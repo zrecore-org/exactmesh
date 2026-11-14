@@ -1,0 +1,45 @@
+Recorded 2026-11-14T22:35:20Z, after the section 'V2 (registered 2026-11-14)' of docs/PLAN.md was written and BEFORE any code change for V2 (no source file listed below has been edited yet). Nothing below may be edited; a change of bar after seeing results is appended to PLAN.md as an amendment.
+4c95af7753aa6abb74619a15f58f841175b4edff5802b5515f6767976067d744  docs/PLAN.md section "V2 (registered 2026-11-14)" (text from its heading up to "## Out of scope" that follows it)
+--- hashes of the files that V2 will or may change, BEFORE (these are the 'before' side of lib/geogram/mp24b/FROZEN_SHA256_V2.txt)
+e96cff0efa59a85467f7941cca0c2dd9e9f5ef29232a13d4c81dce2a5ede9468  lib/geogram/mp24b/FROZEN_SHA256.txt
+3224c50127170409d16d5f1a40fc8735acb3f77d09a6c7afa6c90450482b57eb  lib/geogram/mp24b/geogram_fidelity2.cpp
+06a1c8bf4d65c70e9ca800d145ef3923b474fc52bd43cfaf2abb76d6e69fb510  lib/geogram/mp24b/build.sh
+31034619c2f6621b1810c1ba12dfe1d836cb8aa6c0c2b851a26e716f7676ac09  lib/geogram/mp24b/ADAPTED_SHA256.txt
+68003580cf55a8634088b5c8af9347bf4429d5af38467f08b2770897a851b621  lib/geogram/v1/validator_v1.h
+2fc8d41f9619433592fac45fef9e3f13c36d4e1a99bcd765624377056b6546ee  ci/geogram_xplat.sh
+38e6a6690917f64382a2d30fcf10223695e8c37c6d188da3dfdc4415c969728f  tests/acceptance/test_acceptance.cpp
+8e32f22c019585d92940936bfda35c999bbd4317efd29cbaf825ffb873abbeb8  build/generated/ (extracted rules span, must stay byte-identical) pipeline_rules.h
+--- baseline of the recorded evaluation (Apple M1, Release), saved before the change
+e2edd6f7d6ad9862e6cdcc3ff77ea962ccff689893a7baca0d291d673e20a184  verdict list (build/work/report24b/mp24b_verdicts.txt, 9453 rows)
+a46b1a3b8b6f3049d252aba52dc2be1a865c71d67293c01938dc315a0ce9a990  output aggregate (build/work/report24b/mp24b_output_sha256.txt)
+baseline per-row result file (copy kept outside the repository)  db7c334fb5e007543844cb58c034c6838b0c029ee1abc65c197559376b1d8d83  f2.tsv
+baseline per-row result file (copy kept outside the repository)  1ca0c8403d37360b8dd16ee5f2e1ce7ebb5cede609e5d5be737df9f4195294c2  g1.tsv
+baseline per-row result file (copy kept outside the repository)  a3d928ffefc60ad17b65c133244dfca647dcf10f691a2a4fee70eeb020ff76f3  off.tsv
+baseline per-row result file (copy kept outside the repository)  5eae867492a73bc1dbe23a96c205a9310f65bd71eb07318988b2c6258fabc411  set3.tsv
+baseline per-row result file (copy kept outside the repository)  c0ebdace1458f29f4734ae6b30e8fce9bf9e36793fee3f32863683795f7da9bc  set5.tsv
+baseline per-row result file (copy kept outside the repository)  0fb258211500f3f6932d7b7e9caa6b85fd5140b9952636fdd7a2bec36a6882b7  thin.tsv
+--- V1 corpus the CLI will be fed (bar b, c)
+c382516297bcef27d3751e524a3f97477b1caf3fbed0c471280d28ae19b38e45  corpus/v1/EXPECTED_SHA256.txt
+2f71e6f4b63d6a069ac3713d5bb50282c0285c708342e37c6b26ffe05b27fae2  corpus/v1/gen_v1.cpp
+--- predictor run before any code (check_v1 compare on the five work corpora): 0 files whose verdict or reason changed (g1 73, fid 1364, fid2 1608, set3 1068, set5 2200 files)
+
+--- appended 2026-11-14T22:37:45Z: after the V2 code change was built and the bar-(b) checker smoke-run, BEFORE any bar-(c) CLI run on cavity pairs. The source change itself is hashed in FROZEN_SHA256_V2.txt.
+062f4f89d66bc1ded995a79758ce1504a0a871ae8504467bc3d070326706a13b  lib/geogram/v1/make_cavity_pairs.py
+21208ab7b571e2c0f3e2556f5bc6e361f897a98486c760eaa52e055eca7095e8  lib/geogram/v1/meshpy.py
+74c8bbcdedfd80bede29388fb1f13e10a190c10b78537bbba8fe411f2cf682f8  lib/geogram/v1/check_v1_cli.py
+4941a6b70ace7dcb55efe686b569fed821fe313afd68704fb9301b4e61208a0d  sorted sha256 list of the 256 generated pairs (512 meshes + manifest.tsv), generated twice, byte-identical
+f74924b14f92625df1eee76f45ace0155ae8ed687d840680ef8a765b10c12aba  manifest.tsv of the pairs: manifest.tsv
+
+--- appended 2026-11-14T22:44:01Z, AFTER the runs (a record of the after state, not a pre-registration)
+56cccfba25a3922bee006db4d2deaa7b90bcf0c38c554fdde9ea78d6025e8d83  lib/geogram/mp24b/geogram_fidelity2.cpp
+d8d00a82c775ab792acd7c3d6000dd2fe81ea92c42fc4667af22bd41bef563d0  lib/geogram/mp24b/build.sh
+a648401b03d87ff416a170ff39eb3e43838fa8c764dfcba340c62447f9bc7dcd  lib/geogram/mp24b/ADAPTED_SHA256.txt
+e96cff0efa59a85467f7941cca0c2dd9e9f5ef29232a13d4c81dce2a5ede9468  lib/geogram/mp24b/FROZEN_SHA256.txt
+311b5d9e328b7cfe7b6ddd95f59e8ed14979442cf178cac530a9e734e3f46cbc  lib/geogram/mp24b/FROZEN_SHA256_V2.txt
+640cae766ecee1b0fdf33585e0e1525d57349953e2fa18be11db40459b7f12bd  ci/geogram_xplat.sh
+1bf64171c8aee71e4b42c04369a4eb2f4e043476769cd07b1eae39446b598859  tests/acceptance/test_acceptance.cpp
+9300bb53f5d127d24b04e26fb1a422c8965eca68cb1280e561dad7f6e2c104bf  lib/geogram/v1/summarize_cavity_pairs.py
+6d0d6fd031b99ade98621a40e6e6047c78acd1644305803a31eba72159746d7c  lib/geogram/v1/run_cavity_pairs.sh
+17c3548bebdec93bca50d790a9b0548bd2f8fd57f09bea44cfed81e71455e2b7  lib/geogram/v1/compare_rows.py
+310e3a01d997f2b6b77b06f71be77e9302d3364aa24b34eec49d5689106fccf0  build/work/geo_chain/bin/geogram_fidelity2 (M1 Release binary used for the runs)
+build/generated/pipeline_rules.h compared with cmp before/after: identical

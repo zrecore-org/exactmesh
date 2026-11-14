@@ -8,8 +8,8 @@ Every command below was run on an Apple M1 Pro (macOS, Apple clang 21, CMake 4.4
 |---|---|---|
 | Third-party inputs, pinned | `third_party/fetch.sh all` | every archive "ok" (sha256 checked before unpacking) |
 | Fast suite | `cmake -S . -B build -G Ninja && cmake --build build && ctest --test-dir build -L fast` | all pass (about a second) |
-| Planted mutants are caught | `ctest --test-dir build -L mutant` | 12 of 12 (each mutant build fails its suite: 6 before V1, plus 3 V1 unit mutants and 3 V1 corpus-checker mutants) |
-| Acceptance (BDD) | `ci/geogram_xplat.sh fetch build-chain` ... see below; then `ctest --test-dir build -L acceptance` | 10 scenarios, 182 assertions pass (8 scenarios, 157 assertions before V1) |
+| Planted mutants are caught | `ctest --test-dir build -L mutant` | 12 of 12 (each mutant build fails its suite: 6 before V1, plus 3 V1 unit mutants and 3 V1 corpus-checker mutants); the 6 pipeline mutants (`MUTANTS=1 ci/geogram_xplat.sh build-fidelity2`, binaries `geogram_fidelity2_mut_*`, incl. `NOV1`) each fail `EXACTMESH_FIDELITY2=<mutant> build/mesh/acceptance_tests "[acceptance]"` |
+| Acceptance (BDD) | `ci/geogram_xplat.sh fetch build-chain` ... see below; then `ctest --test-dir build -L acceptance` | 10 scenarios, 257 assertions pass (V2; 182 before V2, 8 scenarios and 157 assertions before V1) |
 | Pipeline v2 evaluation, 9,453 rows | `ci/geogram_xplat.sh mp24b` then `ci/check_aggregates.sh build/work/report24b darwin-arm64` | verdict-list hash `e2edd6f7d6ad9862e6cdcc3ff77ea962ccff689893a7baca0d291d673e20a184`; output aggregate `a46b1a3b8b6f3049d252aba52dc2be1a865c71d67293c01938dc315a0ce9a990` (M1; Linux outputs start `5f17783a`) |
 | Manifold comparison (G1, 93 rows) | `ci/manifold_xplat.sh all` | aggregate `0bb7453ba7d7d9dbdbf1cf5331e145b80d6cb00bf4fec703b2a4219041f57642` in `build/work_manifold/report/aggregate_sha256.txt` (M1) |
 | LBVH pair lists | `cmake -S . -B build -DEXACTMESH_GPU=ON && cmake --build build && tools/with_gpu_lock.sh tools/run_gpu.sh mp10_lbvh device 0.1` (and `... device 1.0`) | `determinism: 20 repeats byte-identical (hash 9d4de5d07a4f1308)` at scale 0.1, `f474f69f005abdb8` at scale 1.0 |
@@ -17,6 +17,9 @@ Every command below was run on an Apple M1 Pro (macOS, Apple clang 21, CMake 4.4
 | LBVH planted mutants | `tools/with_gpu_lock.sh ctest --test-dir build -L lbvhmut` | all 3 caught; kept out of the lavapipe CI job because a mutant of the tree build can hang a kernel (a fence timeout on the M1) |
 | V1 validator corpus (64 legit + 207 invalid) | `ctest --test-dir build -R corpus_v1`; `build/mesh/check_v1 set build/test_work/v1 --list \| shasum -a 256` | generator output matches `corpus/v1/EXPECTED_SHA256.txt`; 0 false refusals, 0 wrong accepts; verdict-list hash `5418cee9a425897bc73de284fd6d96d2e6603fbba1cecef85555699900ff7049` (Release and Debug+ASan/UBSan) |
 | V1 against the older corpora | `build/mesh/check_v1 compare build/work/g1_corpus build/work/fid_corpus build/work/fid2_corpus build/work/set3_corpus build/work/set5_corpus` | 0 files whose verdict or reason changed |
+| V1 through the pipeline CLI (V2), bar b | `python3 -I lib/geogram/v1/check_v1_cli.py build/work/geo_chain/bin/geogram_fidelity2 build/test_work/v1 <scratch dir>` | 3 known-limit inputs + 271 cases, 2,192 CLI runs, 0 mismatches (needs the corpus from `ctest -R corpus_v1` in `build/test_work/v1`) |
+| Cavity operands through the CLI (V2), bar c | `lib/geogram/v1/run_cavity_pairs.sh build/work/geo_chain/bin/geogram_fidelity2 build/test_work/v1 <work dir>` | 768 rows: 592 PASS, 168 REFUSED (162 hard limit, 6 Geogram exceptions), 8 FAIL (all `one_ulp_cavity`); bar not met, see `RESULTS.md` V2 |
+| Per-row comparison with a saved baseline (V2), bar a | `python3 -I lib/geogram/v1/compare_rows.py <saved score24b dir> build/work/score24b` | 0 of 9,453 rows differ |
 | Corpus generators | `ctest --test-dir build -R corpus` and `research/corpus*/gen*.sh --check` | all files match the recorded `EXPECTED_SHA256*.txt` |
 
 `ci/geogram_xplat.sh` stages: `fetch`, `build-chain`, `build-fidelity2`, `tools24b`, `corpus24b`, `score24b`, `report24b`, `mp24b` (all in order). The Geogram build is reused when its stamp (pins, patch hashes, platform, script) is unchanged; `FORCE_REBUILD=1` rebuilds.
@@ -41,6 +44,7 @@ GitHub regenerates source archives from time to time; if a GitHub archive hash c
 
 ## Notes on the hash records
 
+* V2 re-froze `geogram_fidelity2.cpp`: `lib/geogram/mp24b/FROZEN_SHA256.txt` stays verbatim (its `geogram_fidelity2.cpp` line is the source of the recorded evaluation) and `lib/geogram/mp24b/FROZEN_SHA256_V2.txt` holds the before and after hashes; `ci/geogram_xplat.sh` checks both. The recorded aggregates (`e2edd6f7...`, `a46b1a3b...`) did not change.
 * The files `lib/geogram/mp24b/FROZEN_SHA256.txt`, `corpus/*/GENERATOR_SHA256.txt` and `lib/geogram/mp2*/SET*_HASHES_BEFORE_RUN.txt` are the records made **before** the corresponding runs. They are kept verbatim (paths in them name the research-history layout); `ci/geogram_xplat.sh` maps the paths when checking.
   Files whose bytes they pin are byte-identical to the research branch. Four build/scoring scripts had to change for the new layout and are checked against `lib/geogram/mp24b/ADAPTED_SHA256.txt` instead (`PROVENANCE.md`).
 * The recorded aggregates are platform-specific because Geogram's outputs differ in the last bits between libc++ and libstdc++; the verdicts do not.
@@ -64,3 +68,6 @@ Local runs of this repository's own scripts (not GitHub Actions: this repository
 * Not run: GitHub Actions, macOS-hosted runner, lavapipe, the T4, Windows.
 
 * **V1 (2026-11-14, Apple M1, Apple clang, Release `-O2` and Debug with `-fsanitize=address,undefined`):** fast suite 10 of 10 (Debug build: 9 of 9, no GPU test), mutants 12 of 12, acceptance 10 scenarios / 182 assertions. The CTest counts, test-case counts (`unit_validator` 5, `unit_validator_v1` 4) and the "6 CTest entries" / "6 of 6" numbers in the extraction notes above are historical and describe the state before V1. Not run for V1: Linux x86_64 and aarch64, GitHub Actions, the real-mesh set.
+
+* **V2 (2026-11-14, Apple M1, Release `-O2`; Debug with ASan/UBSan for the fast suite):** `ci/geogram_xplat.sh mp24b` (with `MUTANTS=1`) re-run in full after wiring V1 into `geogram_fidelity2`: verdict-list hash `e2edd6f7...` and output aggregate `a46b1a3b...` unchanged, 0 of 9,453 rows differ from the saved baseline; fast 10 of 10 (Debug 9 of 9), mutants 12 of 12 in both, acceptance 10 scenarios / 257 assertions, 6 pipeline mutants each fail the acceptance suite. Bar (c) (cavity operands) was NOT met: 8 FAIL and 6 Geogram exceptions in the `one_ulp_cavity` family, unchanged from the pre-V2 CLI. Not run for V2: Linux x86_64 and aarch64, GitHub Actions, the real-mesh set, `run_mutants.sh`. The fast suite in the Release build included the GPU orient-filter test (the build has the GPU option on).
+

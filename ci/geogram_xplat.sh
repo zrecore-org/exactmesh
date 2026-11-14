@@ -119,13 +119,16 @@ build_predicates() {
 }
 
 # Check a FROZEN_SHA256 file of the research history against this tree: old paths (poc/gpu/mesh/...) are mapped to the new layout; the two files that had to be adapted to the new layout
-# (lib/geogram/mp24b/build.sh, score_fidelity2.py) are checked against lib/geogram/mp24b/ADAPTED_SHA256.txt instead (see docs/PROVENANCE.md).
+# (lib/geogram/mp24b/build.sh, score_fidelity2.py) are checked against lib/geogram/mp24b/ADAPTED_SHA256.txt instead (see docs/PROVENANCE.md); V2 supersedes the geogram_fidelity2.cpp line (FROZEN_SHA256_V2.txt).
 check_frozen() {  # frozen-file
   local t="$WORK/frozen.sums"
   grep -E '^[0-9a-f]{64}  ' "$1" | sed -e 's#  poc/gpu/mesh/lib/geogram/mp2[02]/geogram_#  patches/geogram/geogram_#' -e 's#  poc/gpu/mesh/#  #' \
-    | grep -v -E '  lib/geogram/mp24b/(build\.sh|score_fidelity2\.py)$' > "$t"
+    | grep -v -E '  lib/geogram/mp24b/(build\.sh|score_fidelity2\.py|geogram_fidelity2\.cpp)$' > "$t"
   ( cd "$ROOT" && shacheck "$t" ) || return 1
   ( cd "$ROOT" && shacheck lib/geogram/mp24b/ADAPTED_SHA256.txt ) || return 1
+  # V2 (docs/PLAN.md): geogram_fidelity2.cpp (superseded line of the original file), build.sh and validator_v1.h are checked against the new file with before/after hashes
+  grep -E '^[0-9a-f]{64}  ' "$ROOT/lib/geogram/mp24b/FROZEN_SHA256_V2.txt" > "$WORK/frozen_v2.sums"
+  ( cd "$ROOT" && shacheck "$WORK/frozen_v2.sums" ) || return 1
 }
 
 stage_tools() {

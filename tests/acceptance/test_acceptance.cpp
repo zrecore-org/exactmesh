@@ -35,13 +35,13 @@ std::string fidelityBinary() {
 }
 fs::path workDir() { fs::path d = fs::path(EXACTMESH_TEST_TMP) / "acceptance"; fs::create_directories(d); return d; }
 
-Result runPipeline(const std::string& op, const Mesh& a, const Mesh& b, const std::string& tag) {
+Result runPipeline(const std::string& op, const Mesh& a, const Mesh& b, const std::string& tag, const std::string& flags = "") {
     static int counter = 0;
     fs::path d = workDir(), A = d / (tag + "_A.msh"), B = d / (tag + "_B.msh"), O = d / (tag + "_" + op + "_" + std::to_string(counter++) + ".msh"), L = d / (tag + "_" + op + ".log");
     REQUIRE(writeMesh(A.string(), a));
     REQUIRE(writeMesh(B.string(), b));
     fs::remove(O);
-    std::string cmd = "GEOGRAM_RUNNER_THREADS=1 '" + fidelityBinary() + "' boolean " + op + " '" + A.string() + "' '" + B.string() + "' '" + O.string() + "' > /dev/null 2> '" + L.string() + "'";
+    std::string cmd = "GEOGRAM_RUNNER_THREADS=1 '" + fidelityBinary() + "' " + flags + (flags.empty() ? "" : " ") + "boolean " + op + " '" + A.string() + "' '" + B.string() + "' '" + O.string() + "' > /dev/null 2> '" + L.string() + "'";
     int st = std::system(cmd.c_str());
     Result r;
     r.exitCode = WIFEXITED(st) ? WEXITSTATUS(st) : -1;
@@ -230,24 +230,48 @@ SCENARIO("Inputs beyond a hard limit are refused with the reason (MP24b acceptan
     }
 }
 
-SCENARIO("Nesting and orientation defects are refused by the V1 validator with a reason code (V1 bar 1)", "[acceptance][v1]") {
-    // The V1 validator is called directly: the pipeline CLI is built from frozen sources that still use the old validator (docs/PLAN.md, V1 amendment A1).
+SCENARIO("Nesting and orientation defects are refused through the pipeline CLI with a V1 reason code (V1 bar 1, wired by V2)", "[acceptance][v1]") {
+    // V2 (docs/PLAN.md): the CLI calls v1::validate after the frozen mp21b::validate, so the three former known-limit inputs are decided by the CLI itself.
     using tmesh::append; using tmesh::inverted;
+    Mesh cube = tmesh::box({20, 0, 0}, {21, 1, 1});
+    auto refusedWith = [&](const Result& r, const char* code, const char* side) {
+        CHECK(r.exitCode == 3);
+        CHECK(r.log.find(std::string("REFUSED: invalid input ") + side + ": " + code) != std::string::npos);
+        CHECK_FALSE(r.haveOut);
+    };
     GIVEN("a solid box [0,4]^3") {
         Mesh outer = tmesh::box({0, 0, 0}, {4, 4, 4});
-        WHEN("a second box with the SAME orientation is nested inside it") {
-            std::string r = v1::validate(append(outer, tmesh::box({1, 1, 1}, {2, 2, 2})));
-            THEN("it is refused as a solid inside a solid") { CHECK(r.rfind("V1-NESTED-SAME-ORIENTATION", 0) == 0); }
+        WHEN("a second box with the SAME orientation is nested inside it, as operand A") {
+            Mesh m = append(outer, tmesh::box({1, 1, 1}, {2, 2, 2}));
+            THEN("the CLI refuses it as a solid inside a solid, for every operation, and also as operand B") {
+                for (const char* op : {"union", "intersection", "difference"}) refusedWith(runPipeline(op, m, cube, "nested_same"), "V1-NESTED-SAME-ORIENTATION", "A");
+                refusedWith(runPipeline("union", cube, m, "nested_same_b"), "V1-NESTED-SAME-ORIENTATION", "B");
+                refusedWith(runPipeline("union", m, cube, "nested_same_s", "--no-cavities"), "V1-NESTED-SAME-ORIENTATION", "A");
+            }
         }
-        WHEN("an inverted box is placed beside it, outside") {
-            std::string r = v1::validate(append(outer, inverted(tmesh::box({10, 0, 0}, {11, 1, 1}))));
-            THEN("it is refused as a negative-volume component outside every solid") { CHECK(r.rfind("V1-NEGATIVE-OUTSIDE", 0) == 0); }
+        WHEN("an inverted box is placed beside it, outside, as operand A") {
+            Mesh m = append(outer, inverted(tmesh::box({10, 0, 0}, {11, 1, 1})));
+            THEN("the CLI refuses it as a negative-volume component outside every solid, in both modes") {
+                for (const char* op : {"union", "intersection", "difference"}) refusedWith(runPipeline(op, m, cube, "neg_beside"), "V1-NEGATIVE-OUTSIDE", "A");
+                refusedWith(runPipeline("union", cube, m, "neg_beside_b"), "V1-NEGATIVE-OUTSIDE", "B");
+                refusedWith(runPipeline("union", m, cube, "neg_beside_s", "--no-cavities"), "V1-NEGATIVE-OUTSIDE", "A");
+            }
         }
         WHEN("an inverted box is nested inside it (a cavity)") {
             Mesh m = append(outer, inverted(tmesh::box({1, 1, 1}, {2, 2, 2})));
-            v1::Report rep; std::string r = v1::validate(m, v1::Options{true}, &rep);
-            THEN("it is accepted as a hollow solid and the cavity is counted") { CHECK(r.empty()); CHECK(rep.cavities == 1); }
-            THEN("a caller that does not allow cavities gets V1-CAVITY-NOT-ALLOWED") { CHECK(v1::validate(m, v1::Options{false}).rfind("V1-CAVITY-NOT-ALLOWED", 0) == 0); }
+            THEN("by default the CLI accepts it as a hollow solid: union with a far cube = 6 * (63 + 1)") {
+                Result r = runPipeline("union", m, cube, "cavity_default");
+                requireVolume(r, six(64.0));
+            }
+            THEN("with --no-cavities the CLI refuses it with V1-CAVITY-NOT-ALLOWED, as operand A and as operand B") {
+                refusedWith(runPipeline("union", m, cube, "cavity_strict", "--no-cavities"), "V1-CAVITY-NOT-ALLOWED", "A");
+                refusedWith(runPipeline("union", cube, m, "cavity_strict_b", "--no-cavities"), "V1-CAVITY-NOT-ALLOWED", "B");
+            }
+        }
+        WHEN("an option the CLI does not know is given") {
+            std::string cmd = "'" + fidelityBinary() + "' --bogus boolean union a b c > /dev/null 2>&1";
+            int st = std::system(cmd.c_str());
+            THEN("it is a usage error, exit status 4") { CHECK((WIFEXITED(st) ? WEXITSTATUS(st) : -1) == 4); }
         }
     }
 }

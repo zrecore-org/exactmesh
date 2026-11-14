@@ -1,7 +1,8 @@
 // MP24b: geogram_fidelity2, pipeline v2 (PLAN.md "MP24b amended rule") in ONE process:
 //   exact validation -> exact power-of-two scale 2^-s -> exact re-centring if representable, else c = 0 if |bbox centre| <= T x largest bbox side, else REFUSE (hard limit)
 //   -> Geogram boolean (runner.cpp call, MP20+MP22 patched library) -> translate back (one IEEE addition) -> exact scale back (ldexp).
-//   geogram_fidelity2 boolean <union|intersection|difference> <A.msh> <B.msh> <out.msh>
+//   geogram_fidelity2 [--no-cavities] boolean <union|intersection|difference> <A.msh> <B.msh> <out.msh>
+//   V2 (docs/PLAN.md): after the frozen mp21b::validate, v1::validate (nesting / orientation of components) on A and B; a cavity is accepted unless --no-cavities (then V1-CAVITY-NOT-ALLOWED). MUT_NOV1 skips the V1 call.
 // Exit 0 ok, 3 REFUSED (reason on stderr; hard limits start "REFUSED: hard limit"), 4 error/usage. stderr always ends with one line "fidelity2: path=<recentred|c0|refused> ..."
 // (also before a refusal), with the translate-back error in ulps and per-stage ms; GEOGRAM_FIDELITY_LOG=<file> appends "<out path>\t<line>" per successful run.
 // Scale: s = smallest integer >= 0 with max|coordinate| < 2^18 (A and B together). Refused (hard limit, "underflow") if any nonzero coordinate would become subnormal or inexact.
@@ -12,6 +13,7 @@
 #include "../runner.cpp"
 #undef main
 #include "../mp21b/validator.h"
+#include "../v1/validator_v1.h"
 #include <cfloat>
 #include <cmath>
 #include <fcntl.h>
@@ -104,7 +106,9 @@ Plan plan(const mesh::Mesh& a, const mesh::Mesh& b, mesh::Mesh& ta, mesh::Mesh& 
 
 int main(int argc, char** argv) {
     int realOut = dup(1); dup2(2, 1); (void)realOut;
-    if (argc != 6 || std::string(argv[1]) != "boolean") { fprintf(stderr, "usage: geogram_fidelity2 boolean <union|intersection|difference> A.msh B.msh out.msh\n"); return 4; }
+    bool allowCavities = true;
+    if (argc >= 2 && std::string(argv[1]) == "--no-cavities") { allowCavities = false; argv++; argc--; }
+    if (argc != 6 || std::string(argv[1]) != "boolean") { fprintf(stderr, "usage: geogram_fidelity2 [--no-cavities] boolean <union|intersection|difference> A.msh B.msh out.msh\n"); return 4; }
     try {
         GEO::initialize(GEO::GEOGRAM_INSTALL_ALL);
         GEO::set_assert_mode(GEO::ASSERT_THROW);
@@ -120,6 +124,13 @@ int main(int argc, char** argv) {
         auto t0 = Clock::now();
         if (std::string r = mp21b::validate(a); !r.empty()) { fprintf(stderr, "REFUSED: invalid input A: %s\n", r.c_str()); return 3; }
         if (std::string r = mp21b::validate(b); !r.empty()) { fprintf(stderr, "REFUSED: invalid input B: %s\n", r.c_str()); return 3; }
+#ifndef MUT_NOV1
+        v1::Options v1opt; v1opt.allowCavities = allowCavities;
+        if (std::string r = v1::validate(a, v1opt); !r.empty()) { fprintf(stderr, "REFUSED: invalid input A: %s\n", r.c_str()); return 3; }
+        if (std::string r = v1::validate(b, v1opt); !r.empty()) { fprintf(stderr, "REFUSED: invalid input B: %s\n", r.c_str()); return 3; }
+#else
+        (void)allowCavities;
+#endif
         double validateMs = msSince(t0);
 
         auto t1 = Clock::now();

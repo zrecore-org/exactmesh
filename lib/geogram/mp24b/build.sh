@@ -1,9 +1,9 @@
 #!/bin/sh
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 zrecore-org contributors
-# Build geogram_fidelity2 (and the five planted mutants) against a built MP22-state libgeogram.a (GEOGRAM_DIR = the tree: <dir>/src, <dir>/build).
+# Build geogram_fidelity2 (and the six planted mutants) against a built MP22-state libgeogram.a (GEOGRAM_DIR = the tree: <dir>/src, <dir>/build).
 # usage: GEOGRAM_DIR=<tree> BOOST=<boost root> [OUTDIR=<dir>] [MUTANTS=1] [EXTRA="-DT_EXP=n"] sh build.sh
-# Adapted from the frozen research-history script only in its path handling (see docs/PROVENANCE.md); the compiler flags are unchanged.
+# Adapted from the frozen research-history script only in its path handling (see docs/PROVENANCE.md); the compiler flags are unchanged. V2 (docs/PLAN.md): the mutant NOV1 is added to the list (FROZEN_SHA256_V2.txt).
 set -eu
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../../.." && pwd)"
@@ -18,4 +18,4 @@ build() {  # name defines
   echo "built $OUT/$1"
 }
 build geogram_fidelity2 ""
-if [ "${MUTANTS:-0}" = 1 ]; then for m in NOSCALE SCALE19 C0 NOBACK TLARGE; do build geogram_fidelity2_mut_$m -DMUT_$m; done; fi
+if [ "${MUTANTS:-0}" = 1 ]; then for m in NOSCALE SCALE19 C0 NOBACK TLARGE NOV1; do build geogram_fidelity2_mut_$m -DMUT_$m; done; fi

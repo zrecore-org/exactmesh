@@ -1,2 +1,2 @@
-06a1c8bf4d65c70e9ca800d145ef3923b474fc52bd43cfaf2abb76d6e69fb510  lib/geogram/mp24b/build.sh
+d8d00a82c775ab792acd7c3d6000dd2fe81ea92c42fc4667af22bd41bef563d0  lib/geogram/mp24b/build.sh
 ed6281e98d74a30470eab0f4fccac76e1c342a54f8b6f34ac5d3ce2ac8d4e9a4  lib/geogram/mp24b/score_fidelity2.py

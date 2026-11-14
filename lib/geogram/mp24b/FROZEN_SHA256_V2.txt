@@ -1,0 +1,9 @@
+V2 re-freeze, 2026-11-14 (docs/PLAN.md, "V2 (registered 2026-11-14): wire V1 into the pipeline"). lib/geogram/mp24b/FROZEN_SHA256.txt is the record made before the MP24b runs and stays verbatim (sha256 e96cff0efa59a85467f7941cca0c2dd9e9f5ef29232a13d4c81dce2a5ede9468, recorded in lib/geogram/v1/V2_HASHES_BEFORE_RUN.txt before the change).
+Reason: the pipeline CLI now also calls v1::validate (lib/geogram/v1/validator_v1.h) after the frozen mp21b::validate, and takes the option --no-cavities. Nothing in the scale / re-centre / refuse rules, in T = 2^12 or in the Geogram call changed (the span extracted into build/generated/pipeline_rules.h is byte-identical, sha256 8e32f22c...).
+ci/geogram_xplat.sh check_frozen() checks the lines below (and every line of FROZEN_SHA256.txt except the superseded one). Lines starting with "BEFORE" are records, not checks.
+BEFORE 3224c50127170409d16d5f1a40fc8735acb3f77d09a6c7afa6c90450482b57eb  lib/geogram/mp24b/geogram_fidelity2.cpp   (the source of the recorded 9,453-row evaluation; superseded line of FROZEN_SHA256.txt)
+BEFORE 06a1c8bf4d65c70e9ca800d145ef3923b474fc52bd43cfaf2abb76d6e69fb510  lib/geogram/mp24b/build.sh   (checked through ADAPTED_SHA256.txt; V2 adds only the mutant NOV1 to the mutant list)
+BEFORE 68003580cf55a8634088b5c8af9347bf4429d5af38467f08b2770897a851b621  lib/geogram/v1/validator_v1.h   (not pinned before; now an input of the CLI; unchanged by V2)
+56cccfba25a3922bee006db4d2deaa7b90bcf0c38c554fdde9ea78d6025e8d83  lib/geogram/mp24b/geogram_fidelity2.cpp
+68003580cf55a8634088b5c8af9347bf4429d5af38467f08b2770897a851b621  lib/geogram/v1/validator_v1.h
+AFTER-NOTE lib/geogram/mp24b/build.sh is now d8d00a82c775ab792acd7c3d6000dd2fe81ea92c42fc4667af22bd41bef563d0 (recorded in ADAPTED_SHA256.txt, whose own sha256 changed from 31034619c2f6621b1810c1ba12dfe1d836cb8aa6c0c2b851a26e716f7676ac09 to the value in the V2 results record).

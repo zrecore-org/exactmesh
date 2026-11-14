@@ -38,7 +38,7 @@ stderr, 4 = error). More in [`docs/REPRODUCE.md`](docs/REPRODUCE.md).
 | Path | Contents |
 |---|---|
 | `harness/` | exact arithmetic (`exact.h`), topology checks, exact point-in-solid, mesh file format (headers) |
-| `lib/geogram/` | the pipeline CLI (`mp24b/geogram_fidelity2.cpp`), the exact validator (`mp21b/validator.h`), the Geogram runner |
+| `lib/geogram/` | the pipeline CLI (`mp24b/geogram_fidelity2.cpp`), the exact validator (`mp21b/validator.h`) and, since V2, the V1 nesting and orientation validator (`v1/validator_v1.h`, option `--no-cavities`), the Geogram runner |
 | `patches/geogram/` | the two frozen Geogram patches (BSD-3-Clause, derivative of Geogram) |
 | `oracle/` | Shewchuk-predicate and exact checks, the scoring tool `mesh_compare` |
 | `corpus/` | corpus generators and the recorded sha256 of every generated file (generated data is never committed) |
