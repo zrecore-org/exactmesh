@@ -3,6 +3,7 @@
 // Unit tests for harness/exact.h: exact orientation signs, dyadic arithmetic, exact signed volume.
 #include <catch2/catch_test_macros.hpp>
 #include "testmeshes.h"
+#include <cstdio>
 #include <limits>
 
 using namespace mesh;

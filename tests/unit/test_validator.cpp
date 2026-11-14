@@ -5,6 +5,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include "testmeshes.h"
 #include "validator.h"
+#include <limits>
 
 using namespace mesh;
 

@@ -10,3 +10,5 @@ manifold_g1_darwin_arm64 0bb7453ba7d7d9dbdbf1cf5331e145b80d6cb00bf4fec703b2a4219
 # mp10_pairlist: FNV-1a hash of the LBVH box-pair list printed by `mp10_lbvh device <scale>` ("determinism: 20 repeats byte-identical (hash ...)")
 mp10_pairlist_scale_0.1 9d4de5d07a4f1308
 mp10_pairlist_scale_1.0 f474f69f005abdb8
+# First full value observed when this repository was assembled (Linux aarch64, Ubuntu 24.04 container, g++ 13.3, libstdc++, 2026-11-14); it starts with the recorded prefix above. Observation, not a pre-registered value.
+pipeline_outputs_linux_aarch64_observed 5f17783af5febfe48978fe3a48122eb494dbc525974b55b5f475c2514bce2007

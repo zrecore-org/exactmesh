@@ -1,0 +1,44 @@
+# REUSE (https://reuse.software) annotations for files that carry no in-file SPDX header.
+# Source files whose exact bytes are pinned by recorded sha256 values (lib/geogram/mp24b/FROZEN_SHA256.txt, corpus/*/GENERATOR_SHA256.txt, ...) cannot take a header without
+# breaking the pin; data, documents and the patch files cannot carry one either. Their licence is declared here.
+version = 1
+SPDX-PackageName = "exactmesh"
+SPDX-PackageSupplier = "zrecore-org contributors"
+SPDX-PackageDownloadLocation = "https://github.com/zrecore-org/exactmesh"
+
+[[annotations]]
+path = [
+  "harness/exact.h", "harness/mesh_io.h",
+  "lib/geogram/runner.cpp", "lib/geogram/mp21b/validator.h", "lib/geogram/mp24b/geogram_fidelity2.cpp",
+  "corpus/fidelity/gen_fidelity.cpp", "corpus/fidelity2/gen_fidelity2.cpp", "corpus/magnitude/gen_magnitude.cpp",
+  "corpus/touch/gen_touch_set3.cpp", "corpus/touch/gen_touch_set5.cpp",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 zrecore-org contributors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+  "**/*.md", "**/*.txt", "**/*.tsv", "**/*.csv", "**/*.cff", "**/*.toml", ".gitignore", "NOTICE",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 zrecore-org contributors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["patches/geogram/*.patch"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2000-2022 Inria (Geogram); modifications by zrecore-org contributors"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = ["patches/geogram/LICENSE"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2000-2022 Inria"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = ["LICENSE"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "The Apache Software Foundation"
+SPDX-License-Identifier = "Apache-2.0"

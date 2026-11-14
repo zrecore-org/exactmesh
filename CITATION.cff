@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below. Please also cite Geogram (Bruno Levy, Inria) and Shewchuk's robust predicates when you use the pipeline."
+title: "exactmesh"
+abstract: "Exact validation, scaling and re-centring around a pinned, patched Geogram for binary64 triangle-mesh Boolean operations, with an exact oracle, a reproducible test corpus and GPU kernels. Research code."
+type: software
+version: 0.1.0
+license: Apache-2.0
+authors:
+  - name: "zrecore-org"
+repository-code: "https://github.com/zrecore-org/exactmesh"
+keywords:
+  - computational geometry
+  - mesh Boolean operations
+  - exact arithmetic
+  - robust predicates
