@@ -1,0 +1,11 @@
+# Everything large or fetched stays out of git. Builds, downloads and caches live on the external volume.
+/build/
+/storage/
+/_deps/
+*.o
+*.a
+*.spv
+*.msh
+*.pyc
+__pycache__/
+.DS_Store

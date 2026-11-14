@@ -1,0 +1,18 @@
+exactmesh
+Copyright 2026 zrecore-org contributors
+
+This product includes software developed by the exactmesh contributors, licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party material (none of it is vendored in this repository except where stated; most of it is fetched by pinned, hash-checked scripts):
+
+* Geogram (https://github.com/BrunoLevy/geogram), BSD-3-Clause, Copyright (c) 2000-2022 Inria. Fetched at tag v1.10.1 and built with its
+  restricted components (TetGen, Triangle, HLBFGS) OFF. The two files in patches/geogram/*.patch are derivative works of Geogram source and are
+  distributed under the same BSD-3-Clause terms (patches/geogram/LICENSE).
+* Shewchuk's robust predicates, predicates.c (https://www.cs.cmu.edu/~quake/robust.html), placed in the public domain by Jonathan Richard Shewchuk.
+  Fetched, used as a test oracle only.
+* Boost (https://www.boost.org/), Boost Software License 1.0. Header-only multiprecision is used by the exact-arithmetic harness. Fetched.
+* Catch2 v3 (https://github.com/catchorg/Catch2), Boost Software License 1.0. Fetched for the tests.
+* Manifold (https://github.com/elalish/manifold), Apache-2.0, and its dependency Clipper2 (BSL-1.0). Fetched; used only by the optional comparison tool.
+* Vulkan-Headers (Apache-2.0 / MIT) and volk (MIT), fetched for the GPU host programs.
+
+See docs/THIRD_PARTY_LICENSES.md for the license audit and docs/PROVENANCE.md for what came from where.
