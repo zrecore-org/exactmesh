@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 zrecore-org contributors
+name: GPU T4 (manual)
+
+# Runs the GPU parts on the organization's hosted NVIDIA Tesla T4 runner (label gpu-t4, discrete GPU over PCIe). It is BILLED per minute and the runner pool has size 1, and the
+# same runner is shared with other repositories of the organization. Therefore:
+#   * it has NO automatic trigger: only workflow_dispatch, started by a person who has decided a T4 run is needed;
+#   * one run at a time, never cancelled in the middle (a cancelled run still bills and leaves the shared runner busy);
+#   * follow the shared queue protocol before dispatching: tools/t4_ci_turn.sh join exactmesh; tools/t4_ci_turn.sh wait exactmesh; (dispatch); tools/t4_ci_turn.sh leave exactmesh
+#     (it only coordinates pushes made from one development machine; GitHub's own queue still decides who gets the runner).
+# The lavapipe job in ci.yml should be green first; it is not a prerequisite enforced here.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gpu-t4-shared-runner
+  cancel-in-progress: false
+
+jobs:
+  nvidia-t4:
+    name: NVIDIA Tesla T4 (hosted GPU runner, billed)
+    runs-on: gpu-t4
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packages
+        timeout-minutes: 10
+        run: |
+          cat /etc/os-release | head -3
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ninja-build glslc spirv-tools libvulkan1 vulkan-tools curl ca-certificates python3
+          command -v glslc
+      - name: Select the NVIDIA Vulkan driver and show the device
+        run: |
+          nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv,noheader
+          ICD="$(ls /usr/share/vulkan/icd.d/nvidia_icd.json /etc/vulkan/icd.d/nvidia_icd.json 2>/dev/null | head -1)"
+          test -n "$ICD" || { echo "::error::no nvidia_icd.json on this image"; exit 1; }
+          echo "VK_ICD_FILENAMES=$ICD" >> "$GITHUB_ENV"
+          VK_ICD_FILENAMES="$ICD" vulkaninfo --summary | grep -E 'deviceName|deviceType|driverName|driverInfo|apiVersion' | head
+          VK_ICD_FILENAMES="$ICD" vulkaninfo --summary | grep -q 'NVIDIA' || { echo "::error::Vulkan does not see the NVIDIA GPU"; exit 1; }
+      - name: Fetch the pinned inputs (hash-checked)
+        run: third_party/fetch.sh all
+      - name: Configure and build with the GPU parts
+        run: |
+          cmake -S . -B build -G Ninja -DEXACTMESH_GPU=ON
+          cmake --build build
+      - name: Orient filter and LBVH against their CPU references on the T4
+        run: ctest --test-dir build -L gpu --output-on-failure
+      - name: Full-size LBVH runs (pair-list hashes are printed; recorded values are in ci/EXPECTED_AGGREGATES.txt)
+        run: |
+          build/mesh/mp10_lbvh device 0.1 | tee mp10_0.1.log
+          build/mesh/mp10_lbvh device 1.0 | tee mp10_1.0.log
+          grep -h 'determinism' mp10_0.1.log mp10_1.0.log
+      - name: Orient filter, full size
+        run: build/mesh/mp09_orient_filter device 2000000

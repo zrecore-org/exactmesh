@@ -1,0 +1,12 @@
+# Recorded aggregate hashes (sha256) that the scripts in ci/ reproduce. A different value is a finding to investigate, never a reason to edit this file.
+# pipeline_verdicts_all_platforms: sha256 of the sorted '<family:case.op>  <verdict>' list (9453 rows), identical on Apple M1 (arm64, libc++), Linux x86_64 and Linux aarch64 (gcc, libstdc++)
+pipeline_verdicts_all_platforms e2edd6f7d6ad9862e6cdcc3ff77ea962ccff689893a7baca0d291d673e20a184
+# pipeline_outputs_darwin_arm64: sha256 of the sorted '<sha256 of the output file>  <family:case.op>  <verdict>' list on Apple M1 (clang, libc++)
+pipeline_outputs_darwin_arm64 a46b1a3b8b6f3049d252aba52dc2be1a865c71d67293c01938dc315a0ce9a990
+# pipeline_outputs_linux: only the first 8 hex digits were recorded; x86_64 and aarch64 must agree with each other and start with this prefix
+pipeline_outputs_linux_prefix 5f17783a
+# manifold_g1_darwin_arm64: aggregate sha256 of the sorted '<sha256> <case.op> <verdict>' lines of Manifold v3.5.5 (serial, -ffp-contract=off) on the 93 G1 rows, Apple M1
+manifold_g1_darwin_arm64 0bb7453ba7d7d9dbdbf1cf5331e145b80d6cb00bf4fec703b2a4219041f57642
+# mp10_pairlist: FNV-1a hash of the LBVH box-pair list printed by `mp10_lbvh device <scale>` ("determinism: 20 repeats byte-identical (hash ...)")
+mp10_pairlist_scale_0.1 9d4de5d07a4f1308
+mp10_pairlist_scale_1.0 f474f69f005abdb8

@@ -174,6 +174,11 @@ stage_build_chain() {
   [ "$(sha "$PATCH")" = "$want20" ] || die "geogram_mp20.patch sha256 differs from mp20/FROZEN_SHA256.txt"
   [ "$(sha "$PATCH22")" = "$want22" ] || die "geogram_mp22.patch sha256 differs from mp22/FROZEN_SHA256.txt"
   echo "patch hashes match the FROZEN files: mp20 $want20, mp22 $want22"
+  # A finished build is reused when everything that determines it is unchanged (this is what CI caches): the Geogram and submodule pins, both patch hashes, the platform and this script.
+  local stamp; stamp="$(printf '%s\n' "$G_SHA256" "$SUBS" "$want20" "$want22" "$(uname -sm)" "$(sha "$0")" | { sha256sum 2>/dev/null || shasum -a 256; } | cut -d' ' -f1)"
+  if [ -z "${FORCE_REBUILD:-}" ] && [ "$(cat "$D/.build_stamp" 2>/dev/null)" = "$stamp" ] && [ -s "$D/build/lib/libgeogram.a" ] && [ -x "$WORK/geo_mp22/bin/geogram_runner" ] && [ -x "$WORK/geo_unpatched/bin/geogram_runner" ] && [ -x "$WORK/geo_mp20/bin/geogram_runner" ]; then
+    echo "reusing the finished build in $D (stamp $stamp); FORCE_REBUILD=1 rebuilds"; return 0
+  fi
   extract_tree "$D"
   [ "$(sha "$D/src/$CPP")" = "$PRISTINE_CPP_SHA256" ] || die "pristine mesh_surface_intersection.cpp differs from the recorded v1.10.1 hash"
   cmake_build "$D" unpatched
@@ -196,6 +201,7 @@ stage_build_chain() {
   save_runner mp22
   [ "$(sha "$WORK/geo_unpatched/bin/geogram_runner")" != "$(sha "$WORK/geo_mp20/bin/geogram_runner")" ] || die "mp20 runner identical to unpatched (patch not compiled in)"
   [ "$(sha "$WORK/geo_mp20/bin/geogram_runner")" != "$(sha "$WORK/geo_mp22/bin/geogram_runner")" ] || die "mp22 runner identical to mp20 (patch not compiled in)"
+  echo "$stamp" > "$D/.build_stamp"
 }
 
 stage_corpus5() {

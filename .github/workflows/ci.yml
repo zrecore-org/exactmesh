@@ -1,0 +1,292 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 zrecore-org contributors
+name: CI
+
+# What each job can and cannot show (read before trusting a green check):
+#   * fast: builds the tools and runs the fast unit suite and the planted-mutant checks (every mutant build must FAIL its suite). Needs no Geogram and no GPU.
+#   * fast-macos: the same on Apple Silicon. Not required: the hosted macOS image changes under us; a red result there is information, not a gate.
+#   * acceptance: builds the pinned, patched Geogram (cached by the pinned hashes) and the pipeline CLI, then runs the [acceptance] BDD scenarios.
+#   * verdicts: runs the whole recorded pipeline evaluation (9453 rows) and compares the verdict-list hash and the output aggregate with ci/EXPECTED_AGGREGATES.txt;
+#     the two Linux architectures must agree byte for byte. NOTE: the recorded bar "0 FAIL on the fresh families" is NOT MET by 3 rows of one pair (a scoring-rule artifact,
+#     docs/LIMITS.md); the job therefore gates on the recorded hashes, not on the bar line.
+#   * gpu-lavapipe: the orient filter and the LBVH on lavapipe (Mesa's CPU Vulkan). There is NO GPU on a hosted runner: this checks host code and kernel logic against a
+#     second Vulkan implementation, not GPU behaviour or speed. The T4 job is a separate workflow (gpu-t4.yml), manual only.
+#   * manifold: optional comparison tool, manual only.
+# A commit message containing [skip ci] skips the run (GitHub's own convention).
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md', 'docs/**', 'LICENSE', 'NOTICE', 'CITATION.cff']
+  pull_request:
+    paths-ignore: ['**.md', 'docs/**', 'LICENSE', 'NOTICE', 'CITATION.cff']
+  workflow_dispatch:
+    inputs:
+      manifold:
+        description: "Also run the optional Manifold comparison job"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && format('-manual-{0}', github.run_id) || '' }}
+  cancel-in-progress: true
+
+jobs:
+  fast:
+    name: Fast suite, ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: x86_64, runner: ubuntu-24.04 }
+          - { arch: aarch64, runner: ubuntu-24.04-arm }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ninja-build curl ca-certificates python3
+      - name: Cache the pinned third-party downloads
+        uses: actions/cache@v4
+        with:
+          path: build/deps/dl
+          key: deps-${{ runner.os }}-${{ hashFiles('third_party/fetch.sh', 'oracle/SHA256SUMS') }}
+      - name: Fetch the pinned third-party inputs (every archive is hash-checked before it is unpacked)
+        run: third_party/fetch.sh boost shewchuk catch2
+      - name: Configure and build
+        run: |
+          cmake -S . -B build -G Ninja
+          cmake --build build
+      - name: Fast unit suite
+        run: ctest --test-dir build -L fast --output-on-failure
+      - name: Planted mutants are caught (each mutant build must fail its suite)
+        run: ctest --test-dir build -L mutant --output-on-failure
+
+  fast-macos:
+    name: Fast suite, macOS arm64 (not required)
+    runs-on: macos-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the pinned third-party inputs
+        run: third_party/fetch.sh boost shewchuk catch2
+      - name: Configure and build
+        run: |
+          cmake -S . -B build
+          cmake --build build -j "$(sysctl -n hw.ncpu)"
+      - name: Fast unit suite and planted mutants
+        run: |
+          ctest --test-dir build -L fast --output-on-failure
+          ctest --test-dir build -L mutant --output-on-failure
+
+  acceptance:
+    name: Acceptance (patched Geogram), ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    env:
+      WORK: ${{ github.workspace }}/build/work
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: x86_64, runner: ubuntu-24.04 }
+          - { arch: aarch64, runner: ubuntu-24.04-arm }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ninja-build make patch curl ca-certificates python3 zlib1g-dev
+      - name: Cache the pinned third-party downloads
+        uses: actions/cache@v4
+        with:
+          path: build/deps/dl
+          key: deps-${{ runner.os }}-${{ hashFiles('third_party/fetch.sh', 'oracle/SHA256SUMS') }}
+      # The Geogram build is cached by everything that determines it: the pinned tarball and submodule hashes (in the script), both patch files and the script itself.
+      # ci/geogram_xplat.sh re-checks the patch hashes on every run and rebuilds when its own stamp differs.
+      - name: Cache the pinned, patched Geogram build
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/work/geo_chain
+            build/work/geo_unpatched
+            build/work/geo_mp20
+            build/work/geo_mp22
+            build/work/dl
+          key: geogram-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('ci/geogram_xplat.sh', 'patches/geogram/*.patch', 'patches/geogram/FROZEN_SHA256_*.txt') }}
+      - name: Fetch the pinned third-party inputs
+        run: third_party/fetch.sh boost shewchuk catch2
+      - name: Fetch Geogram v1.10.1 and the four submodule archives (pinned sha256)
+        run: ci/geogram_xplat.sh fetch
+      - name: Build Geogram unpatched, then with the two frozen patches (restricted components off)
+        timeout-minutes: 30
+        run: ci/geogram_xplat.sh build-chain
+      - name: Build the pipeline CLI geogram_fidelity2 (sources checked against the frozen hashes)
+        run: ci/geogram_xplat.sh build-fidelity2
+      - name: Configure and build the tests
+        run: |
+          cmake -S . -B build -G Ninja -DEXACTMESH_FIDELITY2="$WORK/geo_chain/bin/geogram_fidelity2"
+          cmake --build build
+      - name: Acceptance scenarios
+        run: ctest --test-dir build -L acceptance --output-on-failure
+
+  verdicts:
+    name: Recorded evaluation and hash comparison, ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    env:
+      WORK: ${{ github.workspace }}/build/work
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: x86_64, runner: ubuntu-24.04 }
+          - { arch: aarch64, runner: ubuntu-24.04-arm }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ninja-build make patch curl ca-certificates python3 zlib1g-dev
+      - name: Cache the pinned third-party downloads
+        uses: actions/cache@v4
+        with:
+          path: build/deps/dl
+          key: deps-${{ runner.os }}-${{ hashFiles('third_party/fetch.sh', 'oracle/SHA256SUMS') }}
+      - name: Cache the pinned, patched Geogram build
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/work/geo_chain
+            build/work/geo_unpatched
+            build/work/geo_mp20
+            build/work/geo_mp22
+            build/work/dl
+          key: geogram-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('ci/geogram_xplat.sh', 'patches/geogram/*.patch', 'patches/geogram/FROZEN_SHA256_*.txt') }}
+      - name: Fetch the pinned third-party inputs
+        run: third_party/fetch.sh boost shewchuk
+      - name: Fetch and build the pinned, patched Geogram and the pipeline CLI
+        timeout-minutes: 40
+        run: |
+          ci/geogram_xplat.sh fetch
+          ci/geogram_xplat.sh build-chain
+          ci/geogram_xplat.sh build-fidelity2
+      - name: Build the oracle and every corpus generator; generate the families and verify every file against its EXPECTED_SHA256
+        run: |
+          ci/geogram_xplat.sh tools24b
+          ci/geogram_xplat.sh corpus24b
+      - name: Score all families through the pipeline (GEOGRAM_RUNNER_THREADS=1)
+        timeout-minutes: 60
+        run: ci/geogram_xplat.sh score24b
+      - name: Tables, bars and aggregate hashes
+        run: ci/geogram_xplat.sh report24b
+      - name: Compare with the recorded aggregate hashes
+        run: ci/check_aggregates.sh "$WORK/report24b" linux
+      - name: Upload the report and the hash lists
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verdicts-${{ matrix.arch }}
+          path: |
+            ${{ env.WORK }}/report24b/
+            ${{ env.WORK }}/score24b/*.tsv
+          if-no-files-found: warn
+          retention-days: 30
+
+  compare-architectures:
+    name: x86_64 and aarch64 outputs are byte-identical
+    needs: verdicts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: verdicts-x86_64
+          path: x86_64
+      - uses: actions/download-artifact@v4
+        with:
+          name: verdicts-aarch64
+          path: aarch64
+      - name: Compare the verdict lists and the output hash lists
+        run: |
+          diff -q x86_64/report24b/mp24b_verdicts.txt aarch64/report24b/mp24b_verdicts.txt
+          diff -q x86_64/report24b/mp24b_output_sha256.txt aarch64/report24b/mp24b_output_sha256.txt
+          echo "identical verdicts and identical output bytes on x86_64 and aarch64"
+
+  gpu-lavapipe:
+    name: GPU parts on lavapipe (CPU Vulkan, no GPU), ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    continue-on-error: ${{ matrix.arch == 'aarch64' }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: x86_64, runner: ubuntu-24.04 }
+          - { arch: aarch64, runner: ubuntu-24.04-arm }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ninja-build glslc spirv-tools libvulkan1 mesa-vulkan-drivers vulkan-tools curl ca-certificates python3
+      - name: Cache the pinned third-party downloads
+        uses: actions/cache@v4
+        with:
+          path: build/deps/dl
+          key: deps-${{ runner.os }}-${{ hashFiles('third_party/fetch.sh', 'oracle/SHA256SUMS') }}
+      - name: Fetch the pinned inputs, including Vulkan-Headers and volk (pinned archives)
+        run: third_party/fetch.sh all
+      - name: Configure and build with the GPU parts
+        run: |
+          cmake -S . -B build -G Ninja -DEXACTMESH_GPU=ON
+          cmake --build build
+      - name: Select the lavapipe driver and show the device
+        run: |
+          ICD="$(ls /usr/share/vulkan/icd.d/lvp_icd*.json | head -1)"
+          echo "VK_ICD_FILENAMES=$ICD" >> "$GITHUB_ENV"
+          VK_ICD_FILENAMES="$ICD" vulkaninfo --summary | head -40
+      - name: Orient filter (soft binary64) on the host, then orient filter and LBVH on the lavapipe device against their CPU references
+        run: ctest --test-dir build -L gpu --output-on-failure
+      - name: Host-side soft binary64 orient filter
+        run: build/mesh/mp09_orient_filter host 800000
+
+  manifold:
+    name: Optional comparison, Manifold v3.5.5, ${{ matrix.arch }}
+    if: github.event_name == 'workflow_dispatch' && inputs.manifold
+    runs-on: ${{ matrix.runner }}
+    continue-on-error: true
+    timeout-minutes: 40
+    env:
+      WORK: ${{ github.workspace }}/build/work_manifold
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: x86_64, runner: ubuntu-24.04 }
+          - { arch: aarch64, runner: ubuntu-24.04-arm }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ninja-build make git curl ca-certificates python3
+      - name: Fetch the pinned third-party inputs
+        run: third_party/fetch.sh boost shewchuk
+      - name: Fetch (pinned commit), build and score Manifold on the G1 corpus; aggregate hash
+        run: ci/manifold_xplat.sh all
+      - name: Upload report, TSVs and outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifold-${{ matrix.arch }}
+          path: |
+            ${{ env.WORK }}/report/
+            ${{ env.WORK }}/score/run1/results.tsv
+            ${{ env.WORK }}/score/run2.tsv
