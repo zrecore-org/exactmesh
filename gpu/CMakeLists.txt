@@ -57,9 +57,9 @@ if(EXACTMESH_TESTS)
   add_dependencies(gpu_tests mp09_orient_filter mp10_lbvh)
   add_test(NAME gpu_tests COMMAND gpu_tests "[gpu]" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
   set_tests_properties(gpu_tests PROPERTIES LABELS "gpu" TIMEOUT 1500)
-  # not in the lavapipe CI job (a mutant of the tree build can hang a kernel); run with: ctest -L gpu-mutant
+  # not in the lavapipe CI job (a mutant of the tree build can hang a kernel); run with: ctest -L lbvhmut
   add_test(NAME gpu_mutants COMMAND gpu_tests "[gpu-mutant]" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
-  set_tests_properties(gpu_mutants PROPERTIES LABELS "gpu-mutant" TIMEOUT 600)
+  set_tests_properties(gpu_mutants PROPERTIES LABELS "lbvhmut" TIMEOUT 600)
   add_test(NAME gpu_host_orient_filter COMMAND mp09_orient_filter host 200000 WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
   set_tests_properties(gpu_host_orient_filter PROPERTIES LABELS "fast")
 endif()

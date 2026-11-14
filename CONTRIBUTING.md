@@ -12,7 +12,7 @@ the project's licence (Apache-2.0; the two patch files under `patches/geogram/` 
 
 * **Fast suite must stay green and fast**: `ctest --test-dir build -L fast` (seconds) and `-L mutant` (every planted mutant build must still FAIL its suite; a mutant that is no longer caught means a test got weaker).
 * **Write the test first** for behaviour changes (unit tests in `tests/unit/`, Catch2 v3, `[unit]` tag). A check that cannot fail proves nothing: when you add a check, add or extend a planted mutant that it catches.
-* **Acceptance tests** (`tests/acceptance/`, `[acceptance]`, BDD `SCENARIO / GIVEN / WHEN / THEN`) map one to one onto registered bars and need the pinned, patched Geogram (`ci/geogram_xplat.sh build-chain build-fidelity2`). They are never part of the fast suite.
+* **Acceptance tests** (`tests/acceptance/`, `[acceptance]`, BDD `SCENARIO / GIVEN / WHEN / THEN`) map one to one onto registered bars and need the pinned, patched Geogram (`ci/geogram_xplat.sh build-chain build-fidelity2`). They are never part of the fast suite. A scenario that passes with every planted mutant, with the unpatched runner and with the comparison engine is not testing its bar: check each new scenario against `docs/REPRODUCE.md`' discriminator matrix.
 * **GPU tests** (`[gpu]`) need a Vulkan device (lavapipe is enough). On a machine whose GPU is shared, run them through `tools/with_gpu_lock.sh`; the hosted T4 job (`gpu-t4.yml`) is manual only and follows `tools/t4_ci_turn.sh`.
 * Floating-point code is compiled with `-ffp-contract=off` and without fast-math; the recorded hashes depend on it.
 * Exactness claims need an exact oracle (`harness/exact.h`), not a tolerance. Include the input pair when you report a wrong result.
