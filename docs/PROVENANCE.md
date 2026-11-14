@@ -74,6 +74,11 @@ upstream is under the PostgreSQL License) and "shares some lines with it". Only 
 Everything else was removed or rewritten: the host project's source, build files and planning notes; its aggregation proofs of concept; its database-extension spike; the planning, resource and delegation sections of the plan and the extension spike
 and gate G5 of the results log; the host-specific parts of the licence audit and parity matrix (the "in-tree" and "vendored" statements about the host's source tree); the summation routine in `f64soft.inc`; absolute paths of the research machine.
 
+## Real-mesh validation (`research/realmesh/`)
+
+Added from research-branch commit `69d256a1166` (path `lib/realmesh` and `corpus/real`, plus `THINGI.pin` and the fetch script, adapted). No Thingi10K model file or converted mesh is included; results are by model id. Scripts' paths were adapted and SPDX headers added, so their hashes in `data/HASHES.txt`
+no longer match (the record is kept verbatim except that absolute paths of the research machine were shortened); the `pairs.tsv` path columns were shortened for the same reason, so its recorded hash `9b86bd05...` is that of the original file.
+
 ## Left out on purpose
 
 The aggregation proofs of concept and their shaders, the database-extension spike, the build system of the research branch, Slang and Bazel experiments, the real-mesh download script and pin, the per-step `REPORT.md` files, the Embree, plane-based and Cherchi-survey spikes, the MP18 guard and MP20-MP22 development tooling

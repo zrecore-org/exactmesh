@@ -80,3 +80,28 @@ TEST_CASE("a duplicated triangle inside an otherwise closed surface is refused a
     p.addT(0, 1, 2); p.addT(0, 2, 1);                      // a degenerate "pillow": two opposite triangles on the same three vertices; every edge used once per direction
     CHECK(contains(mp21b::validate(p), "duplicate"));
 }
+
+// KNOWN LIMITATION (documented in docs/LIMITS.md, found by the real-mesh validation): the validator checks only the sign of the TOTAL exact volume. It does not check the sign of each
+// connected component or whether components are nested, so the meshes below are ACCEPTED although the Boolean of an ambiguous operand is not well defined for a caller that expects
+// a plain solid. These tests assert the CURRENT behaviour (accepted). When the gap is closed, they must fail: then flip them to expect a refusal. Hidden ([.]) and not tagged [unit].
+TEST_CASE("known limitation: nested and negative-volume components are accepted", "[known-limit][.]") {
+    auto append = [](Mesh& a, const Mesh& b) {
+        uint32_t o = (uint32_t)a.nv();
+        for (size_t i = 0; i < b.nv(); i++) a.addV(b.v[3 * i], b.v[3 * i + 1], b.v[3 * i + 2]);
+        for (size_t k = 0; k < b.nt(); k++) a.addT(b.t[3 * k] + o, b.t[3 * k + 1] + o, b.t[3 * k + 2] + o);
+    };
+    auto inverted = [](Mesh m) { for (size_t k = 0; k < m.nt(); k++) std::swap(m.t[3 * k + 1], m.t[3 * k + 2]); return m; };
+    Mesh outer = tmesh::box({0, 0, 0}, {4, 4, 4});
+    SECTION("an inverted inner shell nested in an outer shell (a cavity, or a defect: the validator cannot tell)") {
+        Mesh m = outer; append(m, inverted(tmesh::box({1, 1, 1}, {2, 2, 2})));
+        CHECK(why(m).empty());                                   // KNOWN GAP: accepted
+    }
+    SECTION("a same-orientation inner shell nested in an outer shell (winding number 2)") {
+        Mesh m = outer; append(m, tmesh::box({1, 1, 1}, {2, 2, 2}));
+        CHECK(why(m).empty());                                   // KNOWN GAP: accepted
+    }
+    SECTION("a negative-volume component beside a larger positive one") {
+        Mesh m = outer; append(m, inverted(tmesh::box({10, 0, 0}, {11, 1, 1})));
+        CHECK(why(m).empty());                                   // KNOWN GAP: accepted (total volume is positive)
+    }
+}

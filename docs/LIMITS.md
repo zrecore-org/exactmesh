@@ -41,12 +41,21 @@ Not refused although it is not valid input: **self-intersecting meshes** (the va
 
 ## What is NOT tested
 
-* **Real meshes.** Nothing has been run on scanned or CAD-derived meshes (a Thingi10K validation is registered as MP26 and not started). Synthetic corpora can miss whole classes of input.
+* **Real meshes beyond one subset.** Only a Thingi10K subset was run (see "Real-mesh evidence"); models above 200k triangles, non-manifold or self-intersecting inputs, scans, and any platform other than the M1 were not. Synthetic corpora and one subset can miss whole classes of input.
 * **Windows**, MSVC, and every standard library or compiler other than Apple clang 21 / libc++ and g++ 13.3 / libstdc++ (Geogram has a known dependence on memory layout, see defect 2).
 * **Non-contact families**: the corpora concentrate on contact, offset, thin and nested cases. Curved-curved contact has no unpatched failure to repair and a thin sample; spiky near-coincident geometry fails regardless of coordinate magnitude (76 of 186 development runs
   of one spiky shape failed, 17 of them at small coordinates; a Geogram behaviour that the pipeline does not address and the acceptance families exclude by using smooth shapes).
 * **GPU hardware** other than Apple M1, NVIDIA T4 and lavapipe; performance claims for GPU are not made here (see `RESULTS.md` for what was measured and its caveats).
 * Non-manifold repair, self-intersection handling, meshes above a few hundred thousand triangles, multi-threaded Geogram determinism beyond the single-thread (`GEOGRAM_RUNNER_THREADS=1`) runs used for scoring.
+
+## Real-mesh evidence (MP26, Thingi10K subset, Apple M1)
+
+420 pairs from 560 models (closed, manifold, no self-intersections, up to 200k triangles; selection frozen and hashed before any run; `research/realmesh/`, recorded results by model id only, no model file is in this repository and each model has its own licence).
+* **407 clean pairs: 0 wrong results** (405 correct, 2 refused, per operation); plain patched Geogram 407/0/0 and Manifold 407/0/0 on the same pairs. Over all 420 pairs the pipeline gave 410 correct, 0 wrong, 10 refused; Manifold gave 12/5/12 wrong (union/intersection/difference) on the 13 ambiguous pairs.
+* **Every refusal was an input defect**, all by the exact validator and none a hard limit: 7 whole-model inversions and 2 exact zero-area triangles that the dataset's own metadata does not flag, plus 1 artefact of the pair builder.
+* **Validator gap.** The validator checks only the sign of the *total* exact volume; it does not check the sign of each component or whether components are nested. Five accepted pairs (p001, p152, p235, p302, p304) have nested same-orientation shells or negative-volume components, so their "correct" is established only on the unambiguous samples.
+  A cavity (inverted inner shell) is legitimate for a hollow solid and indistinguishable here from a defect. This is pinned by a documented known-limitation test (`[known-limit]`, `ctest -L known-limit`, asserts the current behaviour: accepted).
+* Residual of the inclusion-exclusion volume identity on clean pairs: median 4e-18, max 4.5e-15. Pipeline time equals plain Geogram (+2%); Manifold is about 8x faster at the median.
 
 ## The recorded bar that is not met
 

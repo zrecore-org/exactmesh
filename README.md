@@ -7,8 +7,7 @@ LBVH with box-pair emission) and research spikes on 2D and 3D gap-filling.
 
 ## Status (read this first)
 
-**Research code, version 0.1.0, not production software.** Everything below was measured on synthetic corpora with exactly known answers; **no real-world meshes have been run yet**
-(a validation on real meshes is planned, see `docs/PLAN.md`, MP26). On those corpora (9,453 scored rows, Apple M1) the pipeline gives 9,204 PASS, 3 FAIL and 246 REFUSED: 18 refusals are malformed inputs correctly refused and 228 are valid inputs refused
+**Research code, version 0.1.0, not production software.** Everything below was measured on synthetic corpora with exactly known answers; **real meshes were validated on one Thingi10K subset only** (420 pairs on one machine: 0 wrong on the 407 clean pairs, refusals all input defects; `docs/LIMITS.md`). A known validator gap (per-component volume sign and nesting are not checked) is documented and pinned by a test. On those corpora (9,453 scored rows, Apple M1) the pipeline gives 9,204 PASS, 3 FAIL and 246 REFUSED: 18 refusals are malformed inputs correctly refused and 228 are valid inputs refused
 at a documented hard limit (far from the origin, or underflow). The 3 FAIL rows are one pair that a diagnosis shows to be a scoring-rule artifact (output correct up to vertex rounding), but the registered
 bar "0 FAIL on the fresh families" is **not met** by it, and this repository says so everywhere rather than rewriting the bar. Read [`docs/LIMITS.md`](docs/LIMITS.md) before relying on any result.
 
@@ -47,7 +46,7 @@ stderr, 4 = error). More in [`docs/REPRODUCE.md`](docs/REPRODUCE.md).
 | `cpu/` | the deterministic CPU BVH reference |
 | `ci/` | pinned build and evaluation scripts, recorded aggregate hashes |
 | `tests/` | Catch2 tests: `unit/` (fast), `acceptance/` (BDD, need patched Geogram), `gpu/` |
-| `research/` | 2D/3D gap-fill spikes and their corpus generators (not maintained, not in CI) |
+| `research/` | 2D/3D gap-fill spikes and their generators; `research/realmesh/` the real-mesh validation (scripts and results by model id; fetch script with pinned size and sha256; not in CI) |
 | `third_party/` | fetch script with pinned hashes; nothing third-party is vendored |
 | `docs/` | `PLAN.md` (pre-registered bars), `RESULTS.md`, `LIMITS.md`, `REPRODUCE.md`, `PROVENANCE.md`, parity matrix, license audit |
 

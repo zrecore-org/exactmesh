@@ -34,6 +34,8 @@ set_tests_properties(unit_core PROPERTIES LABELS "fast")
 exactmesh_test(unit_validator unit/test_validator.cpp)
 add_test(NAME unit_validator COMMAND unit_validator "[unit]")
 set_tests_properties(unit_validator PROPERTIES LABELS "fast")
+add_test(NAME known_limits COMMAND unit_validator "[known-limit]")
+set_tests_properties(known_limits PROPERTIES LABELS "known-limit")   # documents current behaviour of a known gap; not in the fast suite
 foreach(M NODUP NOORIENT)
   exactmesh_test(unit_validator_mut_${M} unit/test_validator.cpp)
   target_compile_definitions(unit_validator_mut_${M} PRIVATE MUT_${M})
