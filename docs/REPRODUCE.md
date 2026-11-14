@@ -46,7 +46,7 @@ GitHub regenerates source archives from time to time; if a GitHub archive hash c
 
 Local runs of this repository's own scripts (not GitHub Actions: this repository's CI has not run yet):
 
-* **Apple M1 Pro, macOS, Apple clang 21:** fast suite (7 tests: 15 + 3 + 7 Catch2 test cases, about 370,000 assertions, 4 CTest corpus/predicate checks), 6 of 6 planted mutants caught, acceptance 8 scenarios (157 assertions) green, and each of the 5 planted pipeline mutants
+* **Apple M1 Pro, macOS, Apple clang 21:** fast suite (6 CTest entries, 7 with the GPU build: `unit_core` 15 Catch2 test cases, `unit_validator` 3, `unit_rules` 7, about 370,000 assertions in all, two corpus checks, `predicates_check`), 6 of 6 planted mutants caught, acceptance 8 scenarios (157 assertions) green, and each of the 5 planted pipeline mutants
   (`NOSCALE`, `SCALE19`, `C0`, `NOBACK`, `TLARGE`) fails the acceptance suite. `ci/geogram_xplat.sh mp24b` reproduced both recorded pipeline hashes (verdict list `e2edd6f7...`, M1 output aggregate `a46b1a3b...`) twice, from a clean build and from a reused one.
   `ci/manifold_xplat.sh all` reproduced `0bb7453b...`. `mp10_lbvh` reproduced `9d4de5d07a4f1308` (scale 0.1) and `f474f69f005abdb8` (scale 1.0) through the shared GPU lock; `ctest -L gpu` (orient filter on the device, LBVH, 3 planted LBVH mutants) passes.
   All four research corpus generators (`research/corpus*/gen*.sh --check`) and the G1 generator match their recorded hashes.
