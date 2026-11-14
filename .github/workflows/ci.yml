@@ -43,10 +43,8 @@ jobs:
     timeout-minutes: 30
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - { arch: x86_64, runner: ubuntu-24.04 }
-          - { arch: aarch64, runner: ubuntu-24.04-arm }
+      # the hosted arm64 runner is available to public repositories only: while the repository is private only x86_64 runs
+      matrix: ${{ fromJSON(github.event.repository.private && '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"}]}' || '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"},{"arch":"aarch64","runner":"ubuntu-24.04-arm"}]}') }}
     steps:
       - uses: actions/checkout@v4
       - name: Install packages
@@ -95,10 +93,8 @@ jobs:
       WORK: ${{ github.workspace }}/build/work
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - { arch: x86_64, runner: ubuntu-24.04 }
-          - { arch: aarch64, runner: ubuntu-24.04-arm }
+      # the hosted arm64 runner is available to public repositories only: while the repository is private only x86_64 runs
+      matrix: ${{ fromJSON(github.event.repository.private && '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"}]}' || '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"},{"arch":"aarch64","runner":"ubuntu-24.04-arm"}]}') }}
     steps:
       - uses: actions/checkout@v4
       - name: Install packages
@@ -146,10 +142,8 @@ jobs:
       WORK: ${{ github.workspace }}/build/work
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - { arch: x86_64, runner: ubuntu-24.04 }
-          - { arch: aarch64, runner: ubuntu-24.04-arm }
+      # the hosted arm64 runner is available to public repositories only: while the repository is private only x86_64 runs
+      matrix: ${{ fromJSON(github.event.repository.private && '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"}]}' || '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"},{"arch":"aarch64","runner":"ubuntu-24.04-arm"}]}') }}
     steps:
       - uses: actions/checkout@v4
       - name: Install packages
@@ -228,10 +222,8 @@ jobs:
     timeout-minutes: 60
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - { arch: x86_64, runner: ubuntu-24.04 }
-          - { arch: aarch64, runner: ubuntu-24.04-arm }
+      # the hosted arm64 runner is available to public repositories only: while the repository is private only x86_64 runs
+      matrix: ${{ fromJSON(github.event.repository.private && '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"}]}' || '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"},{"arch":"aarch64","runner":"ubuntu-24.04-arm"}]}') }}
     steps:
       - uses: actions/checkout@v4
       - name: Install packages
@@ -269,10 +261,8 @@ jobs:
       WORK: ${{ github.workspace }}/build/work_manifold
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - { arch: x86_64, runner: ubuntu-24.04 }
-          - { arch: aarch64, runner: ubuntu-24.04-arm }
+      # the hosted arm64 runner is available to public repositories only: while the repository is private only x86_64 runs
+      matrix: ${{ fromJSON(github.event.repository.private && '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"}]}' || '{"include":[{"arch":"x86_64","runner":"ubuntu-24.04"},{"arch":"aarch64","runner":"ubuntu-24.04-arm"}]}') }}
     steps:
       - uses: actions/checkout@v4
       - name: Install packages

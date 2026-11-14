@@ -7,7 +7,7 @@
 #   tools/with_gpu_lock.sh <command> [args...]        (PGSTROM_TEST_LOCK overrides the lock path, for testing)
 LOCK=${PGSTROM_TEST_LOCK:-/tmp/pgstrom_test.lock}
 QUEUE=$LOCK.queue
-TREE="mongo-gpu-poc $*"
+TREE="exactmesh $*"
 lstart_of() { ps -o lstart= -p "$1" 2>/dev/null | sed 's/^ *//'; }
 alive() { [ -n "$1" ] || return 1; kill -0 "$1" 2>/dev/null || return 1; [ -z "$2" ] || [ "$(lstart_of "$1")" = "$2" ]; }
 mkdir -p "$QUEUE" 2>/dev/null

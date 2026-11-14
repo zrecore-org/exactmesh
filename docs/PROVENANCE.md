@@ -67,7 +67,7 @@ upstream is under the PostgreSQL License) and "shares some lines with it". Only 
 
 | Where | What | Why it stays |
 |---|---|---|
-| `tools/with_gpu_lock.sh` | `PGSTROM_TEST_LOCK`, `/tmp/pgstrom_test.lock`, `TREE="mongo-gpu-poc ..."` | the shared lock path and variable of the protocol (a different path would defeat the mutual exclusion); `TREE` is the label other waiters see |
+| `tools/with_gpu_lock.sh` | `PGSTROM_TEST_LOCK`, `/tmp/pgstrom_test.lock`, `TREE="exactmesh ..."` (changed from the research label) | the shared lock path and variable of the protocol (a different path would defeat the mutual exclusion); `TREE` is the label other waiters see |
 | `tools/t4_ci_turn.sh` | the default `REPOS` list names the other two repositories that share the T4 runner | needed to see the runner's busy state across repositories |
 | `docs/PROVENANCE.md` | this file | explains the above |
 
