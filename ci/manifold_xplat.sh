@@ -5,7 +5,7 @@
 # Optional comparison tool: scores Manifold v3.5.5 (SERIAL build, -ffp-contract=off, MANIFOLD_PAR=OFF) on the G1 corpus (31 adversarial pairs x 3 operations = 93 rows) with
 # oracle/score_library.py (--points 5000, serial), runs every pair twice, compares with lib/manifold/scoring_results.tsv (the recorded Apple M1 run) and prints the
 # aggregate sha256 of the outputs. Manifold is NOT part of the exactmesh pipeline; it is the reference the pipeline is compared against.
-# usage: ci/manifold_xplat.sh <stage>   stages: fetch | build | tools | corpus | score | rerun | report | all
+# usage: ci/manifold_xplat.sh <stage>...   stages: fetch | build | tools | corpus | score | rerun | report | all
 # WORK defaults to <repo>/build/work_manifold. Needs: git, cmake, ninja or make, g++/c++, python3, curl and the fetched inputs (third_party/fetch.sh boost shewchuk).
 # Hard failures (exit 1): checked-out Manifold commit or fetched Clipper2 commit differs from the pin, a build fails, a generated corpus file differs from corpus/EXPECTED_SHA256.txt.
 # Verdicts and hash differences never fail the script.
@@ -127,14 +127,17 @@ stage_rerun() {   # second independent run of every pair, for run-to-run identit
 arch_tag() { echo "$(uname -s)-$(uname -m)"; }
 stage_report() { say "report"; python3 -I "$HERE/manifold_report.py" "$WORK" "$(arch_tag)" "$REF"; }
 
-case "${1:-all}" in
-  fetch) stage_fetch ;;
-  build) stage_build ;;
-  tools) stage_tools ;;
-  corpus) stage_corpus ;;
-  score) stage_score ;;
-  rerun) stage_rerun ;;
-  report) stage_report ;;
-  all) stage_fetch; stage_tools; stage_corpus; stage_build; stage_score; stage_rerun; stage_report ;;
-  *) die "unknown stage $1" ;;
-esac
+[ $# -gt 0 ] || set -- all
+for stage in "$@"; do
+  case "$stage" in
+    fetch) stage_fetch ;;
+    build) stage_build ;;
+    tools) stage_tools ;;
+    corpus) stage_corpus ;;
+    score) stage_score ;;
+    rerun) stage_rerun ;;
+    report) stage_report ;;
+    all) stage_fetch; stage_tools; stage_corpus; stage_build; stage_score; stage_rerun; stage_report ;;
+    *) die "unknown stage $stage" ;;
+  esac
+done

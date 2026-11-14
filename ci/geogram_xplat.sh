@@ -4,7 +4,7 @@
 #
 # Pinned, hash-checked build of the patched Geogram and the pipeline CLI geogram_fidelity2, plus the corpus generation and the verdict/hash comparison (the
 # "MP24b" stages of the research history; the stage names keep their old numbers so that recorded reports stay readable).
-# usage: ci/geogram_xplat.sh <stage>
+# usage: ci/geogram_xplat.sh <stage>...      (one or more stages, run in the order given; default mp24b)
 #   fetch              download Geogram v1.10.1 and the four submodule archives, verify the pinned sha256 values
 #   build-chain        one source tree: unpatched, then geogram_mp20.patch, then geogram_mp22.patch (incremental); runners copied to $WORK/geo_{unpatched,mp20,mp22}
 #   build-fidelity2    build geogram_fidelity2 (sources checked against lib/geogram/mp24b/FROZEN_SHA256.txt)
@@ -298,14 +298,17 @@ stage_report24b() {
   python3 -I "$HERE/pipeline_report.py" "$WORK" "$(arch_tag)"
 }
 
-case "${1:-mp24b}" in
-  fetch) stage_fetch ;;
-  build-chain) stage_build_chain ;;
-  build-fidelity2) stage_build_fidelity2 ;;
-  tools24b) stage_tools24b ;;
-  corpus24b) stage_corpus24b ;;
-  score24b) stage_score24b ;;
-  report24b) stage_report24b ;;
-  mp24b) stage_fetch; stage_build_chain; stage_build_fidelity2; stage_tools24b; stage_corpus24b; stage_score24b; stage_report24b ;;
-  *) die "unknown stage $1" ;;
-esac
+[ $# -gt 0 ] || set -- mp24b
+for stage in "$@"; do
+  case "$stage" in
+    fetch) stage_fetch ;;
+    build-chain) stage_build_chain ;;
+    build-fidelity2) stage_build_fidelity2 ;;
+    tools24b) stage_tools24b ;;
+    corpus24b) stage_corpus24b ;;
+    score24b) stage_score24b ;;
+    report24b) stage_report24b ;;
+    mp24b) stage_fetch; stage_build_chain; stage_build_fidelity2; stage_tools24b; stage_corpus24b; stage_score24b; stage_report24b ;;
+    *) die "unknown stage $stage" ;;
+  esac
+done

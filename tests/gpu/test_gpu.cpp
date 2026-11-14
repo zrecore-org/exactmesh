@@ -2,6 +2,7 @@
 // Copyright 2026 zrecore-org contributors
 // GPU tests (tag [gpu]): the exact-sign orient3d filter (soft binary64 kernel) and the deterministic LBVH with pair emission, run on the Vulkan device that is configured
 // (a real GPU, or lavapipe in CI), each against its CPU reference inside the host program. Run from the repository root (the programs read build/shaders/*.spv).
+// The planted-mutant test is tagged [gpu-mutant], not [gpu]: a mutant of the tree build can make a kernel never finish, which a CPU Vulkan driver may not survive cleanly, so it is run by hand or on real GPUs.
 // The host programs exit 0 on success, 2 or 3 on a mismatch, and print "no GPU: ..." with status 2 when no Vulkan device can be opened (reported here as a skip).
 #include <catch2/catch_test_macros.hpp>
 #include <array>
@@ -43,7 +44,7 @@ TEST_CASE("the LBVH with pair emission on the device equals the CPU reference, b
     CHECK(r.out.find("PASS") != std::string::npos);
 }
 
-TEST_CASE("planted mutants of the LBVH kernels are caught", "[gpu][lbvh][mutant]") {
+TEST_CASE("planted mutants of the LBVH kernels are caught", "[gpu-mutant]") {
     for (int m = 1; m <= 3; m++) {
         Run r = run("GPU_POC_CORRECTNESS_ONLY=1 MP10_MUT=" + std::to_string(m) + " " + bin("mp10_lbvh") + " device 0.1");
         skipIfNoDevice(r);

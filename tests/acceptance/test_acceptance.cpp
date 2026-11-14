@@ -69,7 +69,7 @@ Dyadic sixOf(const Dyadic& v) { return mulExact(v, tmesh::dy(6.0)); }
 
 SCENARIO("Two boxes sharing one corner (the vertex-contact family, bars 1 and 4)", "[acceptance]") {
     GIVEN("box A = [0,1]^3 and box B = [1,2]^3, which touch only at the point (1,1,1)") {
-        Mesh A = tmesh::box({0, 0, 0}, {1, 1, 1}), B = tmesh::box({1, 1, 1}, {2, 2, 2});
+        Mesh A = tmesh::boxCorpusOrder({0, 0, 0}, {1, 1, 1}), B = tmesh::boxCorpusOrder({1, 1, 1}, {2, 2, 2});
         WHEN("the union is computed through the pipeline") {
             Result r = runPipeline("union", A, B, "corner");
             THEN("the exact volume is 2") { requireVolume(r, six(2.0)); }
@@ -91,14 +91,14 @@ SCENARIO("Two boxes sharing one corner (the vertex-contact family, bars 1 and 4)
     }
 }
 
-SCENARIO("A unit cube nested in a cube of side 2^20 (bar 2, the nested and large-extent classes)", "[acceptance]") {
-    GIVEN("a cube [0, 2^20]^3 and a unit cube [2^19, 2^19 + 1]^3 strictly inside it") {
-        const double L = std::ldexp(1.0, 20), m = std::ldexp(1.0, 19);
-        Mesh big = tmesh::box({0, 0, 0}, {L, L, L}), small = tmesh::box({m, m, m}, {m + 1, m + 1, m + 1});
-        Dyadic bigV = mulExact(mulExact(tmesh::dy(L), tmesh::dy(L)), tmesh::dy(L));
+SCENARIO("A unit cube nested in a cube of half-width 2^20 (bar 2, the nested and large-extent classes; Geogram defect A needs a distance above 1e6)", "[acceptance]") {
+    GIVEN("a cube [-2^20, 2^20]^3 and the unit cube [0, 1]^3 at its centre, more than 1e6 from the enclosing surface") {
+        const double L = std::ldexp(1.0, 20);
+        Mesh big = tmesh::box({-L, -L, -L}, {L, L, L}), small = tmesh::unitCube();
+        Dyadic bigV = mulExact(mulExact(tmesh::dy(2 * L), tmesh::dy(2 * L)), tmesh::dy(2 * L));
         WHEN("the union is computed through the pipeline") {
             Result r = runPipeline("union", big, small, "nested");
-            THEN("the exact volume is 2^60, the volume of the large cube") {
+            THEN("the exact volume is 2^63, the volume of the large cube") {
                 requireVolume(r, sixOf(bigV));
                 CHECK(r.translateBackUlps <= 0.5);
             }
@@ -109,7 +109,7 @@ SCENARIO("A unit cube nested in a cube of side 2^20 (bar 2, the nested and large
         }
         WHEN("the difference large - small is computed") {
             Result r = runPipeline("difference", big, small, "nested");
-            THEN("the exact volume is 2^60 - 1") { requireVolume(r, sixOf(subExact(bigV, tmesh::dy(1.0)))); }
+            THEN("the exact volume is 2^63 - 1") { requireVolume(r, sixOf(subExact(bigV, tmesh::dy(1.0)))); }
         }
     }
 }
@@ -230,9 +230,9 @@ SCENARIO("Inputs beyond a hard limit are refused with the reason (MP24b acceptan
 }
 
 SCENARIO("The same input always gives the same bytes", "[acceptance]") {
-    GIVEN("the nested-cube pair") {
-        const double L = std::ldexp(1.0, 20), m = std::ldexp(1.0, 19);
-        Mesh big = tmesh::box({0, 0, 0}, {L, L, L}), small = tmesh::box({m, m, m}, {m + 1, m + 1, m + 1});
+    GIVEN("the nested-cube pair of half-width 2^20") {
+        const double L = std::ldexp(1.0, 20);
+        Mesh big = tmesh::box({-L, -L, -L}, {L, L, L}), small = tmesh::unitCube();
         WHEN("the union is computed twice") {
             Result a = runPipeline("union", big, small, "det"), b = runPipeline("union", big, small, "det");
             THEN("both results are identical, vertex for vertex and triangle for triangle") {

@@ -4,7 +4,7 @@
 #
 # Fetches the pinned third-party inputs into $EXACTMESH_DEPS (default: <repo>/build/deps; build/ is git-ignored) and verifies every archive against
 # the sha256 pinned below BEFORE it is unpacked. Nothing fetched is ever committed. A hash mismatch is a hard failure; the pin is never updated silently.
-#   third_party/fetch.sh [boost|shewchuk|catch2|vulkan|all]      (default: all)
+#   third_party/fetch.sh [boost|shewchuk|catch2|vulkan|all]...    (any number of items, in order; default: all)
 # Result layout:  $DEPS/boost_1_88_0/boost/...   $DEPS/shewchuk/predicates.c   $DEPS/Catch2-3.16.1   $DEPS/Vulkan-Headers-1.3.283   $DEPS/volk-vulkan-sdk-1.3.283.0
 # Geogram and Manifold have their own pinned fetch stages in ci/geogram_xplat.sh and ci/manifold_xplat.sh.
 set -euo pipefail
@@ -42,8 +42,11 @@ get_vulkan() {
   [ -f "$DEPS/Vulkan-Headers-1.3.283/include/vulkan/vulkan.h" ] || { fetch https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.3.283.tar.gz vulkan-headers-v1.3.283.tar.gz "$VKH_SHA256"; tar xzf "$DL/vulkan-headers-v1.3.283.tar.gz" -C "$DEPS"; }
   [ -f "$DEPS/volk-vulkan-sdk-1.3.283.0/volk.c" ] || { fetch https://github.com/zeux/volk/archive/refs/tags/vulkan-sdk-1.3.283.0.tar.gz volk-vulkan-sdk-1.3.283.0.tar.gz "$VOLK_SHA256"; tar xzf "$DL/volk-vulkan-sdk-1.3.283.0.tar.gz" -C "$DEPS"; }
 }
-case "${1:-all}" in
-  boost) get_boost ;; shewchuk) get_shewchuk ;; catch2) get_catch2 ;; vulkan) get_vulkan ;;
-  all) get_boost; get_shewchuk; get_catch2; get_vulkan ;;
-  *) die "unknown item $1" ;;
-esac
+[ $# -gt 0 ] || set -- all
+for item in "$@"; do
+  case "$item" in
+    boost) get_boost ;; shewchuk) get_shewchuk ;; catch2) get_catch2 ;; vulkan) get_vulkan ;;
+    all) get_boost; get_shewchuk; get_catch2; get_vulkan ;;
+    *) die "unknown item $item" ;;
+  esac
+done

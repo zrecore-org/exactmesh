@@ -20,6 +20,16 @@ inline mesh::Mesh box(Vec lo, Vec hi) {
     for (auto& t : T) m.addT(t[0], t[1], t[2]);
     return m;
 }
+// The same box with the vertex and triangle order of the registered corpus generator (corpus/gen_corpus.cpp): Geogram's unpatched vertex-contact defect depends on the order
+// (and so on the memory layout) of the vertices, so the registered vertex-contact scenario uses this ordering.
+inline mesh::Mesh boxCorpusOrder(Vec lo, Vec hi) {
+    mesh::Mesh m;
+    for (int z = 0; z < 2; z++) { const double Z = z ? hi[2] : lo[2];
+        m.addV(lo[0], lo[1], Z); m.addV(hi[0], lo[1], Z); m.addV(hi[0], hi[1], Z); m.addV(lo[0], hi[1], Z); }
+    static const uint32_t T[12][3] = {{0, 2, 1}, {0, 3, 2}, {4, 5, 6}, {4, 6, 7}, {0, 1, 5}, {0, 5, 4}, {3, 7, 6}, {3, 6, 2}, {0, 4, 7}, {0, 7, 3}, {1, 2, 6}, {1, 6, 5}};
+    for (auto& t : T) m.addT(t[0], t[1], t[2]);
+    return m;
+}
 inline mesh::Mesh unitCube() { return box({0, 0, 0}, {1, 1, 1}); }
 
 // A finite double as an exact dyadic rational num * 2^exp2.
