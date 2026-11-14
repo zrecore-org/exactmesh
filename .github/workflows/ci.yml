@@ -13,6 +13,8 @@ name: CI
 #     second Vulkan implementation, not GPU behaviour or speed. The T4 job is a separate workflow (gpu-t4.yml), manual only.
 #   * manifold: optional comparison tool, manual only.
 # A commit message containing [skip ci] skips the run (GitHub's own convention).
+# Runner availability (untested here): the hosted arm64 label ubuntu-24.04-arm was available only to public repositories when the research workflow was written; in a private repository
+# the aarch64 jobs need a self-hosted arm64 runner (or a public repository) or they will wait forever. macos-latest is billed in private repositories.
 
 on:
   push:

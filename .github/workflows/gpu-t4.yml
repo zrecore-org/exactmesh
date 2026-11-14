@@ -8,6 +8,7 @@ name: GPU T4 (manual)
 #   * one run at a time, never cancelled in the middle (a cancelled run still bills and leaves the shared runner busy);
 #   * follow the shared queue protocol before dispatching: tools/t4_ci_turn.sh join exactmesh; tools/t4_ci_turn.sh wait exactmesh; (dispatch); tools/t4_ci_turn.sh leave exactmesh
 #     (it only coordinates pushes made from one development machine; GitHub's own queue still decides who gets the runner).
+# The gpu-t4 runner group must include this repository (organization setting) or the job never starts.
 # The lavapipe job in ci.yml should be green first; it is not a prerequisite enforced here.
 
 on:
