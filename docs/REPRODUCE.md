@@ -53,8 +53,10 @@ Local runs of this repository's own scripts (not GitHub Actions: this repository
   the Manifold runner fails the 2^-40 sliver, far-offset, malformed and hard-limit scenarios. The determinism scenario is a property check that none of these discriminators exercises. `ci/geogram_xplat.sh mp24b` reproduced both recorded pipeline hashes (verdict list `e2edd6f7...`, M1 output aggregate `a46b1a3b...`) twice, from a clean build and from a reused one.
   `ci/manifold_xplat.sh all` reproduced `0bb7453b...`. `mp10_lbvh` reproduced `9d4de5d07a4f1308` (scale 0.1) and `f474f69f005abdb8` (scale 1.0) through the shared GPU lock; `ctest -L gpu` (orient filter on the device, LBVH) and `ctest -L lbvhmut` (3 planted LBVH mutants) pass.
   All four research corpus generators (`research/corpus*/gen*.sh --check`) and the G1 generator match their recorded hashes.
-* **Linux aarch64, Ubuntu 24.04 container, g++ 13.3, libstdc++:** fast suite and mutants green; then the same steps as the `acceptance` and `verdicts` CI jobs: acceptance green, verdict-list hash `e2edd6f7...` identical to the M1,
-  output aggregate `5f17783af5febfe48978fe3a48122eb494dbc525974b55b5f475c2514bce2007` (the research branch recorded only the prefix `5f17783a`, which this value extends).
-  Finding: a bare Ubuntu image needs `zlib1g-dev` for Geogram's headers (hosted runner images carry it); the CI package lists include it.
-* **Linux x86_64:** see the note appended below if the emulated run finished.
+* **Linux aarch64 (native container) and Linux x86_64 (the same image under emulation), Ubuntu 24.04, g++ 13.3, libstdc++:** the steps of the `fast`, `acceptance`, `verdicts` and `gpu-lavapipe` CI jobs, with the exact commands of `ci.yml`,
+  on an empty `build/deps` (so the fetch path ran): fast suite 6 of 6 and mutants 6 of 6 green; acceptance green; verdict-list hash `e2edd6f7...` identical to the M1; output aggregate
+  `5f17783af5febfe48978fe3a48122eb494dbc525974b55b5f475c2514bce2007` **identical on aarch64 and x86_64** (every row of the output hash list identical), which extends the prefix `5f17783a` recorded by the research branch.
+  lavapipe on aarch64: `ctest -L gpu` green and the LBVH pair-list hash at scale 0.1 is `9d4de5d07a4f1308`, as on the M1. Not re-run after the last fix: the lavapipe step on x86_64.
+  Findings from these runs: a bare Ubuntu image needs `zlib1g-dev` for Geogram's headers (hosted runner images carry it; the CI package lists include it); the multi-stage command lines of the scripts did not work until the scripts looped over their arguments;
+  the GPU host programs looked for their SPIR-V relative to the working directory (fixed).
 * Not run: GitHub Actions, macOS-hosted runner, lavapipe, the T4, Windows.
