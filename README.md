@@ -69,3 +69,7 @@ See [`CITATION.cff`](CITATION.cff) (GitHub shows a "Cite this repository" button
 Apache-2.0 for all original code (`LICENSE`, `NOTICE`). The two Geogram patch files in `patches/geogram/` are derivative works of Geogram and stay under its BSD-3-Clause licence
 (`patches/geogram/LICENSE`). Files whose exact bytes are pinned by recorded hashes carry no in-file header; their licence is declared in `REUSE.toml`. Third-party software is fetched, not vendored.
 Not legal advice; the copyright holder named in `NOTICE` is a placeholder pending confirmation.
+
+## Authorship and AI assistance
+
+The research, code, tests and documentation in this repository were produced with extensive help from an AI assistant (Claude, by Anthropic), directed and reviewed by the maintainers at zrecore-org. Every claim is meant to be checkable: recorded results are in `docs/RESULTS.md`, and the corpora, hashes and exact oracles let you reproduce them (`docs/REPRODUCE.md`). Please report anything that does not reproduce.
