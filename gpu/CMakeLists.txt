@@ -3,7 +3,7 @@
 #
 # GPU parts (optional): the exact-sign orient3d filter in soft binary64 and the deterministic LBVH with box-pair emission, with their host programs.
 # Needs glslc and the Vulkan headers + volk that third_party/fetch.sh vulkan puts into EXACTMESH_DEPS (or a Vulkan SDK via -DVULKAN_INCLUDE_DIR / -DVOLK_DIR).
-# The host programs read their SPIR-V from build/shaders/ relative to the working directory, so run them from the repository root:
+# The host programs find their SPIR-V in the directory CMake compiled it into (override: EXACTMESH_SHADER_DIR):
 #   build/mesh/mp09_orient_filter device 400000      build/mesh/mp10_lbvh device 0.1      (tools/run_gpu.sh sets the Vulkan driver)
 find_program(GLSLC glslc HINTS "$ENV{HOME}/VulkanSDK/1.3.283.0/macOS/bin" REQUIRED)
 set(VULKAN_INCLUDE_DIR "${EXACTMESH_DEPS}/Vulkan-Headers-1.3.283/include" CACHE PATH "Vulkan headers")
@@ -43,12 +43,14 @@ add_custom_target(gpu_shaders ALL DEPENDS ${SPVS})
 add_executable(mp09_orient_filter mp09_orient_filter.cpp)
 target_include_directories(mp09_orient_filter PRIVATE "${BOOST_ROOT_DIR}" "${CMAKE_SOURCE_DIR}/harness" "${GPU_SRC}")
 target_link_libraries(mp09_orient_filter PRIVATE volk shewchuk_predicates)
+target_compile_definitions(mp09_orient_filter PRIVATE EXACTMESH_SHADER_DIR_DEFAULT="${SHADER_OUT}")
 add_dependencies(mp09_orient_filter gpu_shaders)
 
 find_package(Threads REQUIRED)
 add_executable(mp10_lbvh mp10_lbvh.cpp "${CMAKE_SOURCE_DIR}/cpu/bvh_pairs.cpp")
 target_include_directories(mp10_lbvh PRIVATE "${CMAKE_SOURCE_DIR}/harness" "${CMAKE_SOURCE_DIR}/cpu" "${GPU_SRC}")
 target_link_libraries(mp10_lbvh PRIVATE volk Threads::Threads)
+target_compile_definitions(mp10_lbvh PRIVATE EXACTMESH_SHADER_DIR_DEFAULT="${SHADER_OUT}")
 add_dependencies(mp10_lbvh gpu_shaders)
 
 if(EXACTMESH_TESTS)

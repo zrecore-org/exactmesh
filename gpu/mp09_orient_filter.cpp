@@ -102,7 +102,7 @@ static int deviceMode(long N) {
     gpu::Ctx ctx;
     if (!ctx.init(gpu::defaultLoaderPaths())) { printf("no GPU: %s\n", ctx.error.c_str()); return 2; }
     printf("device=%s memory=%s\n", ctx.props.deviceName, ctx.memMode());
-    auto k = ctx.makeKernel("build/shaders/orient_filter.spv", 2, 4);
+    auto k = ctx.makeKernel(gpu::shaderDir() + "/orient_filter.spv", 2, 4);
     long per = N / kNumCls; int rc = 0; long diffAll = 0, wrongAll = 0, total = 0;
     printf("(dev==ref compares the sign AND the determinant and bound bits)\n%-38s %10s %12s %14s\n", "class", "dev==ref", "wrong(dev)", "uncertain");
     std::vector<double> all; std::vector<int> ref; std::vector<int> ex; std::vector<uint64_t> refDet, refBound;
@@ -148,7 +148,7 @@ static int streamMode(long randomN, long advN) {
     if (!ctx.init(gpu::defaultLoaderPaths())) { printf("no GPU: %s\n", ctx.error.c_str()); return 2; }
     exactinit();
     printf("device=%s memory=%s; stream: %ld random cases + %ld per adversarial class\n", ctx.props.deviceName, ctx.memMode(), randomN, advN);
-    auto k = ctx.makeKernel("build/shaders/orient_filter.spv", 2, 4);
+    auto k = ctx.makeKernel(gpu::shaderDir() + "/orient_filter.spv", 2, 4);
     const uint32_t C = 2000000;
     auto A = ctx.alloc((size_t)C * 96), R = ctx.alloc((size_t)C * 24);
     const unsigned T = std::max(1u, std::thread::hardware_concurrency());

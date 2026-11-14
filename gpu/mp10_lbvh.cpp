@@ -30,7 +30,7 @@ struct Lbvh {
     bool init(size_t mA, size_t mB, size_t capPairs, int mut) {
         if (!ctx.init(gpu::defaultLoaderPaths())) return false;
         std::string sfx = mut ? "_m" + std::to_string(mut) : "";
-        std::string d = "build/shaders/";
+        std::string d = gpu::shaderDir() + "/";
         kMorton = ctx.makeKernel(d + "lbvh_morton.spv", 2, 20);
         kc = ctx.makeKernel(d + "sort_count.spv", 2, 12); ks = ctx.makeKernel(d + "sort_scan.spv", 1, 12); kt = ctx.makeKernel(d + "sort_scatter.spv", 5, 12);
         kBuild = ctx.makeKernel(d + (mut == 2 ? "lbvh_build_m2.spv" : "lbvh_build.spv"), 4, 4);

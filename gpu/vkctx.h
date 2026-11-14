@@ -22,6 +22,16 @@
 
 namespace gpu {
 
+// Directory of the compiled SPIR-V kernels: $EXACTMESH_SHADER_DIR, else the directory CMake compiled them into, else build/shaders relative to the working directory.
+inline std::string shaderDir() {
+    if (const char* e = std::getenv("EXACTMESH_SHADER_DIR")) return e;
+#ifdef EXACTMESH_SHADER_DIR_DEFAULT
+    return EXACTMESH_SHADER_DIR_DEFAULT;
+#else
+    return "build/shaders";
+#endif
+}
+
 inline double nowMs() {
     using namespace std::chrono;
     return duration<double, std::milli>(steady_clock::now().time_since_epoch()).count();
