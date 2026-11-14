@@ -198,6 +198,8 @@ jobs:
   compare-architectures:
     name: x86_64 and aarch64 outputs are byte-identical
     needs: verdicts
+    # needs the aarch64 artifact, which only exists when the repository is public (hosted arm64 runners)
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
