@@ -30,6 +30,14 @@ inline mesh::Mesh boxCorpusOrder(Vec lo, Vec hi) {
     for (auto& t : T) m.addT(t[0], t[1], t[2]);
     return m;
 }
+// Several components in one mesh (indices shifted), and the same mesh with every triangle reversed (negative volume).
+inline mesh::Mesh append(mesh::Mesh a, const mesh::Mesh& b) {
+    uint32_t o = (uint32_t)a.nv();
+    for (size_t i = 0; i < b.nv(); i++) a.addV(b.v[3 * i], b.v[3 * i + 1], b.v[3 * i + 2]);
+    for (size_t k = 0; k < b.nt(); k++) a.addT(b.t[3 * k] + o, b.t[3 * k + 1] + o, b.t[3 * k + 2] + o);
+    return a;
+}
+inline mesh::Mesh inverted(mesh::Mesh m) { for (size_t k = 0; k < m.nt(); k++) std::swap(m.t[3 * k + 1], m.t[3 * k + 2]); return m; }
 inline mesh::Mesh unitCube() { return box({0, 0, 0}, {1, 1, 1}); }
 
 // A finite double as an exact dyadic rational num * 2^exp2.

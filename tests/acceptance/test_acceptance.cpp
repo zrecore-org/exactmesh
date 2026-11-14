@@ -8,6 +8,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include "testmeshes.h"
 #include "topology.h"
+#include "validator_v1.h"
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -225,6 +226,49 @@ SCENARIO("Inputs beyond a hard limit are refused with the reason (MP24b acceptan
                 CHECK(r.log.find("REFUSED: hard limit (underflow)") != std::string::npos);
                 CHECK_FALSE(r.haveOut);
             }
+        }
+    }
+}
+
+SCENARIO("Nesting and orientation defects are refused by the V1 validator with a reason code (V1 bar 1)", "[acceptance][v1]") {
+    // The V1 validator is called directly: the pipeline CLI is built from frozen sources that still use the old validator (docs/PLAN.md, V1 amendment A1).
+    using tmesh::append; using tmesh::inverted;
+    GIVEN("a solid box [0,4]^3") {
+        Mesh outer = tmesh::box({0, 0, 0}, {4, 4, 4});
+        WHEN("a second box with the SAME orientation is nested inside it") {
+            std::string r = v1::validate(append(outer, tmesh::box({1, 1, 1}, {2, 2, 2})));
+            THEN("it is refused as a solid inside a solid") { CHECK(r.rfind("V1-NESTED-SAME-ORIENTATION", 0) == 0); }
+        }
+        WHEN("an inverted box is placed beside it, outside") {
+            std::string r = v1::validate(append(outer, inverted(tmesh::box({10, 0, 0}, {11, 1, 1}))));
+            THEN("it is refused as a negative-volume component outside every solid") { CHECK(r.rfind("V1-NEGATIVE-OUTSIDE", 0) == 0); }
+        }
+        WHEN("an inverted box is nested inside it (a cavity)") {
+            Mesh m = append(outer, inverted(tmesh::box({1, 1, 1}, {2, 2, 2})));
+            v1::Report rep; std::string r = v1::validate(m, v1::Options{true}, &rep);
+            THEN("it is accepted as a hollow solid and the cavity is counted") { CHECK(r.empty()); CHECK(rep.cavities == 1); }
+            THEN("a caller that does not allow cavities gets V1-CAVITY-NOT-ALLOWED") { CHECK(v1::validate(m, v1::Options{false}).rfind("V1-CAVITY-NOT-ALLOWED", 0) == 0); }
+        }
+    }
+}
+
+SCENARIO("A solid with a cavity and an island inside the cavity is accepted and its Boolean is exact (V1 bar 2; one case only)", "[acceptance][v1]") {
+    using tmesh::append; using tmesh::inverted;
+    GIVEN("A = box [0,4]^3 with a cavity [1,2]^3, and B = box [3,6] x [0,4] x [0,4]") {
+        Mesh A = append(tmesh::box({0, 0, 0}, {4, 4, 4}), inverted(tmesh::box({1, 1, 1}, {2, 2, 2}))), B = tmesh::box({3, 0, 0}, {6, 4, 4});
+        THEN("the V1 validator accepts both") { CHECK(v1::validate(A).empty()); CHECK(v1::validate(B).empty()); }
+        WHEN("the union is computed through the pipeline") {
+            Result r = runPipeline("union", A, B, "cavity");
+            THEN("the exact volume is 63 + 48 - 16 = 95") { requireVolume(r, six(95.0)); }
+        }
+        WHEN("the intersection is computed") {
+            Result r = runPipeline("intersection", A, B, "cavity");
+            THEN("the exact volume is 16 (the cavity is outside B)") { requireVolume(r, six(16.0)); }
+        }
+        WHEN("the difference B - A is computed with the cavity moved into B's range") {
+            Mesh A2 = append(tmesh::box({0, 0, 0}, {4, 4, 4}), inverted(tmesh::box({3.25, 1, 1}, {3.75, 2, 2})));
+            Result r = runPipeline("difference", B, A2, "cavity2");
+            THEN("the cavity is part of B - A: exact volume 48 - (16 - 0.5) = 32.5") { requireVolume(r, six(32.5)); }
         }
     }
 }

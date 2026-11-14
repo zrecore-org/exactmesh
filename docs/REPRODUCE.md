@@ -8,13 +8,15 @@ Every command below was run on an Apple M1 Pro (macOS, Apple clang 21, CMake 4.4
 |---|---|---|
 | Third-party inputs, pinned | `third_party/fetch.sh all` | every archive "ok" (sha256 checked before unpacking) |
 | Fast suite | `cmake -S . -B build -G Ninja && cmake --build build && ctest --test-dir build -L fast` | all pass (about a second) |
-| Planted mutants are caught | `ctest --test-dir build -L mutant` | 6 of 6 (each mutant build fails its suite) |
-| Acceptance (BDD) | `ci/geogram_xplat.sh fetch build-chain` ... see below; then `ctest --test-dir build -L acceptance` | 8 scenarios, 157 assertions pass |
+| Planted mutants are caught | `ctest --test-dir build -L mutant` | 12 of 12 (each mutant build fails its suite: 6 before V1, plus 3 V1 unit mutants and 3 V1 corpus-checker mutants) |
+| Acceptance (BDD) | `ci/geogram_xplat.sh fetch build-chain` ... see below; then `ctest --test-dir build -L acceptance` | 10 scenarios, 182 assertions pass (8 scenarios, 157 assertions before V1) |
 | Pipeline v2 evaluation, 9,453 rows | `ci/geogram_xplat.sh mp24b` then `ci/check_aggregates.sh build/work/report24b darwin-arm64` | verdict-list hash `e2edd6f7d6ad9862e6cdcc3ff77ea962ccff689893a7baca0d291d673e20a184`; output aggregate `a46b1a3b8b6f3049d252aba52dc2be1a865c71d67293c01938dc315a0ce9a990` (M1; Linux outputs start `5f17783a`) |
 | Manifold comparison (G1, 93 rows) | `ci/manifold_xplat.sh all` | aggregate `0bb7453ba7d7d9dbdbf1cf5331e145b80d6cb00bf4fec703b2a4219041f57642` in `build/work_manifold/report/aggregate_sha256.txt` (M1) |
 | LBVH pair lists | `cmake -S . -B build -DEXACTMESH_GPU=ON && cmake --build build && tools/with_gpu_lock.sh tools/run_gpu.sh mp10_lbvh device 0.1` (and `... device 1.0`) | `determinism: 20 repeats byte-identical (hash 9d4de5d07a4f1308)` at scale 0.1, `f474f69f005abdb8` at scale 1.0 |
 | GPU tests | `tools/with_gpu_lock.sh ctest --test-dir build -L gpu` (set `VK_ICD_FILENAMES` to your Vulkan driver) | 2 test cases pass (orient filter on the device, LBVH byte-for-byte against the CPU reference) |
 | LBVH planted mutants | `tools/with_gpu_lock.sh ctest --test-dir build -L lbvhmut` | all 3 caught; kept out of the lavapipe CI job because a mutant of the tree build can hang a kernel (a fence timeout on the M1) |
+| V1 validator corpus (64 legit + 207 invalid) | `ctest --test-dir build -R corpus_v1`; `build/mesh/check_v1 set build/test_work/v1 --list \| shasum -a 256` | generator output matches `corpus/v1/EXPECTED_SHA256.txt`; 0 false refusals, 0 wrong accepts; verdict-list hash `5418cee9a425897bc73de284fd6d96d2e6603fbba1cecef85555699900ff7049` (Release and Debug+ASan/UBSan) |
+| V1 against the older corpora | `build/mesh/check_v1 compare build/work/g1_corpus build/work/fid_corpus build/work/fid2_corpus build/work/set3_corpus build/work/set5_corpus` | 0 files whose verdict or reason changed |
 | Corpus generators | `ctest --test-dir build -R corpus` and `research/corpus*/gen*.sh --check` | all files match the recorded `EXPECTED_SHA256*.txt` |
 
 `ci/geogram_xplat.sh` stages: `fetch`, `build-chain`, `build-fidelity2`, `tools24b`, `corpus24b`, `score24b`, `report24b`, `mp24b` (all in order). The Geogram build is reused when its stamp (pins, patch hashes, platform, script) is unchanged; `FORCE_REBUILD=1` rebuilds.
@@ -60,3 +62,5 @@ Local runs of this repository's own scripts (not GitHub Actions: this repository
   Findings from these runs: a bare Ubuntu image needs `zlib1g-dev` for Geogram's headers (hosted runner images carry it; the CI package lists include it); the multi-stage command lines of the scripts did not work until the scripts looped over their arguments;
   the GPU host programs looked for their SPIR-V relative to the working directory (fixed).
 * Not run: GitHub Actions, macOS-hosted runner, lavapipe, the T4, Windows.
+
+* **V1 (2026-11-14, Apple M1, Apple clang, Release `-O2` and Debug with `-fsanitize=address,undefined`):** fast suite 10 of 10 (Debug build: 9 of 9, no GPU test), mutants 12 of 12, acceptance 10 scenarios / 182 assertions. The CTest counts, test-case counts (`unit_validator` 5, `unit_validator_v1` 4) and the "6 CTest entries" / "6 of 6" numbers in the extraction notes above are historical and describe the state before V1. Not run for V1: Linux x86_64 and aarch64, GitHub Actions, the real-mesh set.

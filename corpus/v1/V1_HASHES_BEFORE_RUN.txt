@@ -1,0 +1,8 @@
+Recorded 2026-11-14T21:58:19Z, after the V1 section of docs/PLAN.md and the generator were written and the set was generated twice (byte-identical), and BEFORE
+lib/geogram/v1/validator_v1.h exists and before any validator was run on the set. Nothing below may be edited; a change of bar after seeing results is appended as an amendment with its reason.
+2f71e6f4b63d6a069ac3713d5bb50282c0285c708342e37c6b26ffe05b27fae2  corpus/v1/gen_v1.cpp
+c382516297bcef27d3751e524a3f97477b1caf3fbed0c471280d28ae19b38e45  corpus/v1/EXPECTED_SHA256.txt   (sha256 of the 64 legit + 207 invalid case files and manifest.tsv)
+65d9f8d0afce22224a12ad8edbe919ba3f257ae3abb865390927a1982612d3ff  docs/PLAN.md section "V1 (registered 2026-11-14)" (text from its heading up to "## Out of scope")
+
+Note appended before any validator run: the PLAN section hash above covers the text from its heading up to the next "### V1 amendments" heading (amendment A1, appended
+afterwards, is outside the hashed span; sha256 of that span is the value in the line above).

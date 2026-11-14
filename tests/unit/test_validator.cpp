@@ -4,7 +4,7 @@
 // Built also with each planted mutant (-DMUT_NODUP, -DMUT_NOORIENT); the mutant builds must FAIL these tests (CTest WILL_FAIL).
 #include <catch2/catch_test_macros.hpp>
 #include "testmeshes.h"
-#include "validator.h"
+#include "validator_v1.h"
 #include <limits>
 
 using namespace mesh;
@@ -81,27 +81,31 @@ TEST_CASE("a duplicated triangle inside an otherwise closed surface is refused a
     CHECK(contains(mp21b::validate(p), "duplicate"));
 }
 
-// KNOWN LIMITATION (documented in docs/LIMITS.md, found by the real-mesh validation): the validator checks only the sign of the TOTAL exact volume. It does not check the sign of each
-// connected component or whether components are nested, so the meshes below are ACCEPTED although the Boolean of an ambiguous operand is not well defined for a caller that expects
-// a plain solid. These tests assert the CURRENT behaviour (accepted). When the gap is closed, they must fail: then flip them to expect a refusal. Hidden ([.]) and not tagged [unit].
-TEST_CASE("known limitation: nested and negative-volume components are accepted", "[known-limit][.]") {
-    auto append = [](Mesh& a, const Mesh& b) {
-        uint32_t o = (uint32_t)a.nv();
-        for (size_t i = 0; i < b.nv(); i++) a.addV(b.v[3 * i], b.v[3 * i + 1], b.v[3 * i + 2]);
-        for (size_t k = 0; k < b.nt(); k++) a.addT(b.t[3 * k] + o, b.t[3 * k + 1] + o, b.t[3 * k + 2] + o);
-    };
-    auto inverted = [](Mesh m) { for (size_t k = 0; k < m.nt(); k++) std::swap(m.t[3 * k + 1], m.t[3 * k + 2]); return m; };
+// The gap found by the real-mesh validation (docs/LIMITS.md, history in docs/RESULTS.md "V1"): the frozen validator checked only the sign of the TOTAL exact volume. The same three inputs
+// as before are now judged by v1::validate (lib/geogram/v1/validator_v1.h, docs/PLAN.md "V1: validator nesting and orientation"): (b) and (c) are refused with their reason codes,
+// (a) is a legitimate cavity (accepted, counted; refused only in strict mode). This was the hidden [known-limit] test; it is now an ordinary passing test.
+TEST_CASE("nested and negative-volume components are judged by the V1 validator (was the known limitation)", "[unit][validator][v1]") {
+    using tmesh::append; using tmesh::inverted;
     Mesh outer = tmesh::box({0, 0, 0}, {4, 4, 4});
-    SECTION("an inverted inner shell nested in an outer shell (a cavity, or a defect: the validator cannot tell)") {
-        Mesh m = outer; append(m, inverted(tmesh::box({1, 1, 1}, {2, 2, 2})));
-        CHECK(why(m).empty());                                   // KNOWN GAP: accepted
+    auto code = [](const Mesh& m, bool cavities = true) { return v1::validate(m, v1::Options{cavities}); };
+    SECTION("an inverted inner shell nested in an outer shell is a cavity: accepted and counted, refused in strict mode") {
+        Mesh m = append(outer, inverted(tmesh::box({1, 1, 1}, {2, 2, 2})));
+        v1::Report rep; CHECK(v1::validate(m, v1::Options{true}, &rep).empty());
+        CHECK(rep.components == 2); CHECK(rep.cavities == 1); CHECK(rep.maxDepth == 1);
+        CHECK(contains(code(m, false), "V1-CAVITY-NOT-ALLOWED"));
     }
-    SECTION("a same-orientation inner shell nested in an outer shell (winding number 2)") {
-        Mesh m = outer; append(m, tmesh::box({1, 1, 1}, {2, 2, 2}));
-        CHECK(why(m).empty());                                   // KNOWN GAP: accepted
+    SECTION("a same-orientation inner shell nested in an outer shell (winding number 2) is refused") {
+        CHECK(contains(code(append(outer, tmesh::box({1, 1, 1}, {2, 2, 2}))), "V1-NESTED-SAME-ORIENTATION"));
     }
-    SECTION("a negative-volume component beside a larger positive one") {
-        Mesh m = outer; append(m, inverted(tmesh::box({10, 0, 0}, {11, 1, 1})));
-        CHECK(why(m).empty());                                   // KNOWN GAP: accepted (total volume is positive)
+    SECTION("a negative-volume component beside a larger positive one is refused") {
+        CHECK(contains(code(append(outer, inverted(tmesh::box({10, 0, 0}, {11, 1, 1})))), "V1-NEGATIVE-OUTSIDE"));
     }
+}
+
+TEST_CASE("historical: the frozen validator (mp21b, still used by the pipeline CLI) accepts the three former known-limit inputs", "[unit][validator][v1]") {
+    using tmesh::append; using tmesh::inverted;
+    Mesh outer = tmesh::box({0, 0, 0}, {4, 4, 4});
+    CHECK(why(append(outer, inverted(tmesh::box({1, 1, 1}, {2, 2, 2})))).empty());
+    CHECK(why(append(outer, tmesh::box({1, 1, 1}, {2, 2, 2}))).empty());
+    CHECK(why(append(outer, inverted(tmesh::box({10, 0, 0}, {11, 1, 1})))).empty());
 }
