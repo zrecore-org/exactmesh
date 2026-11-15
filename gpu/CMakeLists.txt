@@ -24,7 +24,7 @@ set(SPVS "")
 function(add_spv out_name src)   # extra args: glslc flags
   add_custom_command(OUTPUT "${SHADER_OUT}/${out_name}.spv"
     COMMAND "${GLSLC}" --target-env=vulkan1.2 -O0 ${ARGN} -I "${GPU_SRC}/shaders" -I "${GPU_SRC}" -o "${SHADER_OUT}/${out_name}.spv" "${src}"
-    DEPENDS "${src}" "${GPU_SRC}/shaders/f64soft.inc" "${GPU_SRC}/orient_filter.inc" "${GPU_SRC}/lbvh_common.glsl" "${GPU_SRC}/pip_filter.inc" VERBATIM)
+    DEPENDS "${src}" "${GPU_SRC}/shaders/f64soft.inc" "${GPU_SRC}/orient_filter.inc" "${GPU_SRC}/lbvh_common.glsl" "${GPU_SRC}/pip_filter.inc" "${GPU_SRC}/pip_diag.inc" VERBATIM)
   set(SPVS ${SPVS} "${SHADER_OUT}/${out_name}.spv" PARENT_SCOPE)
 endfunction()
 add_spv(orient_filter "${GPU_SRC}/orient_filter.comp")
@@ -35,6 +35,8 @@ foreach(M 2 3 4)
 endforeach()
 add_spv(pip_ray "${GPU_SRC}/pip_ray.comp")
 add_spv(pip_bvh "${GPU_SRC}/pip_bvh.comp")          # MP12c: point-in-solid through the LBVH
+add_spv(pip_diag "${GPU_SRC}/pip_diag.comp")
+add_spv(f64_check "${GPU_SRC}/f64_check.comp")
 add_spv(pip_bvh_s2 "${GPU_SRC}/pip_bvh.comp" -DSTK=2)
 add_spv(pip_bvh_b1 "${GPU_SRC}/pip_bvh.comp" -DBMUT=1)
 add_spv(pip_bvh_b2 "${GPU_SRC}/pip_bvh.comp" -DBMUT=2 -DSTK=4)     # overflow needs a small stack to happen at all

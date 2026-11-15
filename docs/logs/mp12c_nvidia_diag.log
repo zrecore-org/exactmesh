@@ -1,0 +1,120 @@
+device=NVIDIA GeForce RTX 4060 Ti shader=pip_bvh
+sphere 30x40 | on the surface (rounded barycentric points): 11 device-vs-twin differences
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 0 (in twin-visited set: 0)
+    device-fields: 0 0 0 2 2 2 3599408571 1068423248 2881726361 1068498172 1401986528 3210889917 282941955 1015517181
+    twin-fields:   0 0 0 2 2 2 3599408571 1068423248 2881726361 1068498172 1401986528 3210889917 282941956 1015517181
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3fbac2609b3c576b 0000000000000000 3fefd31f94f867c6 3fba6e09b0ea1add 3f90be8a5ca27089 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 1 (in twin-visited set: 0)
+    device-fields: 0 0 0 2 2 2 3599408571 1068423248 2017224960 1068540608 3480330792 3212011904 2862696939 1015548718
+    twin-fields:   0 0 0 2 2 2 3599408571 1068423248 2017224961 1068540608 3480330808 3212011904 2862696939 1015548718
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3fba6e09b0ea1add 3f90be8a5ca27089 3fefd31f94f867c6 3fb9731895c9dcab 3fa089c41bd40751 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 2 (in twin-visited set: 0)
+    device-fields: 0 0 0 2 2 2 3599408571 1068423248 816070426 1068581623 1441727432 3212668140 3035572862 1015579479
+    twin-fields:   0 0 0 2 2 2 3599408571 1068423248 816070426 1068581623 1441727432 3212668140 3035572863 1015579479
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3fb9731895c9dcab 3fa089c41bd40751 3fefd31f94f867c6 3fb7d7bb1e2435fb 3fa84c03328c4148 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 3 (in twin-visited set: 0)
+    device-fields: 0 0 0 2 2 2 3599408571 1068423248 2482257733 1068620592 1165460284 3213064257 3211471518 1015608706
+    twin-fields:   0 0 0 2 2 2 3599408571 1068423248 2482257734 1068620592 1165460292 3213064257 3211471520 1015608706
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3fb7d7bb1e2435fb 3fa84c03328c4148 3fefd31f94f867c6 3fb5a6125b882f5f 3faf751a01246f43 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 4 (in twin-visited set: 0)
+    device-fields: 0 0 0 2 2 2 3599408571 1068423248 334264945 1068656557 1161387164 3213351973 526735103 1015635680
+    twin-fields:   0 0 0 2 2 2 3599408571 1068423248 334264946 1068656557 1161387172 3213351973 526735105 1015635680
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3fb5a6125b882f5f 3faf751a01246f43 3fefd31f94f867c6 3fb2ebf2c334a1a9 3fb2ebf2c334a1a8 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 5 (in twin-visited set: 0)
+    device-fields: 0 0 0 2 2 2 3599408571 1068423248 533882297 1068688631 2758325980 3213608565 2823931765 1015659735
+    twin-fields:   0 0 0 2 2 2 3599408571 1068423248 533882298 1068688631 2758325988 3213608565 2823931767 1015659735
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3fb2ebf2c334a1a9 3fb2ebf2c334a1a8 3fefd31f94f867c6 3faf751a01246f43 3fb5a6125b882f5f 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 7 (in twin-visited set: 0)
+    device-fields: 0 0 0 2 2 2 3599408571 1068423248 93532655 1068738064 1765248070 3213944734 1419927709 1015696810
+    twin-fields:   0 0 0 2 2 2 3599408571 1068423248 93532656 1068738064 1765248074 3213944734 1419927711 1015696810
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3fa84c03328c4149 3fb7d7bb1e2435fa 3fefd31f94f867c6 3fa089c41bd40752 3fb9731895c9dcab 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 9 (in twin-visited set: 0)
+    device-fields: 0 0 0 2 2 2 3599408571 1068423248 1863762736 1068764052 256233802 3214048688 2747600271 1015716301
+    twin-fields:   0 0 0 2 2 2 3599408571 1068423248 1863762737 1068764052 256233806 3214048688 2747600271 1015716301
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3f90be8a5ca2708b 3fba6e09b0ea1add 3fefd31f94f867c6 3c5d84274f3aaeed 3fbac2609b3c576b 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 10 (in twin-visited set: 0)
+    device-fields: 0 0 2 2 0 2 3599408571 1068423248 3656195722 1068767361 3130998450 3214061925 3018183186 1015718783
+    twin-fields:   0 0 2 2 0 2 3599408571 1068423248 3656195722 1068767361 3130998450 3214061925 3018183187 1015718783
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 3c5d84274f3aaeed 3fbac2609b3c576b 3fefd31f94f867c6 bf90be8a5ca27080 3fba6e09b0ea1add 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 11 (in twin-visited set: 0)
+    device-fields: 0 0 2 2 0 2 3599408571 1068423248 1863762736 1068764052 256233802 3214048688 2747600271 1015716301
+    twin-fields:   0 0 2 2 0 2 3599408571 1068423248 1863762737 1068764052 256233806 3214048688 2747600271 1015716301
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 bf90be8a5ca27080 3fba6e09b0ea1add 3fefd31f94f867c6 bfa089c41bd40750 3fb9731895c9dcac 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 13 (in twin-visited set: 0)
+    device-fields: 0 0 2 2 0 2 3599408571 1068423248 93532655 1068738064 1765248070 3213944734 1419927709 1015696810
+    twin-fields:   0 0 2 2 0 2 3599408571 1068423248 93532656 1068738064 1765248074 3213944734 1419927711 1015696810
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 bfa84c03328c4147 3fb7d7bb1e2435fb 3fefd31f94f867c6 bfaf751a01246f41 3fb5a6125b882f5f 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49 p=(-0.33589532265890731, -0.40760525268593784, 0.84672176771173979) triangle 15 (in twin-visited set: 0)
+    device-fields: 0 0 2 2 0 2 3599408571 1068423248 533882297 1068688631 2758325980 3213608565 2823931765 1015659735
+    twin-fields:   0 0 2 2 0 2 3599408571 1068423248 533882298 1068688631 2758325988 3213608565 2823931767 1015659735
+    tri bits: 0000000000000000 0000000000000000 3ff0000000000000 bfb2ebf2c334a1a8 3fb2ebf2c334a1a9 3fefd31f94f867c6 bfb5a6125b882f5e 3faf751a01246f45 3fefd31f94f867c6
+    p bits:  bfd57f4f186cc28e bfda1634577db0da 3feb18583fa4436e
+  query 49: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2049 triangle pairs differ field-wise
+  query 119: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 2006 triangle pairs differ field-wise
+  query 407: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 2051 triangle pairs differ field-wise
+  query 561: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 2034 triangle pairs differ field-wise
+  query 624: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 2044 triangle pairs differ field-wise
+  query 721: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2038 triangle pairs differ field-wise
+  query 1144: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 2076 triangle pairs differ field-wise
+  query 1208: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2031 triangle pairs differ field-wise
+  query 1350: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 2072 triangle pairs differ field-wise
+  query 1382: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 2063 triangle pairs differ field-wise
+  query 1491: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 2050 triangle pairs differ field-wise
+sphere 30x40 | within 1..3 ulp of a face point (each axis): 22 device-vs-twin differences
+  query 101: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2012 triangle pairs differ field-wise
+  query 272: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2039 triangle pairs differ field-wise
+  query 618: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2036 triangle pairs differ field-wise
+  query 645: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 2047 triangle pairs differ field-wise
+  query 656: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2035 triangle pairs differ field-wise
+  query 761: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2053 triangle pairs differ field-wise
+  query 763: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2069 triangle pairs differ field-wise
+  query 815: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 2036 triangle pairs differ field-wise
+  query 1032: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2006 triangle pairs differ field-wise
+  query 1292: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2050 triangle pairs differ field-wise
+  query 1432: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2025 triangle pairs differ field-wise
+  query 1561: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 2069 triangle pairs differ field-wise
+  query 1651: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2058 triangle pairs differ field-wise
+  query 1753: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2056 triangle pairs differ field-wise
+  query 1759: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2050 triangle pairs differ field-wise
+  query 1765: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2045 triangle pairs differ field-wise
+  query 1935: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2022 triangle pairs differ field-wise
+  query 1959: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2025 triangle pairs differ field-wise
+  query 2342: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 2021 triangle pairs differ field-wise
+  query 2735: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 2047 triangle pairs differ field-wise
+  query 2771: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2033 triangle pairs differ field-wise
+  query 2848: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 2046 triangle pairs differ field-wise
+sphere 60x80 | on the surface (rounded barycentric points): 12 device-vs-twin differences
+  query 94: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 8309 triangle pairs differ field-wise
+  query 264: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 8318 triangle pairs differ field-wise
+  query 528: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 8249 triangle pairs differ field-wise
+  query 545: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 8323 triangle pairs differ field-wise
+  query 596: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 8372 triangle pairs differ field-wise
+  query 626: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 8300 triangle pairs differ field-wise
+  query 636: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 8251 triangle pairs differ field-wise
+  query 712: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 8261 triangle pairs differ field-wise
+  query 956: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 8292 triangle pairs differ field-wise
+  query 1287: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 8307 triangle pairs differ field-wise
+  query 1396: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 8252 triangle pairs differ field-wise
+  query 1479: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 8241 triangle pairs differ field-wise
+sphere 60x80 | within 1..3 ulp of a face point (each axis): 7 device-vs-twin differences
+  query 825: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 8302 triangle pairs differ field-wise
+  query 947: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 8299 triangle pairs differ field-wise
+  query 1039: device verdict 2, twin verdict 0; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 0; 8316 triangle pairs differ field-wise
+  query 1457: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 8360 triangle pairs differ field-wise
+  query 1774: device verdict 1, twin verdict 2; per-triangle device results over the twin-visited set give 1, per-triangle twin results give 2; 8293 triangle pairs differ field-wise
+  query 2050: device verdict 0, twin verdict 2; per-triangle device results over the twin-visited set give 0, per-triangle twin results give 2; 8323 triangle pairs differ field-wise
+  query 2977: device verdict 2, twin verdict 1; per-triangle device results over the twin-visited set give 2, per-triangle twin results give 1; 8319 triangle pairs differ field-wise
+summary: 52 differing queries; 255920 pairs checked on the device (every triangle of the mesh for each such query); 225081 pairs differ in at least one field
+field differences (0 pipTri, 1-3 edge signs, 4 normal sign, 5 orient3d side, 6-13 det words): 52 0 0 0 0 55 127738 0 128392 0 142148 0 189082 0
+queries whose per-triangle device sum equals the device verdict: 52 of 52; per-triangle twin sum equals the twin verdict: 52 of 52; queries with NO field-level difference at all (so the difference is in the traversal): 0

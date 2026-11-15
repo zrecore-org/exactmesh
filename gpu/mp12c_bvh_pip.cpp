@@ -22,6 +22,7 @@ int g_mut = 0;
 #include "shaders/f64soft.inc"
 #include "orient_filter.inc"
 #include "pip_filter.inc"
+#include "pip_diag.inc"
 extern "C" { void exactinit(void); }
 #include "pip_cases.h"
 
@@ -332,6 +333,104 @@ static int bulk(const std::string& spv) {
     g.shutdown(); return fails ? 3 : 0;
 }
 
+// ---- diagnostic for device-versus-twin differences: find the queries, then compare device and twin per (query, triangle) pair and field by field ----
+static void twinCollect(const Scene& s, const HostTree& tr, const float* qb, std::vector<uint32_t>& visited) {
+    visited.clear(); std::vector<uint32_t> stack(80); int sp = 0; stack[sp++] = 0;
+    while (sp > 0) {
+        uint32_t node = stack[--sp];
+        if (!ovl(qb, &tr.nb[6 * (size_t)node], false)) continue;
+        if (node >= tr.n - 1) { visited.push_back(tr.idx[node - (tr.n - 1)]); continue; }
+        if (sp + 2 > 64) continue;
+        stack[sp++] = tr.lc[node]; stack[sp++] = tr.rc[node];
+    }
+}
+static int diag(const std::string& spv) {
+    exactinit(); GpuPip g; if (!g.init(spv)) { printf("no GPU: %s\n", g.ctx.error.c_str()); return 2; }
+    gpu::Kernel kd = g.ctx.makeKernel(gpu::shaderDir() + "/pip_diag.spv", 5, 4);
+    printf("device=%s shader=%s\n", g.ctx.props.deviceName, spv.c_str());
+    auto cases = makeCases(); std::vector<Case> use; use.push_back(std::move(cases[0]));
+    { Case c; Rng r(78); c.mesh = "sphere 60x80"; c.m = uvsphere(60, 80, 1, 0, 0, 0); addClasses(c, 0, r, 0, 0, 0, 0); use.push_back(std::move(c)); }
+    long diffQ = 0, diffPairs = 0, pairsChecked = 0, fieldDiffs[DIAG_FIELDS] = {0}, shown = 0, qDevMatchesPerTri = 0, qTwinMatchesPerTri = 0, travOnly = 0;
+    for (auto& cs : use) {
+        Scene sc; sc.m = cs.m; g.prepare(sc); HostTree tr = g.download();
+        auto tri = [&](uint32_t k, uint64_t* u) { for (int c = 0; c < 3; c++) for (int d = 0; d < 3; d++) u[3 * c + d] = bits(sc.m.v[3 * (size_t)sc.m.t[3 * (size_t)k + c] + d]); };
+        for (auto& cl : cs.classes) {
+            size_t n = cl.q.size() / 3; std::vector<uint32_t> none; std::vector<float> qb; auto dev = g.query(cl.q, none, &qb);
+            std::vector<size_t> bad; std::vector<uint32_t> twinV(n);
+            for (size_t i = 0; i < n; i++) { twinV[i] = twinWalk(sc, tr, &cl.q[3 * i], &qb[6 * i], 0, 64, 0); if (twinV[i] != dev[i]) bad.push_back(i); }
+            if (bad.empty()) continue;
+            printf("%s | %s: %zu device-vs-twin differences\n", cs.mesh.c_str(), cl.name.c_str(), bad.size()); diffQ += (long)bad.size();
+            // every (differing query, triangle of the mesh) pair on the device
+            std::vector<uint32_t> prs; for (size_t bi = 0; bi < bad.size(); bi++) for (uint32_t k = 0; k < sc.m.nt(); k++) { prs.push_back((uint32_t)bad[bi]); prs.push_back(k); }
+            size_t np = prs.size() / 2;
+            auto bQ = g.ctx.alloc(n * 24 + 8), bP = g.ctx.alloc(np * 8 + 8), bO = g.ctx.alloc(np * DIAG_FIELDS * 4 + 8);
+            memcpy(bQ.ptr, cl.q.data(), n * 24); memcpy(bP.ptr, prs.data(), np * 8); uint32_t pc = (uint32_t)np;
+            g.ctx.begin(); g.ctx.upload(bQ); g.ctx.upload(bP); g.ctx.dispatch(kd, {&g.bV, &g.bT, &bQ, &bP, &bO}, &pc, (uint32_t)((np + 63) / 64)); g.ctx.download(bO); g.ctx.submitWait();
+            const uint32_t* o = (const uint32_t*)bO.ptr;
+            for (size_t bi = 0; bi < bad.size(); bi++) {
+                size_t qi = bad[bi]; const double* p = &cl.q[3 * qi]; uint64_t pb[3] = {bits(p[0]), bits(p[1]), bits(p[2])};
+                std::vector<uint32_t> vis; twinCollect(sc, tr, &qb[6 * qi], vis); std::vector<char> inVis(sc.m.nt(), 0); for (auto k : vis) inVis[k] = 1;
+                uint32_t crD = 0, crT = 0; bool uD = false, uT = false; int nd = 0;
+                for (uint32_t k = 0; k < sc.m.nt(); k++) {
+                    uint64_t u[9]; tri(k, u); const uint32_t* od = o + (size_t)(bi * sc.m.nt() + k) * DIAG_FIELDS; pairsChecked++;
+                    uint32_t tw[DIAG_FIELDS]; for (uint32_t w = 0; w < DIAG_FIELDS; w++) tw[w] = diagField(w, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], pb[0], pb[1], pb[2]);
+                    bool differ = false; for (int w = 0; w < DIAG_FIELDS; w++) if (od[w] != tw[w]) { fieldDiffs[w]++; differ = true; }
+                    if (inVis[k]) { if (od[0] == PIP_UNCERT) uD = true; else crD += od[0]; if (tw[0] == PIP_UNCERT) uT = true; else crT += tw[0]; }
+                    if (differ) {
+                        diffPairs++; nd++;
+                        if (shown < 12) {
+                            shown++; printf("  query %zu p=(%.17g, %.17g, %.17g) triangle %u (in twin-visited set: %d)\n    device-fields:", qi, p[0], p[1], p[2], k, (int)inVis[k]);
+                            for (int w = 0; w < DIAG_FIELDS; w++) printf(" %u", od[w]); printf("\n    twin-fields:  ");
+                            for (int w = 0; w < DIAG_FIELDS; w++) printf(" %u", tw[w]); printf("\n    tri bits:"); for (int w = 0; w < 9; w++) printf(" %016llx", (unsigned long long)u[w]); printf("\n    p bits:  %016llx %016llx %016llx\n", (unsigned long long)pb[0], (unsigned long long)pb[1], (unsigned long long)pb[2]);
+                        }
+                    }
+                }
+                uint32_t perTriDev = uD ? 2u : (crD & 1u), perTriTwin = uT ? 2u : (crT & 1u);
+                qDevMatchesPerTri += perTriDev == dev[qi]; qTwinMatchesPerTri += perTriTwin == twinV[qi]; travOnly += nd == 0;
+                printf("  query %zu: device verdict %u, twin verdict %u; per-triangle device results over the twin-visited set give %u, per-triangle twin results give %u; %d triangle pairs differ field-wise\n", qi, dev[qi], twinV[qi], perTriDev, perTriTwin, nd);
+            }
+            for (gpu::Buf* b : {&bQ, &bP, &bO}) g.ctx.release(*b);
+        }
+    }
+    printf("summary: %ld differing queries; %ld pairs checked on the device (every triangle of the mesh for each such query); %ld pairs differ in at least one field\n", diffQ, pairsChecked, diffPairs);
+    printf("field differences (0 pipTri, 1-3 edge signs, 4 normal sign, 5 orient3d side, 6-13 det words):"); for (int w = 0; w < DIAG_FIELDS; w++) printf(" %ld", fieldDiffs[w]); printf("\n");
+    printf("queries whose per-triangle device sum equals the device verdict: %ld of %ld; per-triangle twin sum equals the twin verdict: %ld of %ld; queries with NO field-level difference at all (so the difference is in the traversal): %ld\n", qDevMatchesPerTri, diffQ, qTwinMatchesPerTri, diffQ, travOnly);
+    g.ctx.release(kd); g.shutdown(); return 0;
+}
+
+// ---- f64soft check on the device: random operand pairs through f64_add / f64_mul / f64_sub against the hardware double, and the multiplication stages against the host ----
+static int f64check(int nPairs) {
+    exactinit(); gpu::Ctx ctx; if (!ctx.init(gpu::defaultLoaderPaths())) { printf("no GPU: %s\n", ctx.error.c_str()); return 2; }
+    gpu::Kernel k = ctx.makeKernel(gpu::shaderDir() + "/f64_check.spv", 2, 4);
+    printf("device=%s\n", ctx.props.deviceName);
+    std::mt19937_64 g(4242); std::vector<uint64_t> ab(2 * (size_t)nPairs);
+    for (int i = 0; i < nPairs; i++) for (int j = 0; j < 2; j++) {   // normal doubles, exponents within +-20 of 1 so that results stay normal; some pairs are exactly representable cancellations
+        uint64_t m = g() & 0xFFFFFFFFFFFFFull; uint64_t e = 1023 - 20 + g() % 41; uint64_t sgn = g() & 1; ab[2 * (size_t)i + j] = (sgn << 63) | (e << 52) | m; }
+    auto bA = ctx.alloc(ab.size() * 8), bO = ctx.alloc((size_t)nPairs * 24 * 4);
+    memcpy(bA.ptr, ab.data(), ab.size() * 8); uint32_t pc = (uint32_t)nPairs;
+    ctx.begin(); ctx.upload(bA); ctx.dispatch(k, {&bA, &bO}, &pc, (uint32_t)((nPairs + 63) / 64)); ctx.download(bO); ctx.submitWait();
+    const uint32_t* o = (const uint32_t*)bO.ptr; long bad[3] = {0, 0, 0}, stageBad[8] = {0}, shBad = 0, upBad = 0, shown = 0, hwBad[3] = {0, 0, 0};
+    auto w64 = [&](size_t i, int w) { return (uint64_t)o[24 * i + w] | ((uint64_t)o[24 * i + w + 1] << 32); };
+    for (int ii = 0; ii < nPairs; ii++) {
+        size_t i = (size_t)ii; uint64_t a = ab[2 * i], b = ab[2 * i + 1]; double da, db; memcpy(&da, &a, 8); memcpy(&db, &b, 8);
+        double hw[3] = {da + db, da * db, da - db}; uint64_t hwb[3]; for (int j = 0; j < 3; j++) memcpy(&hwb[j], &hw[j], 8);
+        uint64_t host[3] = {f64_add(a, b), f64_mul(a, b), f64_sub(a, b)};
+        for (int j = 0; j < 3; j++) { if (w64(i, 2 * j) != host[j]) bad[j]++; if (host[j] != hwb[j]) hwBad[j]++; }
+        const uint64_t kMant = 0x000FFFFFFFFFFFFFull, kHidden = 0x0010000000000000ull;
+        uint64_t ma = (a & kMant) | kHidden, mb = (b & kMant) | kHidden, a0 = ma & 0xFFFFFFFFull, a1 = ma >> 32, b0 = mb & 0xFFFFFFFFull, b1 = mb >> 32;
+        uint64_t p00 = a0 * b0, p01 = a0 * b1, p10 = a1 * b0, p11 = a1 * b1, mid = p01 + p10, lo = p00 + ((mid & 0xFFFFFFFFull) << 32), hi = p11 + (mid >> 32) + (lo < p00 ? 1ull : 0ull);
+        int sh = (hi >= 0x20000000000ull) ? 53 : 52; uint64_t rem = lo & ((1ull << sh) - 1ull), halfway = 1ull << (sh - 1), m = (hi << (64 - sh)) | (lo >> sh); bool up = rem > halfway || (rem == halfway && (m & 1ull));
+        uint64_t st[8] = {p00, p01, p10, p11, mid, lo, hi, rem}; bool any = false;
+        for (int j = 0; j < 8; j++) if (w64(i, 6 + 2 * j) != st[j]) { stageBad[j]++; any = true; }
+        if ((int)o[24 * i + 22] != sh) shBad++; if ((o[24 * i + 23] != 0) != up) upBad++;
+        if ((any || w64(i, 2) != host[1]) && shown < 6) { shown++; printf("  pair %zu a=%016llx b=%016llx\n    device mul=%016llx host mul=%016llx hardware=%016llx\n    stages p00 p01 p10 p11 mid lo hi rem (device / host):\n", i, (unsigned long long)a, (unsigned long long)b, (unsigned long long)w64(i, 2), (unsigned long long)host[1], (unsigned long long)hwb[1]);
+            for (int j = 0; j < 8; j++) printf("      %016llx / %016llx %s\n", (unsigned long long)w64(i, 6 + 2 * j), (unsigned long long)st[j], w64(i, 6 + 2 * j) == st[j] ? "" : "<-- differs"); }
+    }
+    printf("%d pairs. device vs host f64soft: add %ld, mul %ld, sub %ld mismatches. host f64soft vs hardware double: add %ld, mul %ld, sub %ld.\n", nPairs, bad[0], bad[1], bad[2], hwBad[0], hwBad[1], hwBad[2]);
+    printf("mul stage mismatches device vs host (p00 p01 p10 p11 mid lo hi rem): %ld %ld %ld %ld %ld %ld %ld %ld; sh %ld; round-up flag %ld\n", stageBad[0], stageBad[1], stageBad[2], stageBad[3], stageBad[4], stageBad[5], stageBad[6], stageBad[7], shBad, upBad);
+    ctx.release(bA); ctx.release(bO); ctx.release(k); ctx.destroy(); return (bad[0] || bad[1] || bad[2]) ? 3 : 0;
+}
+
 int main(int argc, char** argv) {
     setvbuf(stdout, nullptr, _IONBF, 0);
     std::string mode = argc > 1 ? argv[1] : "device";
@@ -341,6 +440,8 @@ int main(int argc, char** argv) {
     int bm = spv == "pip_bvh_b1" ? 1 : spv == "pip_bvh_b2" ? 2 : spv == "pip_bvh_b5" ? 5 : 0;
     if (mode == "device") return correctness(spv, bm, stk, spv == "pip_bvh" && !g_hmut);
     if (mode == "bench") return bench(spv);
+    if (mode == "diag") return diag(spv);
+    if (mode == "f64check") return f64check(argc > 2 ? atoi(argv[2]) : 1000000);
     if (mode == "bulk") return bulk(spv);
     printf("unknown mode\n"); return 1;
 }

@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 zrecore-org contributors
+#version 450
+#extension GL_GOOGLE_include_directive : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+// MP12c diagnostic (see pip_diag.inc): one invocation per (query, triangle) pair; writes DIAG_FIELDS words per pair.
+#include "f64soft.inc"
+#include "orient_filter.inc"
+#include "pip_filter.inc"
+#include "pip_diag.inc"
+layout(local_size_x = 64) in;
+layout(std430, binding = 0) readonly buffer V { uint64_t v[]; };
+layout(std430, binding = 1) readonly buffer T { uint t[]; };
+layout(std430, binding = 2) readonly buffer Q { uint64_t q[]; };
+layout(std430, binding = 3) readonly buffer PR { uvec2 pr[]; };      // (query index, triangle index)
+layout(std430, binding = 4) writeonly buffer OUT { uint o[]; };
+layout(push_constant) uniform P { uint np; } pc;
+void main() {
+    uint i = gl_GlobalInvocationID.x;
+    if (i >= pc.np) return;
+    uint qi = pr[i].x, k = pr[i].y;
+    uint a = t[3u * k], b = t[3u * k + 1u], c = t[3u * k + 2u];
+    for (uint w = 0u; w < uint(DIAG_FIELDS); w++)
+        o[uint(DIAG_FIELDS) * i + w] = diagField(w, v[3u * a], v[3u * a + 1u], v[3u * a + 2u], v[3u * b], v[3u * b + 1u], v[3u * b + 2u], v[3u * c], v[3u * c + 1u], v[3u * c + 2u], q[3u * qi], q[3u * qi + 1u], q[3u * qi + 2u]);
+}

@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 zrecore-org contributors
+#version 450
+#extension GL_GOOGLE_include_directive : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+// MP12c diagnostic: f64_add / f64_mul / f64_sub on operand pairs plus the intermediate words of f64_mul, to find which step of the soft binary64 code gives a
+// different result on a given device. Per pair (a, b), 24 words (lo, hi of each 64-bit value):
+// add, mul, sub, then the stages of the multiplication: p00, p01, p10, p11, mid, lo, hi, rem; then [22] sh, [23] up.
+#include "f64soft.inc"
+layout(local_size_x = 64) in;
+layout(std430, binding = 0) readonly buffer A { uint64_t ab[]; };
+layout(std430, binding = 1) writeonly buffer OUT { uint o[]; };
+layout(push_constant) uniform P { uint n; } pc;
+void put(uint base, uint w, uint64_t v) { o[base + w] = uint(v & 0xFFFFFFFFul); o[base + w + 1u] = uint(v >> 32); }
+void main() {
+    uint i = gl_GlobalInvocationID.x;
+    if (i >= pc.n) return;
+    uint64_t a = ab[2u * i], b = ab[2u * i + 1u]; uint base = 24u * i;
+    put(base, 0u, f64_add(a, b)); put(base, 2u, f64_mul(a, b)); put(base, 4u, f64_sub(a, b));
+    const uint64_t kMant = 0x000FFFFFFFFFFFFFul, kHidden = 0x0010000000000000ul;
+    uint64_t ma = (a & kMant) | kHidden, mb = (b & kMant) | kHidden;
+    uint64_t a0 = ma & 0xFFFFFFFFul, a1 = ma >> 32, b0 = mb & 0xFFFFFFFFul, b1 = mb >> 32;
+    uint64_t p00 = a0 * b0, p01 = a0 * b1, p10 = a1 * b0, p11 = a1 * b1;
+    uint64_t mid = p01 + p10;
+    uint64_t lo = p00 + ((mid & 0xFFFFFFFFul) << 32);
+    uint64_t hi = p11 + (mid >> 32) + (lo < p00 ? 1ul : 0ul);
+    int sh = (hi >= 0x20000000000ul) ? 53 : 52;
+    uint64_t rem = lo & ((1ul << sh) - 1ul), halfway = 1ul << (sh - 1);
+    uint64_t m = (hi << (64 - sh)) | (lo >> sh);
+    bool up = (rem > halfway || (rem == halfway && (m & 1ul) != 0ul));
+    put(base, 6u, p00); put(base, 8u, p01); put(base, 10u, p10); put(base, 12u, p11); put(base, 14u, mid); put(base, 16u, lo); put(base, 18u, hi); put(base, 20u, rem);
+    o[base + 22u] = uint(sh); o[base + 23u] = up ? 1u : 0u;
+}
