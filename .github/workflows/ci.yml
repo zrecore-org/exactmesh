@@ -252,6 +252,10 @@ jobs:
         run: ctest --test-dir build -L gpu --output-on-failure
       - name: Host-side soft binary64 orient filter
         run: build/mesh/mp09_orient_filter host 800000
+      - name: MP11 hybrid narrow phase, host (CPU twin and exact), then device on lavapipe; the 'total:' lines are compared with the M1 run in docs/RESULTS.md
+        run: |
+          build/mesh/mp11_hybrid host | tail -3
+          build/mesh/mp11_hybrid device | tail -4
 
   manifold:
     name: Optional comparison, Manifold v3.5.5, ${{ matrix.arch }}
