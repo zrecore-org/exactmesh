@@ -15,10 +15,28 @@ using mesh::Mesh;
 static uint64_t bits(double d) { uint64_t u; memcpy(&u, &d, 8); return u; }
 struct Rng { std::mt19937_64 g; explicit Rng(uint64_t s) : g(s) {} double u01() { return (double)(g() >> 11) / 9007199254740992.0; } int pick(int n) { return (int)(g() % (uint64_t)n); } };
 
+// Platform-independent sin and cos: only IEEE + - * / (built with -ffp-contract=off), so every platform gives the same bits (libm results differ in the last bit between
+// macOS, glibc and the Windows runtime). Used when PIP_CASES_DETERMINISTIC is defined before this header (MP12c); mp12_pip keeps the libm versions its recorded totals came from.
+static double detSinCos(double x, bool wantCos) {
+    const double PIO2 = 1.57079632679489661923, TWO_OVER_PI = 0.63661977236758134308;
+    double kf = std::floor(x * TWO_OVER_PI + 0.5); long k = (long)kf; double r = x - kf * PIO2, r2 = r * r, sn = 0, cs = 0, t = r;
+    sn = r; for (int n = 1; n <= 12; n++) { t = -t * r2 / ((2.0 * n) * (2.0 * n + 1.0)); sn += t; }
+    t = 1.0; cs = 1.0; for (int n = 1; n <= 12; n++) { t = -t * r2 / ((2.0 * n - 1.0) * (2.0 * n)); cs += t; }
+    int q = (int)(((k % 4) + 4) % 4);                       // sin(r + q pi/2), cos(r + q pi/2)
+    double sv[4] = {sn, cs, -sn, -cs}, cv[4] = {cs, -sn, -cs, sn};
+    return wantCos ? cv[q] : sv[q];
+}
+#ifdef PIP_CASES_DETERMINISTIC
+#define PIP_SIN(x) detSinCos((x), false)
+#define PIP_COS(x) detSinCos((x), true)
+#else
+#define PIP_SIN(x) std::sin(x)
+#define PIP_COS(x) std::cos(x)
+#endif
 static Mesh uvsphere(int rings, int segs, double rad, double cx, double cy, double cz) {
     Mesh m; const double PI = 3.14159265358979323846;
     uint32_t top = m.addV(cx, cy, cz + rad);
-    for (int i = 1; i < rings; i++) for (int j = 0; j < segs; j++) { double th = PI * i / rings, ph = 2 * PI * j / segs; m.addV(cx + rad * std::sin(th) * std::cos(ph), cy + rad * std::sin(th) * std::sin(ph), cz + rad * std::cos(th)); }
+    for (int i = 1; i < rings; i++) for (int j = 0; j < segs; j++) { double th = PI * i / rings, ph = 2 * PI * j / segs; m.addV(cx + rad * PIP_SIN(th) * PIP_COS(ph), cy + rad * PIP_SIN(th) * PIP_SIN(ph), cz + rad * PIP_COS(th)); }
     uint32_t bot = m.addV(cx, cy, cz - rad);
     auto V = [&](int i, int j) { return (uint32_t)(1 + (i - 1) * segs + (j % segs)); };
     for (int j = 0; j < segs; j++) m.addT(top, V(1, j), V(1, j + 1));

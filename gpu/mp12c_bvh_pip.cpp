@@ -24,6 +24,7 @@ int g_mut = 0;
 #include "pip_filter.inc"
 #include "pip_diag.inc"
 extern "C" { void exactinit(void); }
+#define PIP_CASES_DETERMINISTIC 1
 #include "pip_cases.h"
 
 struct FBox { float lo[3], hi[3]; };
@@ -196,13 +197,13 @@ static int correctness(const std::string& spv, int bmutTwin, int stk, bool check
     GpuPip g; if (!g.init(spv)) { printf("no GPU: %s\n", g.ctx.error.c_str()); return 2; }
     printf("device=%s memory=%s shader=%s hmut=%d stack=%d\n", g.ctx.props.deviceName, g.ctx.memMode(), spv.c_str(), g_hmut, stk);
     printf("%-46s %-62s %7s %7s %7s %7s %8s %6s %6s %8s\n", "mesh", "query class", "n", "OUT", "IN", "UNCERT", "falseDef", "bndry", "dev/tw", "finalBad");
-    Tot tot; bool coverageOk = true; long cpuBvhBad = 0;
+    Tot tot; bool coverageOk = true; long cpuBvhBad = 0; uint64_t vhash = 1469598103934665603ull;
     auto cases = makeCases();
     // extra scenes: a lattice block with equal Morton codes is in makeCases; add a larger block (deep tree) and the multi-mesh scene below
     { Case c; Rng r(77); c.mesh = "block 8x8x8"; c.m = block(8); addClasses(c, 8, r, 0, 0, 0, 0); cases.push_back(std::move(c)); }
     { Case c; Rng r(78); c.mesh = "sphere 60x80"; c.m = uvsphere(60, 80, 1, 0, 0, 0); addClasses(c, 0, r, 0, 0, 0, 0); cases.push_back(std::move(c)); }
     auto account = [&](const std::string& mname, const std::string& cname, const std::vector<uint32_t>& dev, const std::vector<uint32_t>& twin, const std::vector<uint8_t>& exact, bool must) {
-        size_t n = dev.size(); Tot s; s.q = (long)n;
+        size_t n = dev.size(); Tot s; s.q = (long)n; for (size_t i = 0; i < n; i++) { vhash ^= dev[i]; vhash *= 1099511628211ull; }
         for (size_t i = 0; i < n; i++) {
             uint32_t v = dev[i]; bool bnd = exact[i] == 2; s.boundary += bnd; s.devTwin += v != twin[i];
             if (v == 2) s.unc++; else { (v ? s.in : s.out)++; if (bnd || (v != 0) != (exact[i] == 1)) s.falseDef++; }
@@ -241,6 +242,7 @@ static int correctness(const std::string& spv, int bmutTwin, int stk, bool check
         account("40 overlapping 2x2x2 blocks in one scene", "queries (half on the half-integer lattice)", dev, twin, exact, false);
     }
     printf("total: queries %ld, OUT %ld, IN %ld, UNCERTAIN %ld (%.2f%%); false definite %ld; exact-boundary %ld; device vs twin differences %ld\n", tot.q, tot.out, tot.in, tot.unc, 100.0 * tot.unc / std::max(1L, tot.q), tot.falseDef, tot.boundary, tot.devTwin);
+    printf("device verdict arrays (all classes, in order): FNV-1a hash %016llx\n", (unsigned long long)vhash);
     printf("fair CPU baseline (BVH ray walk + native exact predicates) versus the all-triangles exact test: %ld disagreements\n", cpuBvhBad);
     if (cpuBvhBad) { printf("FAIL: the CPU baseline is wrong\n"); g.shutdown(); return 3; }
     bool mutantRun = (spv != "pip_bvh" && spv != "pip_bvh_s2") || g_hmut;
