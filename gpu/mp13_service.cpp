@@ -139,7 +139,8 @@ struct Service {
         }
         return out;
     }
-    ~Service() { if (ctx && !leakedHang) { if (haveKernel) ctx->release(k); ctx->destroy(); } }
+    // after a hang the detached GPU thread may still touch the context, so the context is deliberately leaked (destroying it under that thread was a use-after-free: a segfault on Linux/lavapipe)
+    ~Service() { if (ctx && leakedHang) { ctx.release(); return; } if (ctx) { if (haveKernel) ctx->release(k); ctx->destroy(); } }
 };
 
 struct Check { int pass = 0, fail = 0; void ok(bool c, const std::string& what) { (c ? pass : fail)++; printf("  [%s] %s\n", c ? "ok" : "FAIL", what.c_str()); } };
