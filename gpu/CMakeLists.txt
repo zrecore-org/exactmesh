@@ -24,7 +24,7 @@ set(SPVS "")
 function(add_spv out_name src)   # extra args: glslc flags
   add_custom_command(OUTPUT "${SHADER_OUT}/${out_name}.spv"
     COMMAND "${GLSLC}" --target-env=vulkan1.2 -O0 ${ARGN} -I "${GPU_SRC}/shaders" -I "${GPU_SRC}" -o "${SHADER_OUT}/${out_name}.spv" "${src}"
-    DEPENDS "${src}" "${GPU_SRC}/shaders/f64soft.inc" "${GPU_SRC}/orient_filter.inc" "${GPU_SRC}/lbvh_common.glsl" VERBATIM)
+    DEPENDS "${src}" "${GPU_SRC}/shaders/f64soft.inc" "${GPU_SRC}/orient_filter.inc" "${GPU_SRC}/lbvh_common.glsl" "${GPU_SRC}/pip_filter.inc" VERBATIM)
   set(SPVS ${SPVS} "${SHADER_OUT}/${out_name}.spv" PARENT_SCOPE)
 endfunction()
 add_spv(orient_filter "${GPU_SRC}/orient_filter.comp")
@@ -34,6 +34,14 @@ foreach(M 2 3 4)
   add_spv(tri_tri_filter_m${M} "${GPU_SRC}/tri_tri_filter.comp" -DTTMUT=${M})
 endforeach()
 add_spv(pip_ray "${GPU_SRC}/pip_ray.comp")
+add_spv(pip_bvh "${GPU_SRC}/pip_bvh.comp")          # MP12c: point-in-solid through the LBVH
+add_spv(pip_bvh_s2 "${GPU_SRC}/pip_bvh.comp" -DSTK=2)
+add_spv(pip_bvh_b1 "${GPU_SRC}/pip_bvh.comp" -DBMUT=1)
+add_spv(pip_bvh_b2 "${GPU_SRC}/pip_bvh.comp" -DBMUT=2 -DSTK=4)     # overflow needs a small stack to happen at all
+add_spv(pip_bvh_b5 "${GPU_SRC}/pip_bvh.comp" -DBMUT=5)
+foreach(M 1 2 3 4 5)
+  add_spv(pip_bvh_p${M} "${GPU_SRC}/pip_bvh.comp" -DPMUT=${M})
+endforeach()
 add_spv(volume_reduce "${GPU_SRC}/volume_reduce.comp")
 foreach(M 1 2 3 4)
   add_spv(volume_reduce_m${M} "${GPU_SRC}/volume_reduce.comp" -DVMUT=${M})
@@ -77,6 +85,12 @@ target_include_directories(mp12_pip PRIVATE "${BOOST_ROOT_DIR}" "${CMAKE_SOURCE_
 target_link_libraries(mp12_pip PRIVATE volk shewchuk_predicates Threads::Threads)
 target_compile_definitions(mp12_pip PRIVATE EXACTMESH_SHADER_DIR_DEFAULT="${SHADER_OUT}")
 add_dependencies(mp12_pip gpu_shaders)
+
+add_executable(mp12c_bvh_pip mp12c_bvh_pip.cpp "${CMAKE_SOURCE_DIR}/cpu/bvh_pairs.cpp")
+target_include_directories(mp12c_bvh_pip PRIVATE "${BOOST_ROOT_DIR}" "${CMAKE_SOURCE_DIR}/harness" "${CMAKE_SOURCE_DIR}/cpu" "${GPU_SRC}")
+target_link_libraries(mp12c_bvh_pip PRIVATE volk shewchuk_predicates Threads::Threads)
+target_compile_definitions(mp12c_bvh_pip PRIVATE EXACTMESH_SHADER_DIR_DEFAULT="${SHADER_OUT}")
+add_dependencies(mp12c_bvh_pip gpu_shaders)
 
 add_executable(mp12_vol mp12_vol.cpp)
 target_include_directories(mp12_vol PRIVATE "${BOOST_ROOT_DIR}" "${CMAKE_SOURCE_DIR}/harness" "${GPU_SRC}")
