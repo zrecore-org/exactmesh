@@ -266,7 +266,7 @@ jobs:
           build/mesh/mp12_vol device | tail -3
       - name: MP13 fault injection, circuit breaker, self-test, shadow check (lavapipe), and the no-device case
         run: |
-          build/mesh/mp13_service faults | grep -E "FAIL|summary|PASS"
+          build/mesh/mp13_service faults > /tmp/mp13.txt 2>&1 && echo ok-run || { echo "mp13 faults failed"; tail -40 /tmp/mp13.txt; exit 1; }
           VK_ICD_FILENAMES=/nonexistent/icd.json build/mesh/mp13_service nodevice | tail -5
 
   manifold:
