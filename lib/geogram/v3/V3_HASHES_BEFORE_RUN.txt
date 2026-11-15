@@ -1,0 +1,49 @@
+Recorded 2026-11-14T23:58:54Z, after the section 'V3 (registered 2026-11-14)' of docs/PLAN.md and all V3 code were written and BEFORE the instrumented CLI was built or any V3 analysis, probe or control scoring was run. Nothing below may be edited; a change of bar after seeing results is appended to PLAN.md as an amendment.
+Disclosure: before this record, two things were executed: (1) make_control_pairs.py once, into a scratch directory outside the repository, only to check that it runs (it printed 134 pairs; no CLI was run on its output); (2) the Mersenne Twister in v3_analyze.py was checked against the C++ standard's 10000th-output value for mt19937_64 (seed 5489), which exposed and fixed a typo in a constant before this record. No Geogram run of any kind has been made for V3 before this record.
+--- PLAN section
+c67afca7ffa15c5219072250d1002c1fd76275eab2461c2b66cd7a1317199f6f  docs/PLAN.md section "V3" (from its heading up to "## Out of scope")
+--- new code (hashes)
+8353813814cb9582da11b7062bb4549d38161adceaa13ecb27948cefc046700f  lib/geogram/v3/build_v3.sh
+cf986acc8f35e4870db495a3b1c83a379982d3a783a25f739fa89975d3e8519b  lib/geogram/v3/geogram_fidelity2_v3.cpp
+d801776a9881d0e17b067d7a9d085bee02a98f82e062a668b21e49094ba6d601  lib/geogram/v3/make_control_pairs.py
+f9fa8e2ab9454b9338b9632c8089ceb3c80ca93a4c80757975cd50ef28f842a8  lib/geogram/v3/run_control_pairs.sh
+7988e3bcf7cee922003c3b31baffb4a5dba05254de9a534d1920361415b414bb  lib/geogram/v3/summarize_control_pairs.py
+2658491e83c0a14ae36d2139112691c462010a6a348be7065834bcecdc82b885  lib/geogram/v3/v3_analyze.py
+1704f34b8c7fa065114d2429a8cdd5a6b704d778d91c2e385e9951c7fcdd4e3d  lib/geogram/v3/V3_HASHES_BEFORE_RUN.txt
+a17557bea0efc12b6797a8a2fd3391c6364b7bdc9e77e3c83085cf510ebdc983  lib/geogram/v3/v3_probes.py
+--- unchanged inputs
+56cccfba25a3922bee006db4d2deaa7b90bcf0c38c554fdde9ea78d6025e8d83  lib/geogram/mp24b/geogram_fidelity2.cpp
+ed6281e98d74a30470eab0f4fccac76e1c342a54f8b6f34ac5d3ce2ac8d4e9a4  lib/geogram/mp24b/score_fidelity2.py
+062f4f89d66bc1ded995a79758ce1504a0a871ae8504467bc3d070326706a13b  lib/geogram/v1/make_cavity_pairs.py
+21208ab7b571e2c0f3e2556f5bc6e361f897a98486c760eaa52e055eca7095e8  lib/geogram/v1/meshpy.py
+310e3a01d997f2b6b77b06f71be77e9302d3364aa24b34eec49d5689106fccf0  build/work/geo_chain/bin/geogram_fidelity2
+f74924b14f92625df1eee76f45ace0155ae8ed687d840680ef8a765b10c12aba  build/work/v2_cavity/pairs/manifest.tsv
+2f71e6f4b63d6a069ac3713d5bb50282c0285c708342e37c6b26ffe05b27fae2  corpus/v1/gen_v1.cpp
+4ef8835f18646b5510f379ef23e2a04c0a1c9fe94671879d1091a0e83b73f7fe  sorted concatenation of build/work/v2_cavity/run/out_*/results.tsv rows (V2 baseline)
+
+--- appended 2026-11-14T23:59:08Z, still BEFORE any run: the first build attempt failed to compile (GEO::IsectInfo is an incomplete type outside the library), so geogram_fidelity2_v3.cpp was edited to call intersect() whole (stages reported: intersect / classify / simplify_coplanar_facets). New hash:
+51ed8f982b4353b15e9306b259cad531665ee5eeb241c946bea5eda8b3b9768c  lib/geogram/v3/geogram_fidelity2_v3.cpp
+
+--- appended 2026-11-15T00:02:11Z: after the first analysis runs of the 4 distinct FAIL rows (gate reproduced all 4 hashes) and BEFORE any further run. Disclosure: v3_badpts.cpp was written and run once on case 051 cutB intersection before this record (it exposed that oracle/compare.cpp never calls exactinit(); its source was then edited to add the optional V3_EXACTINIT switch); v3_analyze.py was edited after its first run to print the relative error. Files from here on were all written after those runs:
+4dace40ca1d89c8db767395d57003bfed4b7ef5115b6041c8205c110056ae4bd  lib/geogram/v3/v3_analyze.py
+339b70d7b582d469935034fc76819e02fb343a6e30473f706930c1f74a81de87  lib/geogram/v3/v3_badpts.cpp
+84fb4404837c39fbcbdad3827206617475119da509a6ea7d5341013ccb6ead5d  lib/geogram/v3/compare_exactinit.cpp
+7419ae194aedb69698cbdc650f2a15c6168f053d731f3b87d731cc88a35d364b  lib/geogram/v3/rescore.py
+a294556039aaa3892b5b513e35a0c8d345ff018150fe470c07aef79813fbe1ee  oracle/compare.cpp
+
+--- appended 2026-11-15T00:04:54Z: after the control scoring run (402 rows, official mesh_compare) and the exactinit rescore of the cavity rows, BEFORE the batch analysis of the FAIL rows. v3_analyze.py was changed again (original-frame mapping, Gx/G/C, safe float printing); new files and hashes:
+c908a2eaa0293918ba456a8aebcda20354210b03e8ea7cff1c98fff5add295d9  lib/geogram/v3/v3_analyze.py
+9e8fe689f28eecc4f81c93d6bb3de6ca0242d7b84d7236e3dc7d0b77b367c83e  lib/geogram/v3/v3_batch.sh
+
+--- appended 2026-11-15T00:08:19Z, after all runs: final hashes of the V3 code and of the check that the registered PLAN section is unchanged (the recorded hash above covers the section only; amendments sit in a separate subsection)
+d801776a9881d0e17b067d7a9d085bee02a98f82e062a668b21e49094ba6d601  lib/geogram/v3/make_control_pairs.py
+7419ae194aedb69698cbdc650f2a15c6168f053d731f3b87d731cc88a35d364b  lib/geogram/v3/rescore.py
+7988e3bcf7cee922003c3b31baffb4a5dba05254de9a534d1920361415b414bb  lib/geogram/v3/summarize_control_pairs.py
+c908a2eaa0293918ba456a8aebcda20354210b03e8ea7cff1c98fff5add295d9  lib/geogram/v3/v3_analyze.py
+a17557bea0efc12b6797a8a2fd3391c6364b7bdc9e77e3c83085cf510ebdc983  lib/geogram/v3/v3_probes.py
+84fb4404837c39fbcbdad3827206617475119da509a6ea7d5341013ccb6ead5d  lib/geogram/v3/compare_exactinit.cpp
+51ed8f982b4353b15e9306b259cad531665ee5eeb241c946bea5eda8b3b9768c  lib/geogram/v3/geogram_fidelity2_v3.cpp
+339b70d7b582d469935034fc76819e02fb343a6e30473f706930c1f74a81de87  lib/geogram/v3/v3_badpts.cpp
+8353813814cb9582da11b7062bb4549d38161adceaa13ecb27948cefc046700f  lib/geogram/v3/build_v3.sh
+f9fa8e2ab9454b9338b9632c8089ceb3c80ca93a4c80757975cd50ef28f842a8  lib/geogram/v3/run_control_pairs.sh
+9e8fe689f28eecc4f81c93d6bb3de6ca0242d7b84d7236e3dc7d0b77b367c83e  lib/geogram/v3/v3_batch.sh
