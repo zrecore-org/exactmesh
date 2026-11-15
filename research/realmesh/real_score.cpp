@@ -15,6 +15,7 @@
 #include <map>
 #include <random>
 using namespace mesh;
+extern "C" void exactinit();   // Shewchuk's predicates.c: sets the splitter and the error bounds. Without it orient2d/orient3d return the plain double determinant (V3 found this in oracle/compare.cpp; V5 fixes it here).
 
 namespace {
 struct FPip : Pip { int w = 0; };   // w = exact winding number along the +x ray (sum of the signs of the x component of the normal over the crossings; 1 inside an outward solid)
@@ -146,7 +147,19 @@ void scoreOne(const std::string& label, const std::string& opS, const std::strin
 }  // namespace
 
 int main(int argc, char** argv) {
+#ifndef MUT_NOEXACTINIT
+    exactinit();   // V5: before any predicate and before the mode dispatch; MUT_NOEXACTINIT plants the defect (the MP26 scorer ran without it)
+#endif
     std::string cmd = argc > 1 ? argv[1] : "";
+    if (cmd == "selftest-predicates" && argc == 2) {
+        // V5 guard (SYNTHETIC, not a case from the MP26 data): three doubles near a line on which the plain double determinant of orient2d has the opposite sign to the exact one.
+        // Exact value, computed with Python Fractions: (a-c) x (b-c) = -9.459485382760886e-15 < 0 (orient2d > 0 means counter-clockwise, so this triple is clockwise), while the plain
+        // double formula (a0-c0)*(b1-c1) - (a1-c1)*(b0-c0) evaluates to +2.842170943040401e-14. Without exactinit() Shewchuk's orient2d returns the plain value.
+        double a[2] = {-0x1.a4f16eb3a0a50p+2, 0x1.e0e2f3ddec29ap+1}, b[2] = {0x1.2ca78b05e049ap+1, 0x1.3a479ce87c533p+2}, c[2] = {0x1.2f8d5e2c08bfcp+5, 0x1.305c6c9ce2e70p+3};
+        int s = sgnD(orient2d(a, b, c)); double plain = (a[0] - c[0]) * (b[1] - c[1]) - (a[1] - c[1]) * (b[0] - c[0]);
+        printf("orient2d sign %d (exact -1), plain double determinant %g\n", s, plain);
+        return s == -1 ? 0 : 1;
+    }
     if (cmd == "selftest" && argc == 3) {
         Mesh M; if (!readMesh(argv[2], M)) { fprintf(stderr, "cannot read\n"); return 2; }
         Fast f(M); std::mt19937_64 rng(7); double lo[3] = {1e300,1e300,1e300}, hi[3] = {-1e300,-1e300,-1e300};

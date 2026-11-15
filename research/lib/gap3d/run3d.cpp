@@ -26,6 +26,9 @@ static manifold::Polygons polys(const Case& c) { double sc = std::ldexp(1.0, c.e
 static o3::Verdict worst(const std::vector<o3::Verdict>& vs) { o3::Verdict w; for (auto& v : vs) { if (v.cls > w.cls) w = v; else if (v.cls == w.cls && v.ulps > w.ulps) { w.ulps = v.ulps; if (!v.msg.empty()) w.msg = v.msg; } } return w; }
 
 int main(int argc, char** argv) {
+#ifndef MUT_NOEXACTINIT
+    exactinit();   // V5
+#endif
     if (argc < 3) return 2; g_route = argv[1]; Case c; if (!read(argv[2], c)) return 3; g_name = c.name; g_kind = c.kind; g_cls = c.cls;
     const std::string& k = c.kind; const std::string& r = g_route; int e = c.exp;
     try {

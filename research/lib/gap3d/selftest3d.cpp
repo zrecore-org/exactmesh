@@ -11,6 +11,13 @@ static c3d::IMesh box(long x0, long y0, long z0, long x1, long y1, long z1) {
     int q[6][4] = {{0, 4, 6, 2}, {1, 3, 7, 5}, {0, 1, 5, 4}, {2, 6, 7, 3}, {0, 2, 3, 1}, {4, 5, 7, 6}}; for (auto& f : q) { m.t.push_back({f[0], f[1], f[2]}); m.t.push_back({f[0], f[2], f[3]}); } return m; }
 static mesh::Mesh dbl(const c3d::IMesh& m) { mesh::Mesh o; for (auto& v : m.v) for (int d = 0; d < 3; d++) o.v.push_back((double)v[d]); for (auto& t : m.t) o.addT(t[0], t[1], t[2]); return o; }
 int main() {
+#ifndef MUT_NOEXACTINIT
+    exactinit();   // V5
+#endif
+    {   // V5 guard (SYNTHETIC): after the program's own initialisation, orient2d is exact on a triple where the plain double determinant has the opposite sign (exact value -9.459485382760886e-15, plain +2.842170943040401e-14; Python Fractions); MUT_NOEXACTINIT fails it
+        double a[2] = {-0x1.a4f16eb3a0a50p+2, 0x1.e0e2f3ddec29ap+1}, b[2] = {0x1.2ca78b05e049ap+1, 0x1.3a479ce87c533p+2}, c[2] = {0x1.2f8d5e2c08bfcp+5, 0x1.305c6c9ce2e70p+3};
+        CHECK(mesh::sgnD(orient2d(a, b, c)) == -1, "orient2d is exact (exactinit() was called)");
+    }
     IMesh cube = fromCase(box(0, 0, 0, 1, 1, 1), 0);
     CHECK(vol6(cube) == 6, "unit cube 6V == 6"); QV c; CHECK(centroid(cube, c), "centroid exists");
     CHECK(c[0] == Q(1) / 2 && c[1] == Q(1) / 2 && c[2] == Q(1) / 2, "unit cube centroid (1/2,1/2,1/2)");

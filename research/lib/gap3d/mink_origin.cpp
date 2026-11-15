@@ -4,7 +4,11 @@
 #include "c3d.h"
 #include "../../../harness/pip.h"
 #include <dirent.h>
+extern "C" void exactinit();   // Shewchuk's predicates.c: without a call the orient2d/orient3d used by harness/pip.h return plain double determinants (V3/V5). Every main() below calls it first.
 int main(int, char** argv) {
+#ifndef MUT_NOEXACTINIT
+    exactinit();   // V5
+#endif
     DIR* d = opendir(argv[1]); struct dirent* e;
     while ((e = readdir(d))) { std::string f = e->d_name; if (f.rfind("mink", 0) != 0 || f.size() < 5) continue; c3d::Case c; c3d::read(std::string(argv[1]) + "/" + f, c); if (!c.mesh.count("B")) continue;
         mesh::Mesh m; for (auto& v : c.mesh["B"].v) for (int k = 0; k < 3; k++) m.v.push_back((double)v[k]); for (auto& t : c.mesh["B"].t) m.addT(t[0], t[1], t[2]);

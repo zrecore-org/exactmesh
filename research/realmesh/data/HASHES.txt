@@ -21,3 +21,7 @@ AMENDED 2026-11-14T19:10:32Z before the full run (after a 2-pair smoke test, p00
 bc411ad7e17a9fcf5094f97e1703ff79a1bceec87a02f09975d82c493e83c781  work/mp24b/work/geo_chain/bin/geogram_runner
 ad1d305b117594feb86f70201e0dc35193c06e120b7705a09b644a26f4451744  work/manifold/runA/manifold_runner
 63479ffa66747bd6260bae2c97f8af41619ad0040eb047432122e95dcad22bce  work/mp26/bin/real_score
+
+AMENDED 2026-11-15 (V5, docs/PLAN.md "V5"; appended, nothing above edited): research/realmesh/real_score.cpp now calls exactinit() first in main() (the scorer ran without it) and has a `selftest-predicates` command and a MUT_NOEXACTINIT mutant. Scoring results are unchanged: the re-score of all 3,750 kept outputs gives byte-identical P/R/S lines (docs/RESULTS.md V5). This record's hashes are of the pre-SPDX research-branch files; the repository's copy of the scorer before V5 hashed 
+c29ed0ca77822063fb0f5105e7214c0f7494ffac19dee4660653818c6c6f9c32 (recorded in research/realmesh/V5_HASHES_BEFORE_RUN.txt), after V5:
+7961fb8e8bc7dbb6a26a2c7a7d41b3b980bb190732eadd0d19c649e45155db81  research/realmesh/real_score.cpp

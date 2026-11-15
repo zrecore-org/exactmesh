@@ -33,3 +33,5 @@ Planted mutants of the checker (each a -DMUTANT=k build of selftest3d; its selft
 Speed: 1e5-triangle closed mesh (a 6-face grid cube with integer normal noise), one thread (Manifold built with MANIFOLD_PAR=OFF), operation only, median of 5, load average recorded in
           speed_load.txt before each run; MinGap time includes its internal boolean.
 Effort estimates: person-weeks on the PARITY.md scale (S=1, M=3, L=8), +-2x, from the lines of code and hours this spike took, stated in REPORT.md with the basis.
+
+V5 amendment (2026-11-15, appended): mink_origin, selftest3d and run3d now call exactinit() first in main() (they included harness/pip.h through oracle3d.h without it); selftest3d gained one check (orient2d exact on a triple where the plain double determinant has the wrong sign) and a MUT_NOEXACTINIT build must fail it; the planted mutants MUTANT=1..7 are unchanged and still fail. Recorded results are unchanged (docs/RESULTS.md V5).

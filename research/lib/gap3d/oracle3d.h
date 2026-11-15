@@ -9,6 +9,7 @@
 #include "../../../harness/pip.h"
 #include <boost/multiprecision/cpp_bin_float.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
+extern "C" void exactinit();   // Shewchuk's predicates.c: without a call the orient2d/orient3d used by harness/pip.h return plain double determinants (V3/V5). Every main() below calls it first.
 #include <algorithm>
 #include <cmath>
 #include <cstring>

@@ -1,0 +1,24 @@
+V5 hashes recorded 2026-11-15 BEFORE any V5 run or code change (docs/PLAN.md V5 section text from its heading to the line before '## Out of scope')
+e4af7d2e27820b12774d640fe372de177bc1653ad93238f288cc00b2ebc36c16  docs/PLAN.md#V5
+c29ed0ca77822063fb0f5105e7214c0f7494ffac19dee4660653818c6c6f9c32  research/realmesh/real_score.cpp
+0200d566b8cc704e95f602f0568f6788ea04a14fa470b682e80a90347b1720b3  research/realmesh/run_pairs.py
+81dc78aa834268b2c578900613a72784575ee735404fdee3e058838c1ecc2a70  research/realmesh/pair_build.cpp
+3665ef08fa7e3fde2e66d1dd943a64b7e0707b85b721dc14bf3635214ac6eaee  research/realmesh/stl_to_msh.cpp
+fa639dba925721f12a59bf8c9bcd7a8837564b793ab503127361410835449f38  research/lib/gap3d/mink_origin.cpp
+f13b8c7ebab0b9be412244c6b5bffa5fa6311da05f1d50b881e92623a4999fae  research/lib/gap3d/oracle3d.h
+63d8a4529924bafda2fa6af7e01986a5f0f1b09ee8c2834e1ceca0e67828ed2d  research/lib/gap3d/selftest3d.cpp
+0bb01f8af65d5286b919f96f22e404cc0c9ff211683354952f93bb8b98ff2215  research/lib/gap3d/run3d.cpp
+b192ae1e25272a8c936f9cc4b2ca1666701c411fd0e547939868d6c24ff6425a  harness/pip.h
+recorded runners (research checkout storage/mesh):
+0e2d5fae180bd994def98d5cfd4137584815d6077cfcd1e1736d0c821952c31e  mp24b/bin/geogram_fidelity2
+bc411ad7e17a9fcf5094f97e1703ff79a1bceec87a02f09975d82c493e83c781  mp24b/work/geo_chain/bin/geogram_runner
+ad1d305b117594feb86f70201e0dc35193c06e120b7705a09b644a26f4451744  manifold/runA/manifold_runner
+63479ffa66747bd6260bae2c97f8af41619ad0040eb047432122e95dcad22bce  mp26/bin/real_score
+
+AFTER the V5 change (same date):
+7961fb8e8bc7dbb6a26a2c7a7d41b3b980bb190732eadd0d19c649e45155db81  research/realmesh/real_score.cpp
+21ed2aa49dd45961896a9b6ddf74b5dd3b9c24544b69b99b6e19e46f879ff2f6  research/lib/gap3d/mink_origin.cpp
+599964d51219ed04f588c4ac20a751e64c4f9a40d589e9a8f29c4e37fe3fe3ae  research/lib/gap3d/oracle3d.h
+8957054c3948095b016fc083c1a3ed4ef060ab9c49828cbee920916655084463  research/lib/gap3d/selftest3d.cpp
+f9b9ded37113807b628db4232a179c4f15f4aef2897891064296e48003088450  research/lib/gap3d/run3d.cpp
+Data checks (run once): Thingi10K.tar.gz size 9616033688, sha256 9d943391eed4e53cc9aec084ca57bf805731fb5b8ebf3b3ea814377771d2be71 = THINGI.pin; input_summary.csv 191e0f8c..., geometry_data.csv b12c8d22... = HASHES.txt; original pairs.tsv (research commit 69d256a1166) 9b86bd05... = recorded.
