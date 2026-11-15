@@ -228,7 +228,8 @@ static int correctness(const std::string& spv, int bmutTwin, int stk, bool check
     {
         Scene sc; sc.multi = true; std::vector<Mesh> per; Rng r(79); std::vector<double> q; std::vector<uint32_t> qm;
         for (uint32_t k = 0; k < 40; k++) {
-            Mesh b = mapped(block(2), 0, (double)r.pick(3) * 0.5, (double)r.pick(3) * 0.5, (double)r.pick(3) * 0.5); uint32_t base = (uint32_t)sc.m.nv();
+            double sx = (double)r.pick(3) * 0.5, sy = (double)r.pick(3) * 0.5, sz = (double)r.pick(3) * 0.5;   // one draw per declarator: function-argument evaluation order is unspecified (GCC on x86_64 and clang disagree)
+            Mesh b = mapped(block(2), 0, sx, sy, sz); uint32_t base = (uint32_t)sc.m.nv();
             for (size_t i = 0; i < b.nv(); i++) sc.m.addV(b.v[3*i], b.v[3*i+1], b.v[3*i+2]);
             for (size_t t = 0; t < b.nt(); t++) { sc.m.addT(base + b.t[3*t], base + b.t[3*t+1], base + b.t[3*t+2]); sc.tmesh.push_back(k); }
             per.push_back(b);
