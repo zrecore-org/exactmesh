@@ -91,3 +91,8 @@ The patch files are derivative works of Geogram and are distributed under its BS
 * **Wrong exact output, not only rounding.** In a control with no cavity, 36 of 402 rows have a wrong rational (pre-rounding) output: plates of subnormal thickness (volume 1/3 of expected, open surface), a z-axis plate 2^-51 thick at the far end (negative volume), a z-axis plate 2^-100 thick cut by B, and two operands overlapping by one subnormal (empty result). These are scored FAIL, not refused. Do not rely on the pipeline for features of that size.
 * **Geogram exception `!point_outside_boundary`** (`intersect()` stage; refused by the pipeline as `geogram threw`): triggered by a nonzero coordinate that is tiny (thrown at 2^-540 and below, not at 2^-300), with or without a cavity, in an operand or a gap; 27 of 402 control rows and the 6 cavity rows.
 * **Not claimed:** that other thin features or other platforms behave this way; that no bound separates safe from unsafe features (none was found, and none of the above is guarded by a refusal rule).
+
+## MP11 hybrid narrow phase (2026-11-15)
+* The GPU filter discards only about a third of candidate triangle pairs (36% of the rest need the CPU); on the M1 the hybrid is 1.05x the 8-thread CPU at 20,000 x 20,000 triangles. G4's 2x bar is not met there (provisional; no NVIDIA number).
+* Shewchuk's predicates are exact only without underflow; subnormal coordinates need the big-integer exact predicates (used outside the exponent window 2^-100..2^101).
+* Only the triangle-triangle intersection test exists; the distance variant is not built.

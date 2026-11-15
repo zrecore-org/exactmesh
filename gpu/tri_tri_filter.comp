@@ -1,0 +1,67 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 zrecore-org contributors
+#version 450
+#extension GL_GOOGLE_include_directive : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+// MP11: triangle-triangle FILTER for candidate pairs, in exact soft binary64 (MP09 stage-A orient3d filter). One thread per pair (triangle i of A, triangle j of B).
+// Verdict 1 = NO: provably no common point (all three vertices of B strictly on one side of A's plane, with definite filter signs, or the other way round).
+// Verdict 0 = MAYBE: everything else (including uncertain filter signs, zero signs, coplanar, straddling): the CPU exact test decides.
+// Planted mutants (compile-time, each must be caught by tests/mp11_hybrid): TTMUT=2 sign from the determinant alone (bound ignored), TTMUT=3 the last thread of each
+// workgroup reports NO unconditionally (a dropped pair), TTMUT=4 non-strict same-side test (zero and uncertain count as 'same side').
+#ifndef TTMUT
+#define TTMUT 0
+#endif
+#include "f64soft.inc"
+#include "orient_filter.inc"
+layout(local_size_x = 64) in;
+layout(std430, binding = 0) readonly buffer VA { uint64_t va[]; };   // vertex coordinates of A as binary64 bit patterns, 3 per vertex
+layout(std430, binding = 1) readonly buffer TA { uint ta[]; };       // 3 vertex indices per triangle
+layout(std430, binding = 2) readonly buffer VB { uint64_t vb[]; };
+layout(std430, binding = 3) readonly buffer TB { uint tb[]; };
+layout(std430, binding = 4) readonly buffer PR { uint pr[]; };       // pairs: i, j
+layout(std430, binding = 5) writeonly buffer OUT { uint verdict[]; };
+layout(push_constant) uniform P { uint n; } pc;
+
+int osign(uint64_t ax, uint64_t ay, uint64_t az, uint64_t bx, uint64_t by, uint64_t bz, uint64_t cx, uint64_t cy, uint64_t cz, uint64_t dx, uint64_t dy, uint64_t dz) {
+#if TTMUT == 2
+    uint64_t d, b;
+    orient3dFilterSoftEx(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, d, b);
+    if (f64_gt(d, 0ul)) return 1;
+    if (f64_gt(f64_neg(d), 0ul)) return -1;
+    return 0;
+#else
+    return orient3dFilterSoft(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz);
+#endif
+}
+bool sameSide(int s0, int s1, int s2) {
+#if TTMUT == 4
+    return (s0 >= 0 && s1 >= 0 && s2 >= 0) || (s0 <= 0 && s1 <= 0 && s2 <= 0);
+#else
+    return s0 != 0 && s0 == s1 && s1 == s2;
+#endif
+}
+void main() {
+    uint i = gl_GlobalInvocationID.x;
+    if (i >= pc.n) return;
+#if TTMUT == 3
+    if (gl_LocalInvocationID.x == 63u) { verdict[i] = 1u; return; }
+#endif
+    uint ia = pr[2u * i], ib = pr[2u * i + 1u];
+    uint64_t A[9], B[9];
+    for (uint c = 0u; c < 3u; c++) {
+        uint va_ = ta[3u * ia + c], vb_ = tb[3u * ib + c];
+        for (uint k = 0u; k < 3u; k++) { A[3u * c + k] = va[3u * va_ + k]; B[3u * c + k] = vb[3u * vb_ + k]; }
+    }
+    // B's vertices against the plane of A
+    int s0 = osign(A[0], A[1], A[2], A[3], A[4], A[5], A[6], A[7], A[8], B[0], B[1], B[2]);
+    int s1 = osign(A[0], A[1], A[2], A[3], A[4], A[5], A[6], A[7], A[8], B[3], B[4], B[5]);
+    int s2 = osign(A[0], A[1], A[2], A[3], A[4], A[5], A[6], A[7], A[8], B[6], B[7], B[8]);
+    uint v = sameSide(s0, s1, s2) ? 1u : 0u;
+    if (v == 0u) {
+        int t0 = osign(B[0], B[1], B[2], B[3], B[4], B[5], B[6], B[7], B[8], A[0], A[1], A[2]);
+        int t1 = osign(B[0], B[1], B[2], B[3], B[4], B[5], B[6], B[7], B[8], A[3], A[4], A[5]);
+        int t2 = osign(B[0], B[1], B[2], B[3], B[4], B[5], B[6], B[7], B[8], A[6], A[7], A[8]);
+        v = sameSide(t0, t1, t2) ? 1u : 0u;
+    }
+    verdict[i] = v;
+}
