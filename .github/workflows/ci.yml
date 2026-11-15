@@ -264,6 +264,10 @@ jobs:
         run: |
           build/mesh/mp12_vol host | tail -3
           build/mesh/mp12_vol device | tail -3
+      - name: MP13 fault injection, circuit breaker, self-test, shadow check (lavapipe), and the no-device case
+        run: |
+          build/mesh/mp13_service faults | grep -E "FAIL|summary|PASS"
+          VK_ICD_FILENAMES=/nonexistent/icd.json build/mesh/mp13_service nodevice | tail -5
 
   manifold:
     name: Optional comparison, Manifold v3.5.5, ${{ matrix.arch }}

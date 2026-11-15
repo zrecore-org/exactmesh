@@ -84,6 +84,12 @@ target_link_libraries(mp12_vol PRIVATE volk Threads::Threads)
 target_compile_definitions(mp12_vol PRIVATE EXACTMESH_SHADER_DIR_DEFAULT="${SHADER_OUT}")
 add_dependencies(mp12_vol gpu_shaders)
 
+add_executable(mp13_service mp13_service.cpp)
+target_include_directories(mp13_service PRIVATE "${BOOST_ROOT_DIR}" "${CMAKE_SOURCE_DIR}/harness" "${CMAKE_SOURCE_DIR}/cpu" "${GPU_SRC}")
+target_link_libraries(mp13_service PRIVATE volk shewchuk_predicates Threads::Threads)
+target_compile_definitions(mp13_service PRIVATE EXACTMESH_SHADER_DIR_DEFAULT="${SHADER_OUT}")
+add_dependencies(mp13_service gpu_shaders)
+
 if(EXACTMESH_TESTS)
   exactmesh_test(gpu_tests "${CMAKE_SOURCE_DIR}/tests/gpu/test_gpu.cpp")
   target_compile_definitions(gpu_tests PRIVATE EXACTMESH_BIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" EXACTMESH_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
