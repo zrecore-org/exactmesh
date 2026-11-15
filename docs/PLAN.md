@@ -361,5 +361,17 @@ Scope: three small spikes in this repository (Apache-2.0; no MongoDB headers or 
 **G4 reading.** G4 is met only if the GPU total is at least 2x the fair CPU, on the M1 provisionally, at sizes a mongod document can hold, with 0 false definite answers. Otherwise G4 fails and the product stays CPU-only. The NVIDIA number is taken afterwards, once, through the Windows queue.
 **Out of scope.** Exact area, the distance variant, a faster tree builder, SAH, leaf sizes above 1 (knobs to try only if the first number is bad; each would be recorded as a deviation), the T4 and the Windows card for now.
 
+### MP12d amendment (registered 2026-11-15, before any MP12d code): exact surface area, CPU
+**Why.** Exact area was left open by MP12 (part B did volume only). The surface area of a triangle mesh is a sum of square roots, so it is generally irrational; the exact measure is therefore defined as the **correctly rounded binary64 value of the true sum** (round to nearest, ties to even), independent of triangle order and thread count.
+**Design.** `harness/exact_area.h`: scale all coordinates to integers with one common exponent (as `exactVolumeTimes6`); per triangle S = |cross|^2 as an exact integer; area = (sum of sqrt(S_t)) * 2^(2 e0 - 1). Enclosure: floor(sqrt(S_t * 4^k)) is a lower bound with error below 1, so the sum is enclosed in [L, L + n] * 2^(-k) (n triangles); round both ends to the nearest binary64; if they agree that is the answer, otherwise k is doubled. If every S_t is a perfect square the sum is rational and rounded exactly (the only case that can sit on a rounding boundary: a sum of positive square roots of integers is rational only if every term is). Results outside the normal binary64 range, non-finite input, and an undecided enclosure at k = 65536 are refused with a reason, never rounded wrongly.
+**Bars (hard).**
+1. Exact answers: unit cube 6 and boxes (perfect squares, exact); right triangles with irrational areas; a regular tetrahedron-like mesh; sphere meshes (uv spheres 6x12 to 60x80) against an independent oracle (Boost cpp_bin_float with 500 bits: sqrt per triangle, summed in binary, rounded to binary64; the two must agree on every case).
+2. Order and thread independence: the result is bit-identical for 20 random triangle permutations and for 1, 4, 8 threads (the code is single threaded; the permutation covers order independence).
+3. Scale: bit-identical results for the same mesh scaled by 2^-30, 2^30, 2^200 (exact scaling by 2^k scales the area by 2^2k; the expected value is the unscaled result times 2^2k, exact when in range), including the refusal when the scaled result leaves the normal range.
+4. The naive floating-point area (sum of sqrt in binary64) is computed alongside and the number of cases where it is not the correctly rounded value is reported (expected to be above zero on at least one class, which shows the function is needed).
+5. Planted mutants, each caught: lower bound used instead of the enclosure agreement (answer taken from L only), no doubling (k fixed at 32), ties not handled (perfect-square case rounded by truncation), the factor 2^-1 dropped.
+6. Reported: time per 1e3 and 1e5 triangles.
+**Out of scope.** GPU, area of non-closed meshes is allowed (it is just the sum), anything involving booleans.
+
 ## Out of scope
 Vendoring a library into the repo; CGAL, SFCGAL and OCCT code or builds; a patched-library GPU boolean (MP16); GPU work for 2D in the first pass; production hardening.
