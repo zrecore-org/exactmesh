@@ -315,5 +315,29 @@ Question: ray-parity point-in-solid on the GPU with the MP09 filter, uncertain r
 ### MP13: fallback, circuit breaker, crossover (registered here, detailed bars before it starts)
 Question: does every injected failure (device lost, out of memory, no device, shader failure, pair overflow, uncertain rate over a cap, deadline) end in the CPU answer, identical to the CPU-only answer, with a startup self-test and a sampled runtime shadow check, and where is the crossover size? Bars to be written as an amendment before MP13 code is run. Baseline for the crossover is the best multi-core CPU, never a single thread.
 
+### MP11 deviations from the registered bars (recorded 2026-11-15, after the run)
+Not done: bar 1 and the distance variant (not built; m5 therefore not run); bar 3's corpus touch sets and the 407 real-mesh pairs (the ~35 generated cases stand in); bar 4's 20 repeats and the M1 versus lavapipe comparison (device versus its CPU twin was checked once on the M1; the host tests run in CTest but are not in the CI lavapipe job). These remain open and are not claimed as met.
+
+### MP12 amendment (registered 2026-11-15, before any MP12 code)
+**Design.** (a) Point-in-solid: for each query point, a ray along +x, parity of crossings with the BVH-candidate triangles (MP10); each crossing test uses the MP09 filter (soft binary64) and returns IN/OUT/UNCERTAIN per triangle; any UNCERTAIN triangle (ray through an edge, vertex or the plane) sends the whole query to the exact CPU test (`harness/pip.h`). (b) Volume and area: exact accumulation. Each triangle's signed-volume term is computed exactly (exact multiply added to `f64soft.inc`, or integer limbs) and accumulated into a wide fixed-point/expansion accumulator, so the result does not depend on thread count or order; one final rounding.
+**Bars (hard unless marked).**
+1. Point-in-solid answers equal the exact CPU on every query in: random points in/around sphere, torus, cube lattice; points on faces, edges and vertices; points at 1 ulp, 2^-40 from the surface; rays through vertices; meshes at offsets 2^30 and 2^50; at least 1e6 queries in total, each class named.
+2. No false definite answer: the count of GPU IN/OUT verdicts that differ from the exact CPU is 0 (counted per query, not per class).
+3. Volume and area are bit-identical to the exact oracle's correctly rounded value (`harness/exact.h` rational recompute) on every mesh of the corpus including the 2^-30, 2^30 and 2^200-scale copies, and bit-identical for 1, 4 and 8 CPU threads and across repeated device runs (20); M1 versus lavapipe (CI) bit-identical (reported if lavapipe is not available for the run).
+4. Overflow/underflow: inputs outside the filter's exponent window go to the CPU exact path; a class covers them and the answer still equals the oracle.
+5. Planted mutants, each caught: parity off by one for rays through a vertex; UNCERTAIN treated as OUT; bound ignored; exact accumulation replaced by plain binary64 sum; accumulator carry dropped.
+6. Reported: UNCERTAIN rate per class; time against 1- and 8-thread CPU, upload and readback included, few-large and many-small; M1 numbers provisional.
+**Out of scope.** Winding-number prefilter (MP15), distance, T4.
+
+### MP13 amendment (registered 2026-11-15, before any MP13 code)
+**Design.** A wrapper around MP11/MP12 with: startup self-test (known-answer cases on the device; any mismatch disables the GPU path), a sampled runtime shadow check (every k-th batch recomputed on the CPU; a single disagreement trips the breaker for the process), a circuit breaker (N consecutive failures or any disagreement: CPU only, with a recorded reason), and a CPU path that is always the reference.
+**Bars (hard).**
+1. For each injected fault: device lost mid-batch, out of memory at allocation, no Vulkan device, shader load failure, pair-buffer overflow, MAYBE rate over a configured cap, deadline expired, a kernel that returns a wrong answer (planted), the answer returned equals the CPU-only answer byte for byte and the reason is reported; 0 crashes, 0 hangs (each case has a timeout).
+2. The shadow check detects a planted wrong GPU answer within k batches (k configured, tested at k = 1 and k = 8) and trips the breaker; after tripping no GPU result is returned.
+3. The self-test fails on a planted wrong kernel and passes on the real one.
+4. Crossover: sweep 1e2..1e7 triangles and 1..1e5 meshes, GPU path including upload/prewarm versus the best multi-core CPU path (8 threads, never one thread); report the crossover size, or that none exists on this device. The bar is the report, not a particular value.
+5. Planted mutants, each caught: breaker never trips, shadow check skipped, fallback returns the partial GPU result, self-test always passes.
+**Out of scope.** Real device-loss on hardware (injected only), T4, extension integration (MP14).
+
 ## Out of scope
 Vendoring a library into the repo; CGAL, SFCGAL and OCCT code or builds; a patched-library GPU boolean (MP16); GPU work for 2D in the first pass; production hardening.
