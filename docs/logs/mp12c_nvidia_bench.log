@@ -1,0 +1,21 @@
+device=NVIDIA GeForce RTX 4060 Ti memory=discrete (device-local + staging copies); CPU baseline: 8 threads, BVH ray walk (cpu/bvh_ref.h, binary64 boxes) + native exact predicates on the candidates only
+scene                      triangles   queries |  CPU cold CPU amort |  GPU cold GPU amort   unc % |    cold x   amort x  equal
+one sphere                      9800     10000 |       4.3       2.5 |      13.1       6.6   0.00% |     0.33x     0.39x    yes
+one sphere                      9800    100000 |      15.9      13.9 |      29.1      12.1   0.00% |     0.55x     1.15x    yes
+one sphere                      9800   1000000 |     129.9     128.1 |      87.7      73.4   0.00% |     1.48x     1.75x    yes
+one sphere                     39600     10000 |      10.1       3.3 |      28.4       7.9   0.00% |     0.35x     0.42x    yes
+one sphere                     39600    100000 |      24.4      17.5 |      34.1      13.7   0.00% |     0.71x     1.28x    yes
+one sphere                     39600   1000000 |     153.7     146.9 |      88.9      75.8   0.00% |     1.73x     1.94x    yes
+one sphere                    159200     10000 |      38.3       4.9 |      40.3       7.9   0.00% |     0.95x     0.62x    yes
+one sphere                    159200    100000 |      52.0      22.6 |      43.5      12.4   0.00% |     1.20x     1.82x    yes
+one sphere                    159200   1000000 |     226.5     197.1 |     112.8      81.7   0.00% |     2.01x     2.41x    yes
+one sphere                    488600     10000 |     104.7       8.7 |      74.4       8.5   0.00% |     1.41x     1.02x    yes
+one sphere                    488600    100000 |     127.1      31.0 |      78.9      13.7   0.00% |     1.61x     2.26x    yes
+one sphere                    488600   1000000 |     355.6     259.8 |     147.4      76.9   0.00% |     2.41x     3.38x    yes
+one sphere                    998000     10000 |     219.6      14.8 |     132.0       8.5   0.00% |     1.66x     1.75x    yes
+one sphere                    998000    100000 |     244.3      40.6 |     131.2      14.2   0.00% |     1.86x     2.85x    yes
+one sphere                    998000   1000000 |     510.9     306.5 |     298.3      78.9   0.00% |     1.71x     3.88x    yes
+   (many small meshes: combined-tree CPU 63.7 ms, per-mesh CPU 21.0 ms; the ratios below use the better one)
+many small (1000 meshes)      120000    100000 |      21.0      21.0 |      51.1      11.5   0.00% |     0.41x     1.83x    yes
+   (many small meshes: combined-tree CPU 1340.8 ms, per-mesh CPU 178.6 ms; the ratios below use the better one)
+many small (10000 meshes)    1200000   1000000 |     178.6     178.6 |     310.3      86.7   0.00% |     0.58x     2.06x    yes

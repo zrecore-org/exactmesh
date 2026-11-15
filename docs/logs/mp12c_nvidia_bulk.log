@@ -1,0 +1,4 @@
+device=NVIDIA GeForce RTX 4060 Ti shader=pip_bvh
+sphere 100x200         queries  500000  UNCERT   66756 (13.4%)  exact-boundary       0  false definite 0  20 repeats byte-identical: yes
+block 20^3 at +2^30    queries  500000  UNCERT  168699 (33.7%)  exact-boundary   76337  false definite 0  20 repeats byte-identical: yes
+bulk total queries 1000000, false definite 0 -> PASS

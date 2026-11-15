@@ -7,7 +7,15 @@
 
 #include <volk.h>
 
+#ifdef _WIN32
+#include <windows.h>
+static inline void* dlopen_compat(const char* p) { return (void*)LoadLibraryA(p); }
+static inline void* dlsym_compat(void* h, const char* n) { return (void*)GetProcAddress((HMODULE)h, n); }
+#else
 #include <dlfcn.h>
+static inline void* dlopen_compat(const char* p) { return dlopen(p, RTLD_NOW | RTLD_LOCAL); }
+static inline void* dlsym_compat(void* h, const char* n) { return dlsym(h, n); }
+#endif
 
 #include <chrono>
 #include <cstdint>
@@ -94,11 +102,11 @@ struct Ctx {
         try {
             void* h = nullptr;
             for (auto& p : loaderPaths)
-                if ((h = dlopen(p.c_str(), RTLD_NOW | RTLD_LOCAL)))
+                if ((h = dlopen_compat(p.c_str())))
                     break;
             if (!h)
                 throw std::runtime_error("no Vulkan loader found");
-            auto gipa = (PFN_vkGetInstanceProcAddr)dlsym(h, "vkGetInstanceProcAddr");
+            auto gipa = (PFN_vkGetInstanceProcAddr)dlsym_compat(h, "vkGetInstanceProcAddr");
             if (!gipa)
                 throw std::runtime_error("vkGetInstanceProcAddr missing");
             volkInitializeCustom(gipa);
