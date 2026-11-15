@@ -260,7 +260,7 @@ jobs:
         run: |
           build/mesh/mp12_pip host | tail -3
           build/mesh/mp12_pip device | tail -3
-      - name: MP12c BVH point-in-solid on lavapipe (device vs CPU twin vs exact CPU, the fair CPU baseline vs the all-triangles exact test), the soft binary64 operations vs the hardware double, the stack-of-2 overflow check, and the planted mutants (not the 20-repeat bulk run: soft binary64 on a CPU driver is too slow for it)
+      - name: MP12c BVH point-in-solid on lavapipe (device vs CPU twin vs exact CPU, soft binary64 vs the hardware double, stack-of-2 overflow, planted mutants; the 20-repeat bulk run is left out because soft binary64 on a CPU driver is too slow)
         run: |
           build/mesh/mp12c_bvh_pip device | tail -4
           build/mesh/mp12c_bvh_pip f64check 200000 | tail -4
