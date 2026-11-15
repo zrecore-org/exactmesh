@@ -16,15 +16,40 @@
 #include <random>
 #include <sstream>
 
+extern "C" void exactinit();   // Shewchuk's predicates.c: sets the splitter and the error bounds. Without it orient2d/orient3d return the plain double determinant (V3 found this; V4 fixed it).
 using namespace mesh;
 
 static bool parseDyadic(const std::string& s, Dyadic& d) {
     size_t star = s.find("*2^"); if (star == std::string::npos) return false;
     d.num = BigInt(s.substr(0, star)); d.exp2 = atoi(s.c_str() + star + 3); return true;
 }
-static double ratio(const Dyadic& a, const Dyadic& b) {            // a / b as a double (b != 0)
+// a / b as a double (b != 0), for a = a.num * 2^a.exp2 and b likewise. V4: the old computation aligned both integers at the smaller exponent and divided their doubles; when the exponents differ by
+// about 1024 or more the aligned integers overflow to inf (inf/inf = nan, x/inf = 0), which printed "relative nan" and classified a tiny relative error as "wrong". The old computation is kept
+// bit-for-bit whenever both aligned integers are finite doubles; otherwise both numerators are normalised to 64 bits plus a binary exponent, divided, and scaled with ldexp (the relative error of
+// that path is about 2^-63).
+static double ratioOverflowing(const Dyadic& a, const Dyadic& b) {
     int e = std::min(a.exp2, b.exp2);
     return align(a, e).num.convert_to<double>() / align(b, e).num.convert_to<double>();
+}
+static double normalised64(const BigInt& n, long& exp2) {        // n = result * 2^exp2 (to 64 bits), result a double with 2^63 <= |result| < 2^64, or 0
+    if (n == 0) { exp2 = 0; return 0.0; }
+    BigInt m = n < 0 ? BigInt(-n) : n;
+    long sh = (long)boost::multiprecision::msb(m) + 1 - 64;
+    if (sh > 0) m >>= sh; else m <<= -sh;
+    exp2 = sh;
+    double d = m.convert_to<double>();
+    return n < 0 ? -d : d;
+}
+static double ratio(const Dyadic& a, const Dyadic& b) {
+#ifdef MUT_OVERFLOWRATIO
+    return ratioOverflowing(a, b);                                    // planted bug: the pre-V4 computation
+#else
+    int e = std::min(a.exp2, b.exp2);
+    double x = align(a, e).num.convert_to<double>(), y = align(b, e).num.convert_to<double>();
+    if (std::isfinite(x) && std::isfinite(y)) return x / y;          // unchanged for every value that did not overflow
+    long sa, sb; double da = normalised64(a.num, sa), db = normalised64(b.num, sb);
+    return std::ldexp(da / db, (int)((a.exp2 + sa) - (b.exp2 + sb)));
+#endif
 }
 static bool isAxisBox(const Mesh& m, std::vector<double> xs[3]) {
     if (m.nv() != 8 || m.nt() != 12) return false;
@@ -202,11 +227,66 @@ static int selftest() {
             expect("classification is identical after swapping x and y (a different ray direction)", disagree, 0);
         } else printf("  (icosphere_3 not found; run mesh/corpus/gen_corpus.sh first; swap test skipped)\n");
     }
+    // V4: regression tests for the two scorer defects found in V3
+    printf("V4 regression tests (each fails on a build without the fix; see MUT_NOEXACTINIT and MUT_OVERFLOWRATIO):\n");
+    {
+        // (1) exact predicates. R is the pipeline's output for case legit_one_ulp_cavity_051_cutB, intersection (V2 cavity run, 16 vertices, 28 triangles, closed). Every vertex has z >= 0 and the query
+        // point has z = -0x1.594cp-1 < 0, so the point is outside R by a bounding-box argument that needs no predicate (the +x ray from it cannot meet a triangle). Without exactinit() the plain
+        // double determinants misclassified it as inside (1 crossing): that was the scorer's one bad sample point on this row.
+        static const double RV[16][3] = {
+        {0x1p+0, 0x1p+0, 0x1p+0},
+        {0x1p+0, 0x1.fffffffffffffp+1, 0x1p+0},
+        {0x1.ced916872b021p-2, 0x1.a1cac083126e9p-3, 0x1.fced916872b02p+0},
+        {0x1.69fbe76c8b439p+1, 0x1.a1cac083126e9p-3, 0x1.fced916872b02p+0},
+        {0x1.ced916872b02p-2, 0x1p+2, 0x0p+0},
+        {0x1.69fbe76c8b439p+1, 0x1p+2, 0x0p+0},
+        {0x1.69fbe76c8b439p+1, 0x1.a1cac083126eap-3, 0x0p+0},
+        {0x1.ced916872b021p-2, 0x1.a1cac083126eap-3, 0x0p+0},
+        {0x1.ced916872b021p-2, 0x1p+2, 0x1.fced916872b02p+0},
+        {0x1.69fbe76c8b439p+1, 0x1p+2, 0x1.fced916872b02p+0},
+        {0x1.69fbe76c8b439p+1, 0x1.fffffffffffffp+1, 0x1p+0},
+        {0x1.69fbe76c8b439p+1, 0x1p+0, 0x1p+0},
+        {0x1.69fbe76c8b43ap+1, 0x1p+0, 0x1.fced916872b03p+0},
+        {0x1p+0, 0x1p+0, 0x1.fced916872b02p+0},
+        {0x1p+0, 0x1.fffffffffffffp+1, 0x1.fced916872b02p+0},
+        {0x1.69fbe76c8b43ap+1, 0x1p+2, 0x1.fced916872b03p+0}};
+        static const uint32_t RT[28][3] = {{6,4,5}, {7,4,6}, {9,5,4}, {9,4,8}, {11,10,1}, {11,1,0}, {12,11,0}, {12,0,13}, {15,14,1}, {15,1,10}, {13,0,1}, {14,13,1}, {14,8,13}, {13,2,3}, {13,3,12}, {8,2,13}, {14,9,8}, {9,14,15}, {2,6,3}, {7,6,2}, {7,2,8}, {4,7,8}, {12,3,11}, {10,5,9}, {11,5,10}, {6,5,11}, {3,6,11}, {9,15,10}};
+        Mesh R; for (auto& v : RV) R.addV(v[0], v[1], v[2]); for (auto& t : RT) R.addT(t[0], t[1], t[2]);
+        double zmin = 1e300; for (auto& v : RV) zmin = std::min(zmin, v[2]);
+        const double p[3] = {0x1.0e528p+2, 0x1.f07cp-1, -0x1.594cp-1};
+        Pip q = classifyPoint(R, p);
+        printf("  point with z < min z of the mesh: inside=%d boundary=%d crossings=%d (min z %g, point z %g)\n", (int)q.inside, (int)q.boundary, q.crossings, zmin, p[2]);
+        expect("a point below the whole mesh is outside, with 0 crossings (needs exactinit())", (int)(zmin >= 0 && p[2] < 0 && !q.inside && !q.boundary && q.crossings == 0), 1);
+    }
+    {
+        // (2) the volume ratio near the smallest subnormal; every expected value is known exactly. The old code returned nan (inf/inf) or 0 (x/inf) on the rows marked "old".
+        const double tiny = std::ldexp(1.0, -1074);
+        auto D = [](long n, int e) { return Dyadic{BigInt(n), e}; };
+        Dyadic big3{BigInt(3) << 1100, -1100}, big5{BigInt(5) << 1100, -1100};
+        expect("ratio 3 / 5 with both aligned integers beyond 2^1024 is 3.0/5.0 (old: nan)", ratio(big3, big5) == 3.0 / 5.0, 1);
+        expect("ratio -3 / 5 keeps its sign (old: nan)", ratio(Dyadic{-big3.num, -1100}, big5) == -3.0 / 5.0, 1);
+        expect("ratio 2^-1074 / 1 is exactly the smallest subnormal (old: 0)", ratio(D(1, -1074), D(1, 0)) == tiny, 1);
+        expect("ratio 3*2^-1074 / 2^-1074 is exactly 3", ratio(D(3, -1074), D(1, -1074)) == 3.0, 1);
+        expect("ratio 0 / 2^-1074 is 0", ratio(D(0, 0), D(1, -1074)) == 0.0, 1);
+        { Dyadic na{(BigInt(1) << 1022) + 1, -1074}, nb{BigInt(1) << 1074, -1074}; double r = ratio(na, nb); expect("ratio (2^1022 + 1) * 2^-1074 / 1 is 2^-52 plus 2^-1074 (correct to 2^-60; old: 0)", std::fabs(r - std::ldexp(1.0, -52)) <= std::ldexp(1.0, -52 - 60), 1); }
+        // end to end: A = unit cube, B contains it, so A intersect B = A (exact 6V = 6). The result has its x0 face at the smallest subnormal and its top at 1 - 2^-52, so its exact 6V differs from 6 by a
+        // relative -2^-52 (below the 1e-9 'close' bound) and the exponents of its volume and of the difference are 1100 apart. Old: "relative nan", FAIL. New: close, PASS.
+        Mesh A1 = box(0, 0, 0, 1, 1, 1), B1 = box(-1, -1, -1, 2, 2, 2);
+        Mesh R1 = box(tiny, 0, 0, 1, 1, 1 - std::ldexp(1.0, -52));
+        Dyadic v6A = exactVolumeTimes6(A1), v6B = exactVolumeTimes6(B1);
+        std::string rowT = boxRow("u", A1, B1, v6B, v6A, Dyadic{0, 0});
+        expect("result volume off by a relative 2^-52 with a subnormal coordinate: close, passes (old: relative nan, fails)", score("", "u", 1, "", 100, true, &R1, &A1, &B1, &rowT), 0);
+        Mesh R2 = box(tiny, 0, 0, 1, 1, 0.5);
+        expect("the same with the top at 1/2: relative error 1/2, still fails", score("", "u", 1, "", 100, true, &R2, &A1, &B1, &rowT), 1);
+    }
     printf("%s\n", bad ? "SELFTEST FAIL" : "SELFTEST PASS");
     return bad ? 1 : 0;
 }
 
 int main(int argc, char** argv) {
+#ifndef MUT_NOEXACTINIT
+    exactinit();   // V4: must run before any predicate (score and selftest alike); MUT_NOEXACTINIT plants the V3 defect
+#endif
     if (argc >= 2 && std::string(argv[1]) == "selftest") return selftest();
     if (argc >= 6 && std::string(argv[1]) == "score") {
         std::string op = argv[4]; int o = op == "union" ? 0 : op == "intersection" ? 1 : op == "difference" ? 2 : -1;

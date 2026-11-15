@@ -1,0 +1,18 @@
+Recorded 2026-11-15T00:17:10Z, after the section 'V4 (registered 2026-11-15)' of docs/PLAN.md was written and BEFORE any V4 code change or V4 re-score. Nothing below may be edited; later hashes are appended with a reason.
+Section extraction: awk '/^## V4 \(registered/{f=1} /^## Out of scope/{f=0} f' docs/PLAN.md | shasum -a 256
+Disclosure: before this record I read the code and the recorded files and did not run anything new, except copying the existing build/mesh/mesh_compare to build/work/v4/bin/mesh_compare_old (the pre-V4 binary used as the 'old' scorer).
+04d9a1e35c524f82fb2327a4d4665be4af16d2c461d213bca994d0bf532c74d1  docs/PLAN.md section "V4"
+a294556039aaa3892b5b513e35a0c8d345ff018150fe470c07aef79813fbe1ee  oracle/compare.cpp (pre-V4)
+8bf0fac0999d6e769bb3d7a0a7cd4ff1c54a352f49e4501b621851dcb59f940d  build/work/v4/bin/mesh_compare_old
+9245691fa20daa3a802932245b6f07c17aa49d91783adfad0128a773eb0778df  ci/EXPECTED_AGGREGATES.txt
+b192ae1e25272a8c936f9cc4b2ca1666701c411fd0e547939868d6c24ff6425a  harness/pip.h
+Also before this record: build/work/v4/compare_old.cpp (copy of the pre-V4 oracle/compare.cpp) was compiled once to build/work/v4/bin/mesh_compare_old_rebuilt only to confirm the saved binary can be rebuilt (binaries differ in embedded paths; not used).
+
+--- appended 2026-11-15T00:31:26Z, after all V4 runs (final hashes; the PLAN section hash above still verifies: text from the V4 heading up to '### V4 amendments' = 04d9a1e3...)
+ed52ec1d02b4edc5a0ad8a8de665208b4f4d58093b2b736d73ec64fa2efbcdba  oracle/compare.cpp
+15be3ea8d452bd6ff353bf08527437ed9d2b165d51f28e66f779d20182e74c24  tests/CMakeLists.txt
+46061828ce8736e5d60fc107aca3d60ff0e8bfa0130bc175181185fd273220d1  lib/geogram/v4/rescore_all.py
+bc9bffe8752ff0b02c38e19e8638694addb77440079dd18fb03644d3d4ce7f20  lib/geogram/v4/old_comparator_driver.cpp
+9245691fa20daa3a802932245b6f07c17aa49d91783adfad0128a773eb0778df  ci/EXPECTED_AGGREGATES.txt
+b192ae1e25272a8c936f9cc4b2ca1666701c411fd0e547939868d6c24ff6425a  harness/pip.h
+c678ae5b14400d95fe930d309c5cc4d028b2b6c6aa9b43eb57fdcbab5f0b6481  lib/geogram/v3/V3_HASHES_BEFORE_RUN.txt
