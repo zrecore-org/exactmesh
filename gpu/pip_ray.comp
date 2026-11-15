@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 zrecore-org contributors
+#version 450
+#extension GL_GOOGLE_include_directive : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+// MP12: ray-parity point-in-solid FILTER, one thread per query point, looping over every triangle (a brute-force POC; the BVH version is a later step).
+// Verdict 0 = OUT, 1 = IN, 2 = UNCERTAIN (the CPU exact test decides). Per-triangle logic: pip_filter.inc (shared with the CPU twin).
+// Planted mutants (-DPMUT=n): 1 bound ignored, 2 uncertain triangle treated as no crossing, 3 exact zero treated as positive, 4 wrong tie for p in the plane,
+// 5 the last thread of each workgroup reports IN unconditionally.
+#include "f64soft.inc"
+#include "orient_filter.inc"
+#include "pip_filter.inc"
+layout(local_size_x = 64) in;
+layout(std430, binding = 0) readonly buffer V { uint64_t v[]; };
+layout(std430, binding = 1) readonly buffer T { uint t[]; };
+layout(std430, binding = 2) readonly buffer Q { uint64_t q[]; };
+layout(std430, binding = 3) writeonly buffer OUT { uint verdict[]; };
+layout(push_constant) uniform P { uint nq; uint nt; } pc;
+void main() {
+    uint i = gl_GlobalInvocationID.x;
+    if (i >= pc.nq) return;
+#if PMUT == 5
+    if (gl_LocalInvocationID.x == 63u) { verdict[i] = 1u; return; }
+#endif
+    uint64_t px = q[3u * i], py = q[3u * i + 1u], pz = q[3u * i + 2u];
+    uint crossings = 0u;
+    for (uint k = 0u; k < pc.nt; k++) {
+        uint a = t[3u * k], b = t[3u * k + 1u], c = t[3u * k + 2u];
+        uint r = pipTri(v[3u * a], v[3u * a + 1u], v[3u * a + 2u], v[3u * b], v[3u * b + 1u], v[3u * b + 2u], v[3u * c], v[3u * c + 1u], v[3u * c + 2u], px, py, pz);
+        if (r == PIP_UNCERT) { verdict[i] = 2u; return; }
+        crossings += r;
+    }
+    verdict[i] = crossings & 1u;
+}
