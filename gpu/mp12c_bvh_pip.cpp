@@ -409,13 +409,13 @@ static int f64check(int nPairs) {
     auto bA = ctx.alloc(ab.size() * 8), bO = ctx.alloc((size_t)nPairs * 24 * 4);
     memcpy(bA.ptr, ab.data(), ab.size() * 8); uint32_t pc = (uint32_t)nPairs;
     ctx.begin(); ctx.upload(bA); ctx.dispatch(k, {&bA, &bO}, &pc, (uint32_t)((nPairs + 63) / 64)); ctx.download(bO); ctx.submitWait();
-    const uint32_t* o = (const uint32_t*)bO.ptr; long bad[3] = {0, 0, 0}, stageBad[8] = {0}, shBad = 0, upBad = 0, shown = 0, hwBad[3] = {0, 0, 0};
+    const uint32_t* o = (const uint32_t*)bO.ptr; long devHw[3] = {0, 0, 0}, bad[3] = {0, 0, 0}, stageBad[8] = {0}, shBad = 0, upBad = 0, shown = 0, hwBad[3] = {0, 0, 0};
     auto w64 = [&](size_t i, int w) { return (uint64_t)o[24 * i + w] | ((uint64_t)o[24 * i + w + 1] << 32); };
     for (int ii = 0; ii < nPairs; ii++) {
         size_t i = (size_t)ii; uint64_t a = ab[2 * i], b = ab[2 * i + 1]; double da, db; memcpy(&da, &a, 8); memcpy(&db, &b, 8);
         double hw[3] = {da + db, da * db, da - db}; uint64_t hwb[3]; for (int j = 0; j < 3; j++) memcpy(&hwb[j], &hw[j], 8);
         uint64_t host[3] = {f64_add(a, b), f64_mul(a, b), f64_sub(a, b)};
-        for (int j = 0; j < 3; j++) { if (w64(i, 2 * j) != host[j]) bad[j]++; if (host[j] != hwb[j]) hwBad[j]++; }
+        for (int j = 0; j < 3; j++) { if (w64(i, 2 * j) != host[j]) bad[j]++; if (w64(i, 2 * j) != hwb[j]) devHw[j]++; if (host[j] != hwb[j]) hwBad[j]++; }
         const uint64_t kMant = 0x000FFFFFFFFFFFFFull, kHidden = 0x0010000000000000ull;
         uint64_t ma = (a & kMant) | kHidden, mb = (b & kMant) | kHidden, a0 = ma & 0xFFFFFFFFull, a1 = ma >> 32, b0 = mb & 0xFFFFFFFFull, b1 = mb >> 32;
         uint64_t p00 = a0 * b0, p01 = a0 * b1, p10 = a1 * b0, p11 = a1 * b1, mid = p01 + p10, lo = p00 + ((mid & 0xFFFFFFFFull) << 32), hi = p11 + (mid >> 32) + (lo < p00 ? 1ull : 0ull);
@@ -427,8 +427,9 @@ static int f64check(int nPairs) {
             for (int j = 0; j < 8; j++) printf("      %016llx / %016llx %s\n", (unsigned long long)w64(i, 6 + 2 * j), (unsigned long long)st[j], w64(i, 6 + 2 * j) == st[j] ? "" : "<-- differs"); }
     }
     printf("%d pairs. device vs host f64soft: add %ld, mul %ld, sub %ld mismatches. host f64soft vs hardware double: add %ld, mul %ld, sub %ld.\n", nPairs, bad[0], bad[1], bad[2], hwBad[0], hwBad[1], hwBad[2]);
+    printf("device f64soft vs hardware double: add %ld, mul %ld, sub %ld mismatches.\n", devHw[0], devHw[1], devHw[2]);
     printf("mul stage mismatches device vs host (p00 p01 p10 p11 mid lo hi rem): %ld %ld %ld %ld %ld %ld %ld %ld; sh %ld; round-up flag %ld\n", stageBad[0], stageBad[1], stageBad[2], stageBad[3], stageBad[4], stageBad[5], stageBad[6], stageBad[7], shBad, upBad);
-    ctx.release(bA); ctx.release(bO); ctx.release(k); ctx.destroy(); return (bad[0] || bad[1] || bad[2]) ? 3 : 0;
+    ctx.release(bA); ctx.release(bO); ctx.release(k); ctx.destroy(); return (bad[0] || bad[1] || bad[2] || devHw[0] || devHw[1] || devHw[2]) ? 3 : 0;
 }
 
 int main(int argc, char** argv) {

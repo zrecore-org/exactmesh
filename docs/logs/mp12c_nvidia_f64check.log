@@ -1,0 +1,69 @@
+device=NVIDIA GeForce RTX 4060 Ti
+  pair 2 a=40cba281781d55ae b=c03f27417fad29a3
+    device mul=c11ae7540a804712 host mul=c11ae7540a804713 hardware=c11ae7540a804712
+    stages p00 p01 p10 p11 mid lo hi rem (device / host):
+      3be7ccdd65fc6bca / 3be7ccdd65fc6bca 
+      000e9df85792432e / 000e9df85792432e 
+      000dc84f4ecc2123 / 000dc84f4ecc2123 
+      0000035cea64e9c1 / 0000035cea64e9c1 
+      001c6647a65e6451 / 001c6647a65e6451 
+      e246312e65fc6bca / e246312e65fc6bca 
+      0000035cea815008 / 0000035cea815008 
+      0006312e65fc6bca / 0006312e65fc6bca 
+  pair 6 a=bf94790e55e2af42 b=c00629b5ee9bdca5
+    device mul=3fac5bd2b59615bc host mul=3fac5bd2b59615bd hardware=3fac5bd2b59615bc
+    stages p00 p01 p10 p11 mid lo hi rem (device / host):
+      500d0935a2adad8a / 500d0935a2adad8a 
+      00076f7917037baa / 00076f7917037baa 
+      00131501f4b40e06 / 00131501f4b40e06 
+      000001c5bd10d4e6 / 000001c5bd10d4e6 
+      001a847b0bb789b0 / 001a847b0bb789b0 
+      5bc492e5a2adad8a / 5bc492e5a2adad8a 
+      000001c5bd2b5961 / 000001c5bd2b5961 
+      000492e5a2adad8a / 000492e5a2adad8a 
+  pair 8 a=c00e9a9257f4661d b=bf3c739ff69116c9
+    device mul=3f5b35d486b81be4 host mul=3f5b35d486b81be5 hardware=3f5b35d486b81be4
+    stages p00 p01 p10 p11 mid lo hi rem (device / host):
+      54b6b361c417aac5 / 54b6b361c417aac5 
+      0009c67495d67303 / 0009c67495d67303 
+      001d79e09201e8a2 / 001d79e09201e8a2 
+      00000366ba6996ae / 00000366ba6996ae 
+      0027405527d85ba5 / 0027405527d85ba5 
+      7c8f0f06c417aac5 / 7c8f0f06c417aac5 
+      00000366ba90d703 / 00000366ba90d703 
+      000f0f06c417aac5 / 000f0f06c417aac5 
+  pair 9 a=bfe643efa4932b62 b=3fe5dddb07e20dd3
+    device mul=bfde6de5b2eac204 host mul=bfde6de5b2eac205 hardware=bfde6de5b2eac204
+    stages p00 p01 p10 p11 mid lo hi rem (device / host):
+      051158ff1904bbc6 / 051158ff1904bbc6 
+      000e0eb26563b6d6 / 000e0eb26563b6d6 
+      0000af84b5cb20fd / 0000af84b5cb20fd 
+      000001e6de4c7075 / 000001e6de4c7075 
+      000ebe371b2ed7d3 / 000ebe371b2ed7d3 
+      204030d21904bbc6 / 204030d21904bbc6 
+      000001e6de5b2eac / 000001e6de5b2eac 
+      000030d21904bbc6 / 000030d21904bbc6 
+  pair 12 a=3fe5dc77c05921dd b=3f1a138ed962b161
+    device mul=3f11d07dca387e68 host mul=3f11d07dca387e69 hardware=3f11d07dca387e68
+    stages p00 p01 p10 p11 mid lo hi rem (device / host):
+      a355b519cdc9a1bd / a355b519cdc9a1bd 
+      001397bebf662f96 / 001397bebf662f96 
+      0012904e6a44d017 / 0012904e6a44d017 
+      0000023a0f931f02 / 0000023a0f931f02 
+      0026280d29aaffad / 0026280d29aaffad 
+      cd00b4c6cdc9a1bd / cd00b4c6cdc9a1bd 
+      0000023a0fb9470f / 0000023a0fb9470f 
+      0000b4c6cdc9a1bd / 0000b4c6cdc9a1bd 
+  pair 13 a=3f2b4f988f48c32a b=402c926d6f84e047
+    device mul=3f68629e0bba8fbf host mul=3f68629e0bba8fc0 hardware=3f68629e0bba8fbf
+    stages p00 p01 p10 p11 mid lo hi rem (device / host):
+      3e6aebab3f9ae0a6 / 3e6aebab3f9ae0a6 
+      000ffde9d9e10ce2 / 000ffde9d9e10ce2 
+      000be5afdf981328 / 000be5afdf981328 
+      0000030c53a593b8 / 0000030c53a593b8 
+      001be399b979200a / 001be399b979200a 
+      f7e40bb53f9ae0a6 / f7e40bb53f9ae0a6 
+      0000030c53c17751 / 0000030c53c17751 
+      00040bb53f9ae0a6 / 00040bb53f9ae0a6 
+1000000 pairs. device vs host f64soft: add 25, mul 499505, sub 25 mismatches. host f64soft vs hardware double: add 25, mul 499505, sub 25.
+mul stage mismatches device vs host (p00 p01 p10 p11 mid lo hi rem): 0 0 0 0 0 0 0 0; sh 0; round-up flag 0

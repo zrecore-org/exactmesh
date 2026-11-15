@@ -17,6 +17,10 @@
 typedef unsigned uint;
 extern int g_mut;   // mutation switch for the self-check: 0 = correct code
 #define MUT(k) (g_mut == (k))
+// The literals below use the `ul` suffix, which is 64 bits only where `unsigned long` is 64 bits (LP64: macOS, Linux). On LLP64 targets (Windows) it is 32 bits and
+// `1ul << 52` silently gives a wrong result (found in MP12c: the mingw build of the twin disagreed with the hardware double). Such builds must rewrite `ul` to `ull`
+// first (tools/win_build.sh does); this assertion makes any other build fail loudly instead of computing wrong values.
+static_assert(sizeof(1ul) == 8, "f64soft.inc needs 64-bit `ul` literals: rewrite the suffix to `ull` on LLP64 targets");
 #define FN static inline
 #define IO(T) T&
 static inline int msb64(uint64_t x) { return 63 - __builtin_clzll(x); }   // x != 0
