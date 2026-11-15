@@ -26,6 +26,7 @@ int g_mut = 0;
 extern "C" { void exactinit(void); }
 #define PIP_CASES_DETERMINISTIC 1
 #include "pip_cases.h"
+#include "stl_read.h"
 
 struct FBox { float lo[3], hi[3]; };
 static float roundDown(double x) { float f = (float)x; if ((double)f > x) f = nextafterf(f, -INFINITY); return f; }
@@ -192,16 +193,16 @@ static void cpuPerMesh(const Scene& s, const std::vector<double>& q, const std::
 
 struct Tot { long q = 0, out = 0, in = 0, unc = 0, falseDef = 0, boundary = 0, devTwin = 0, finalBad = 0; };
 
-static int correctness(const std::string& spv, int bmutTwin, int stk, bool checkCoverage) {
+static int correctness(const std::string& spv, int bmutTwin, int stk, bool checkCoverage, const std::vector<Case>* real = nullptr) {
     exactinit();
     GpuPip g; if (!g.init(spv)) { printf("no GPU: %s\n", g.ctx.error.c_str()); return 2; }
     printf("device=%s memory=%s shader=%s hmut=%d stack=%d\n", g.ctx.props.deviceName, g.ctx.memMode(), spv.c_str(), g_hmut, stk);
     printf("%-46s %-62s %7s %7s %7s %7s %8s %6s %6s %8s\n", "mesh", "query class", "n", "OUT", "IN", "UNCERT", "falseDef", "bndry", "dev/tw", "finalBad");
     Tot tot; bool coverageOk = true; long cpuBvhBad = 0; uint64_t vhash = 1469598103934665603ull;
-    auto cases = makeCases();
+    auto cases = real ? *real : makeCases();
     // extra scenes: a lattice block with equal Morton codes is in makeCases; add a larger block (deep tree) and the multi-mesh scene below
-    { Case c; Rng r(77); c.mesh = "block 8x8x8"; c.m = block(8); addClasses(c, 8, r, 0, 0, 0, 0); cases.push_back(std::move(c)); }
-    { Case c; Rng r(78); c.mesh = "sphere 60x80"; c.m = uvsphere(60, 80, 1, 0, 0, 0); addClasses(c, 0, r, 0, 0, 0, 0); cases.push_back(std::move(c)); }
+    if (!real) { Case c; Rng r(77); c.mesh = "block 8x8x8"; c.m = block(8); addClasses(c, 8, r, 0, 0, 0, 0); cases.push_back(std::move(c)); }
+    if (!real) { Case c; Rng r(78); c.mesh = "sphere 60x80"; c.m = uvsphere(60, 80, 1, 0, 0, 0); addClasses(c, 0, r, 0, 0, 0, 0); cases.push_back(std::move(c)); }
     auto account = [&](const std::string& mname, const std::string& cname, const std::vector<uint32_t>& dev, const std::vector<uint32_t>& twin, const std::vector<uint8_t>& exact, bool must) {
         size_t n = dev.size(); Tot s; s.q = (long)n; for (size_t i = 0; i < n; i++) { vhash ^= dev[i]; vhash *= 1099511628211ull; }
         for (size_t i = 0; i < n; i++) {
@@ -225,7 +226,7 @@ static int correctness(const std::string& spv, int bmutTwin, int stk, bool check
         }
     }
     // many meshes in one scene, spatially overlapping (so the mesh id test is exercised): 40 blocks of 2x2x2 at random shifts within a 3-unit box, 200 queries each
-    {
+    if (!real) {
         Scene sc; sc.multi = true; std::vector<Mesh> per; Rng r(79); std::vector<double> q; std::vector<uint32_t> qm;
         for (uint32_t k = 0; k < 40; k++) {
             double sx = (double)r.pick(3) * 0.5, sy = (double)r.pick(3) * 0.5, sz = (double)r.pick(3) * 0.5;   // one draw per declarator: function-argument evaluation order is unspecified (GCC on x86_64 and clang disagree)
@@ -435,6 +436,20 @@ static int f64check(int nPairs) {
     ctx.release(bA); ctx.release(bO); ctx.release(k); ctx.destroy(); return (bad[0] || bad[1] || bad[2] || devHw[0] || devHw[1] || devHw[2]) ? 3 : 0;
 }
 
+// ---- real: MP12e, the MP12c correctness run on STL models (one path per line in <list>, id = file stem), the MP12c query classes, seeded from the id ----
+static int realMode(const std::string& list, const std::string& spv) {
+    std::ifstream in(list); std::string path; std::vector<Case> cases; size_t degTotal = 0, nDeg = 0;
+    while (std::getline(in, path)) {
+        if (path.empty()) continue;
+        Case c; size_t deg = 0; if (!stlr::readStl(path, c.m, &deg)) { printf("unreadable: %s\n", path.c_str()); return 1; }
+        size_t sl = path.find_last_of('/'), dt = path.find_last_of('.'); c.mesh = path.substr(sl == std::string::npos ? 0 : sl + 1, dt - (sl == std::string::npos ? 0 : sl + 1)) + " (" + std::to_string(c.m.nt()) + " tris" + (deg ? ", " + std::to_string(deg) + " degenerate" : "") + ")";
+        uint64_t h = 1469598103934665603ull; for (char ch : c.mesh.substr(0, c.mesh.find(' '))) { h ^= (uint8_t)ch; h *= 1099511628211ull; }
+        Rng r(h); addClasses(c, 0, r, 0, 0, 0, 0); degTotal += deg; nDeg += deg > 0; cases.push_back(std::move(c));
+    }
+    printf("real models: %zu, with a degenerate triangle after welding: %zu (%zu triangles)\n", cases.size(), nDeg, degTotal);
+    return correctness(spv, 0, 64, false, &cases);
+}
+
 int main(int argc, char** argv) {
     setvbuf(stdout, nullptr, _IONBF, 0);
     std::string mode = argc > 1 ? argv[1] : "device";
@@ -447,5 +462,6 @@ int main(int argc, char** argv) {
     if (mode == "diag") return diag(spv);
     if (mode == "f64check") return f64check(argc > 2 ? atoi(argv[2]) : 1000000);
     if (mode == "bulk") return bulk(spv);
+    if (mode == "real") return realMode(argc > 2 ? argv[2] : "", argc > 3 ? argv[3] : "pip_bvh");
     printf("unknown mode\n"); return 1;
 }
