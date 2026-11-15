@@ -1,0 +1,4 @@
+device=NVIDIA GeForce RTX 4060 Ti shader=pip_bvh
+summary: 0 differing queries; 0 pairs checked on the device (every triangle of the mesh for each such query); 0 pairs differ in at least one field
+field differences (0 pipTri, 1-3 edge signs, 4 normal sign, 5 orient3d side, 6-13 det words): 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+queries whose per-triangle device sum equals the device verdict: 0 of 0; per-triangle twin sum equals the twin verdict: 0 of 0; queries with NO field-level difference at all (so the difference is in the traversal): 0

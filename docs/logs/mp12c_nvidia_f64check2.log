@@ -1,0 +1,4 @@
+device=NVIDIA GeForce RTX 4060 Ti
+1000000 pairs. device vs host f64soft: add 0, mul 0, sub 0 mismatches. host f64soft vs hardware double: add 0, mul 0, sub 0.
+device f64soft vs hardware double: add 0, mul 0, sub 0 mismatches.
+mul stage mismatches device vs host (p00 p01 p10 p11 mid lo hi rem): 0 0 0 0 0 0 0 0; sh 0; round-up flag 0
