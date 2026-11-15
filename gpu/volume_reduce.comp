@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 zrecore-org contributors
+#version 450
+#extension GL_GOOGLE_include_directive : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+// MP12 part B: exact partial sums of 6 * volume. Thread g adds the terms of triangles g, g + nThreads, ... into a private 896-bit accumulator and writes its 28 limbs;
+// the host adds the partials exactly (integers) and rounds once. Planted mutants: -DVMUT=1..4 (see exact_acc.inc).
+#include "f64soft.inc"
+#include "orient_filter.inc"
+#include "exact_acc.inc"
+layout(local_size_x = 64) in;
+layout(std430, binding = 0) readonly buffer V { uint64_t v[]; };
+layout(std430, binding = 1) readonly buffer T { uint t[]; };
+layout(std430, binding = 2) writeonly buffer OUT { uint part[]; };
+layout(push_constant) uniform P { uint nt; uint nthreads; } pc;
+void main() {
+    uint g = gl_GlobalInvocationID.x;
+    if (g >= pc.nthreads) return;
+    uint acc[ACC_LIMBS];
+    for (int i = 0; i < ACC_LIMBS; i++) acc[i] = 0u;
+    for (uint k = g; k < pc.nt; k += pc.nthreads) {
+        uint a = t[3u * k], b = t[3u * k + 1u], c = t[3u * k + 2u];
+        accTriangle(acc, v[3u * a], v[3u * a + 1u], v[3u * a + 2u], v[3u * b], v[3u * b + 1u], v[3u * b + 2u], v[3u * c], v[3u * c + 1u], v[3u * c + 2u]);
+    }
+    for (int i = 0; i < ACC_LIMBS; i++) part[g * uint(ACC_LIMBS) + uint(i)] = acc[i];
+}
