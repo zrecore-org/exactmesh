@@ -188,6 +188,7 @@ static int crossover() {
     return 0;
 }
 int main(int argc, char** argv) {
+    setvbuf(stdout, nullptr, _IONBF, 0);   // a crash must not swallow the lines printed so far
     std::string m = argc > 1 ? argv[1] : "faults";
     if (m == "crossover") return crossover();
     if (m == "nodevice") return faults(0, true);
