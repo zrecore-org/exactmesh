@@ -89,7 +89,7 @@ struct Service {
             auto bV = ctx->alloc(vb), bT = ctx->alloc(m.t.size() * 4), bQ = ctx->alloc(n * 24), bO = ctx->alloc(n * 4);
             memcpy(bV.ptr, m.v.data(), m.v.size() * 8); memcpy(bT.ptr, m.t.data(), m.t.size() * 4); memcpy(bQ.ptr, q.data(), n * 24);
             uint32_t pc[2] = {(uint32_t)n, (uint32_t)m.nt()};
-            if (inject == Fault::Hang) std::this_thread::sleep_for(std::chrono::milliseconds((int)(cfg.deadlineMs * 3)));
+            if (inject == Fault::Hang) { std::this_thread::sleep_for(std::chrono::milliseconds((int)(cfg.deadlineMs * 3))); return; }   // a stuck call: after the sleep it does no more GPU work and releases nothing (a detached thread dispatching on a second context at the same time crashed lavapipe)
             ctx->begin(); for (gpu::Buf* b : {&bV, &bT, &bQ}) ctx->upload(*b); ctx->dispatch(k, {&bV, &bT, &bQ, &bO}, pc, (uint32_t)((n + 63) / 64)); ctx->download(bO); ctx->submitWait();
             memcpy(v.data(), bO.ptr, n * 4); for (gpu::Buf* b : {&bV, &bT, &bQ, &bO}) ctx->release(*b);
         };
