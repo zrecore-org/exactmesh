@@ -1,0 +1,82 @@
+== case gpu_dzn; extensionOptions: [extensionOptions:|  gpu: true|]
+vulkan-library-mappings: 10
+{"t":{"$date":"2026-11-16T19:23:52.164+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=true engine=gpu reason=hardware device present"}
+PASS inserted 60 model documents
+PASS batchSize 1000: 60 documents returned
+PASS batchSize 1000: every verdict string equals the oracle mismatched models=0
+PASS batchSize 7: 60 documents returned
+PASS batchSize 7: every verdict string equals the oracle mismatched models=0
+QUERIES 540000 ON 68436 resolved-verdict hash=ae59d9976297a67b
+PASS hash equals the MP14d reference ae59d9976297a67b
+COUNTERS {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'gpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 120, 'gpuFallbacks': 0, 'gpuShadowMismatch': 0, 'gpuUncertain': 269958, 'gpuPoints': 1080000}
+PASS device path used: gpuBatches > 0, UNCERTAIN resolved exactly (gpuUncertain > 0), 0 fallbacks, 0 shadow mismatches, engine gpu {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'gpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 120, 'gpuFallbacks': 0, 'gpuShadowMismatch': 0, 'gpuUncertain': 269958, 'gpuPoints': 1080000}
+PASS planted wrong verdicts: results still equal the oracle
+COUNTERS {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'cpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 120, 'gpuFallbacks': 1, 'gpuShadowMismatch': 1, 'gpuUncertain': 269958, 'gpuPoints': 1080000}
+PASS shadow check fired once, fell back, device disabled (engine cpu) {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'cpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 120, 'gpuFallbacks': 1, 'gpuShadowMismatch': 1, 'gpuUncertain': 269958, 'gpuPoints': 1080000}
+Traceback (most recent call last):
+  File "/w/mp14d_dzn/mp14d_pkg/test_mp14d.py", line 53, in <module>
+    res = list(col.aggregate([{"$meshContains": SPEC}]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/collection.py", line 3013, in aggregate
+    return self._aggregate(
+           ^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/_csot.py", line 133, in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/collection.py", line 2910, in _aggregate
+    return self._database.client._retryable_read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/mongo_client.py", line 2124, in _retryable_read
+    return self._retry_internal(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/_csot.py", line 133, in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/mongo_client.py", line 2086, in _retry_internal
+    ).run()
+      ^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/mongo_client.py", line 2901, in run
+    self._check_last_error()
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/mongo_client_shared.py", line 234, in _check_last_error
+    raise self._last_error
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/mongo_client.py", line 2890, in run
+    res = self._read() if self._is_read else self._write()
+          ^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/mongo_client.py", line 3089, in _read
+    return self._func(self._session, self._server, conn, read_pref)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/aggregation.py", line 162, in get_cursor
+    result = conn.command(
+             ^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/helpers.py", line 50, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/pool.py", line 311, in command
+    self._raise_connection_failure(error)
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/pool.py", line 416, in _raise_connection_failure
+    raise error
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/pool.py", line 286, in command
+    return run_command(
+           ^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/command_runner.py", line 438, in run_command
+    docs, _, _ = _run_command(
+                 ^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/command_runner.py", line 190, in _run_command
+    reply = conn.receive_message(request_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/pool.py", line 339, in receive_message
+    self._raise_connection_failure(error)
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/pool.py", line 416, in _raise_connection_failure
+    raise error
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/synchronous/pool.py", line 336, in receive_message
+    return receive_message(self, request_id, self.max_message_size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/network_layer.py", line 746, in receive_message
+    length, _, response_to, op_code = _UNPACK_HEADER(receive_data(conn, 16, deadline))
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/w/mp14d_dzn/mp14d_pkg/venv/lib/python3.12/site-packages/pymongo/network_layer.py", line 337, in receive_data
+    raise _OperationCancelled("operation cancelled") from None
+pymongo.errors._OperationCancelled: operation cancelled
+./run_mp14d_real.sh: line 7:  3927 Segmentation fault      (core dumped) nice -n 10 "$MONGOD" -f "$R/mongod.conf" > "$R/start.out" 2>&1
+FAIL gpu_dzn: test_mp14d
+FAILS 1
