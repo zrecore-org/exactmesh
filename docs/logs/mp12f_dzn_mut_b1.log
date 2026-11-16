@@ -1,0 +1,54 @@
+WARNING: dzn is not a conformant Vulkan implementation, testing use only.
+device=Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Ti) memory=discrete (device-local + staging copies) shader=pip_bvh_b1 hmut=0 stack=64
+mesh                                           query class                                                          n     OUT      IN  UNCERT falseDef  bndry dev/tw finalBad
+sphere 30x40                                   random in and around the bbox                                     3000    2543     457       0        0      0      0        0
+sphere 30x40                                   ray through a vertex (py,pz of a vertex, px random)               1500     605       0     895       49      0      0       49
+sphere 30x40                                   on the surface (rounded barycentric points)                       1500     616     619     265        0      0      0        0
+sphere 30x40                                   within 1..3 ulp of a face point (each axis)                       3000    1342    1357     301        0      0      0        0
+block 3x3x3                                    random in and around the bbox                                     3000    2109     891       0        0      0      0        0
+block 3x3x3                                    ray through a vertex (py,pz of a vertex, px random)               1500    1500       0       0     1001    751      0     1001
+block 3x3x3                                    on the surface (rounded barycentric points)                       1500    1155     345       0     1319   1319      0     1319
+block 3x3x3                                    within 1..3 ulp of a face point (each axis)                       3000    2174     663     163     2042   1907    135     2042
+block 3x3x3                                    lattice points step 1/2 (faces, edges, vertices, grazing rays)    1331    1259       0      72      289    218      0      289
+block 3x3x3                                    on a block face, 1..3 ulp off along the normal                    3000    1830     673     497      570      0    570      570
+block 3x3x3 at +2^30                           random in and around the bbox                                     3000    2092     908       0        0      0      0        0
+block 3x3x3 at +2^30                           ray through a vertex (py,pz of a vertex, px random)               1500    1500       0       0     1025    752      0     1025
+block 3x3x3 at +2^30                           on the surface (rounded barycentric points)                       1500     986     297     217     1081   1298      0     1081
+block 3x3x3 at +2^30                           within 1..3 ulp of a face point (each axis)                       3000    1951     688     361     1677   1904    134     1677
+block 3x3x3 at +2^30                           lattice points step 1/2 (faces, edges, vertices, grazing rays)    1331    1232       0      99      280    218      0      280
+block 3x3x3 at +2^30                           on a block face, 1..3 ulp off along the normal                    3000    1588     947     465     1077    964    578     1077
+block 3x3x3 at +2^50 (x,y,z)                   random in and around the bbox                                     3000    1803     330     867      140    377      0      140
+block 3x3x3 at +2^50 (x,y,z)                   ray through a vertex (py,pz of a vertex, px random)               1500     659       0     841      464    817      0      464
+block 3x3x3 at +2^50 (x,y,z)                   on the surface (rounded barycentric points)                       1500     564     148     788      529   1266      0      529
+block 3x3x3 at +2^50 (x,y,z)                   within 1..3 ulp of a face point (each axis)                       3000    1315     330    1355      712   1736      0      712
+block 3x3x3 at +2^50 (x,y,z)                   lattice points step 1/2 (faces, edges, vertices, grazing rays)    1331     935       0     396       91    218      0       91
+block 3x3x3 at +2^50 (x,y,z)                   on a block face, 1..3 ulp off along the normal                    3000    1095     177    1728     1272   3000      0     1272
+block 3x3x3 scaled 2^-30                       random in and around the bbox                                     3000    2074     926       0        0      0      0        0
+block 3x3x3 scaled 2^-30                       ray through a vertex (py,pz of a vertex, px random)               1500    1500       0       0      997    750      0      997
+block 3x3x3 scaled 2^-30                       on the surface (rounded barycentric points)                       1500    1173     327       0     1302   1302      0     1302
+block 3x3x3 scaled 2^-30                       within 1..3 ulp of a face point (each axis)                       3000    2204     668     128     2063   1915    148     2063
+block 3x3x3 scaled 2^-30                       lattice points step 1/2 (faces, edges, vertices, grazing rays)    1331    1259       0      72      289    218      0      289
+block 3x3x3 scaled 2^-30                       on a block face, 1..3 ulp off along the normal                    3000    1827    1173       0     1470   1470      0     1470
+block 3x3x3 scaled 2^200 (outside the window)  random in and around the bbox                                     3000    2785       0     215      896      0      0      896
+block 3x3x3 scaled 2^200 (outside the window)  ray through a vertex (py,pz of a vertex, px random)               1500     954       0     546      665    737      0      665
+block 3x3x3 scaled 2^200 (outside the window)  on the surface (rounded barycentric points)                       1500    1133       0     367     1048   1336      0     1048
+block 3x3x3 scaled 2^200 (outside the window)  within 1..3 ulp of a face point (each axis)                       3000    2428       0     572     1900   1927     82     1900
+block 3x3x3 scaled 2^200 (outside the window)  lattice points step 1/2 (faces, edges, vertices, grazing rays)    1331    1160       0     171      266    218      0      266
+block 3x3x3 scaled 2^200 (outside the window)  on a block face, 1..3 ulp off along the normal                    3000    3000       0       0     1531      0    196     1531
+block 8x8x8                                    random in and around the bbox                                     3000    2108     892       0        0      0      0        0
+block 8x8x8                                    ray through a vertex (py,pz of a vertex, px random)               1500    1500       0       0     1013    388      0     1013
+block 8x8x8                                    on the surface (rounded barycentric points)                       1500    1111     389       0     1357   1357      0     1357
+block 8x8x8                                    within 1..3 ulp of a face point (each axis)                       3000    2097     754     149     2039   1892    147     2039
+block 8x8x8                                    lattice points step 1/2 (faces, edges, vertices, grazing rays)    9261    8109       0    1152     3889   1538      0     3889
+block 8x8x8                                    on a block face, 1..3 ulp off along the normal                    3000    1868     645     487      580      0    580      580
+sphere 60x80                                   random in and around the bbox                                     3000    2544     456       0        0      0      0        0
+sphere 60x80                                   ray through a vertex (py,pz of a vertex, px random)               1500     573       0     927       22      0      0       22
+sphere 60x80                                   on the surface (rounded barycentric points)                       1500     676     712     112        0      0      0        0
+sphere 60x80                                   within 1..3 ulp of a face point (each axis)                       3000    1414    1420     166        0      0      0        0
+40 overlapping 2x2x2 blocks in one scene       queries (half on the half-integer lattice)                        8000    7138     766      96      416    383      0      416
+total: queries 113916, OUT 81488, IN 17958, UNCERTAIN 14470 (12.70%); false definite 35361; exact-boundary 32176; device vs twin differences 2570
+device verdict arrays (all classes, in order): FNV-1a hash 81dbb8d9de408031
+fair CPU baseline (BVH ray walk + native exact predicates) versus the all-triangles exact test: 0 disagreements
+mutant pip_bvh_b1 hmut=0: caught
+time 36.431 s
+rc=0 (124 = killed after the 900 s limit)

@@ -1,0 +1,250 @@
+real models: 60, with a degenerate triangle after welding: 0 (0 triangles)
+WARNING: dzn is not a conformant Vulkan implementation, testing use only.
+device=Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Ti) memory=discrete (device-local + staging copies) shader=pip_bvh hmut=0 stack=64
+mesh                                           query class                                                          n     OUT      IN  UNCERT falseDef  bndry dev/tw finalBad
+80557 (59256 tris)                             random in and around the bbox                                     3000    2811     189       0        0      0      0        0
+80557 (59256 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     606     164     730        0      0      0        0
+80557 (59256 tris)                             on the surface (rounded barycentric points)                       1500     719     704      77        0      0      0        0
+80557 (59256 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1437    1475      88        0      0      0        0
+54228 (88 tris)                                random in and around the bbox                                     3000    2851     149       0        0      0      0        0
+54228 (88 tris)                                ray through a vertex (py,pz of a vertex, px random)               1500     442      26    1032        0      0      0        0
+54228 (88 tris)                                on the surface (rounded barycentric points)                       1500     276     249     975        0      0      0        0
+54228 (88 tris)                                within 1..3 ulp of a face point (each axis)                       3000     770     710    1520        0      0      0        0
+79182 (14256 tris)                             random in and around the bbox                                     3000    2728     272       0        0      0      0        0
+79182 (14256 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     459      17    1024        0     39      0        0
+79182 (14256 tris)                             on the surface (rounded barycentric points)                       1500     640     671     189        0     81      0        0
+79182 (14256 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1358    1383     259        0    106      0        0
+84917 (3294 tris)                              random in and around the bbox                                     3000    2822     178       0        0      0      0        0
+84917 (3294 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     479      32     989        0    297      0        0
+84917 (3294 tris)                              on the surface (rounded barycentric points)                       1500     508     481     511        0    487      0        0
+84917 (3294 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1100    1172     728        0    700      0        0
+702388 (1764 tris)                             random in and around the bbox                                     3000    2529     471       0        0      0      0        0
+702388 (1764 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     324     174    1002        0    169      0        0
+702388 (1764 tris)                             on the surface (rounded barycentric points)                       1500     504     527     469        0    255      0        0
+702388 (1764 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1203    1096     701        0    376      0        0
+472011 (13194 tris)                            random in and around the bbox                                     3000    2369     631       0        0      0      0        0
+472011 (13194 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     338     213     949        0     39      0        0
+472011 (13194 tris)                            on the surface (rounded barycentric points)                       1500     714     723      63        0     50      0        0
+472011 (13194 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1420    1476     104        0     86      0        0
+122866 (192 tris)                              random in and around the bbox                                     3000    2627     373       0        0      0      0        0
+122866 (192 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     317       0    1183        0    397      0        0
+122866 (192 tris)                              on the surface (rounded barycentric points)                       1500     460     455     585        0    535      0        0
+122866 (192 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1100    1103     797        0    739      0        0
+86240 (524 tris)                               random in and around the bbox                                     3000    2510     490       0        0      0      0        0
+86240 (524 tris)                               ray through a vertex (py,pz of a vertex, px random)               1500     384      51    1065        0    133      0        0
+86240 (524 tris)                               on the surface (rounded barycentric points)                       1500     359     367     774        0    276      0        0
+86240 (524 tris)                               within 1..3 ulp of a face point (each axis)                       3000     829     901    1270        0    397      0        0
+132420 (9580 tris)                             random in and around the bbox                                     3000    2656     344       0        0      0      0        0
+132420 (9580 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     284      22    1194        0     20      0        0
+132420 (9580 tris)                             on the surface (rounded barycentric points)                       1500     737     715      48        0     36      0        0
+132420 (9580 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1462    1462      76        0     59      0        0
+88628 (688 tris)                               random in and around the bbox                                     3000    2705     295       0        0      0      0        0
+88628 (688 tris)                               ray through a vertex (py,pz of a vertex, px random)               1500     419      20    1061        0    346      0        0
+88628 (688 tris)                               on the surface (rounded barycentric points)                       1500     405     419     676        0    629      0        0
+88628 (688 tris)                               within 1..3 ulp of a face point (each axis)                       3000    1001     966    1033        0    909      0        0
+90273 (12354 tris)                             random in and around the bbox                                     3000    2786     214       0        0      0      0        0
+90273 (12354 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     477       0    1023        0     77      0        0
+90273 (12354 tris)                             on the surface (rounded barycentric points)                       1500     616     673     211        0    154      0        0
+90273 (12354 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1339    1336     325        0    208      0        0
+76200 (1252 tris)                              random in and around the bbox                                     3000    2760     240       0        0      0      0        0
+76200 (1252 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     245       8    1247        0    881      0        0
+76200 (1252 tris)                              on the surface (rounded barycentric points)                       1500     384     416     700        0    676      0        0
+76200 (1252 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1010     881    1109        0    962      0        0
+40117 (3780 tris)                              random in and around the bbox                                     3000    2421     579       0        0      0      0        0
+40117 (3780 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     222       7    1271        0    563      0        0
+40117 (3780 tris)                              on the surface (rounded barycentric points)                       1500     395     372     733        0    666      0        0
+40117 (3780 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1014     915    1071        0    984      0        0
+106884 (3512 tris)                             random in and around the bbox                                     3000    2683     317       0        0      0      0        0
+106884 (3512 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     297      26    1177        0    366      0        0
+106884 (3512 tris)                             on the surface (rounded barycentric points)                       1500     322     284     894        0    839      0        0
+106884 (3512 tris)                             within 1..3 ulp of a face point (each axis)                       3000     903     821    1276        0   1195      0        0
+501149 (3792 tris)                             random in and around the bbox                                     3000    2622     378       0        0      0      0        0
+501149 (3792 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     386      40    1074        0    126      0        0
+501149 (3792 tris)                             on the surface (rounded barycentric points)                       1500     589     583     328        0    290      0        0
+501149 (3792 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1280    1263     457        0    415      0        0
+96966 (7088 tris)                              random in and around the bbox                                     3000    2437     563       0        0      0      0        0
+96966 (7088 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     250     625     625        0    335      0        0
+96966 (7088 tris)                              on the surface (rounded barycentric points)                       1500     425     404     671        0    668      0        0
+96966 (7088 tris)                              within 1..3 ulp of a face point (each axis)                       3000     917     960    1123        0    948      0        0
+88053 (153840 tris)                            random in and around the bbox                                     3000    2972      28       0        0      0      0        0
+88053 (153840 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     681      48     771        0      0      0        0
+88053 (153840 tris)                            on the surface (rounded barycentric points)                       1500     740     705      55        0      0      0        0
+88053 (153840 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1474    1485      41        0      0      0        0
+95796 (5420 tris)                              random in and around the bbox                                     3000    2535     465       0        0      0      0        0
+95796 (5420 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     391      85    1024        0     68      0        0
+95796 (5420 tris)                              on the surface (rounded barycentric points)                       1500     711     692      97        0     65      0        0
+95796 (5420 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1430    1449     121        0     80      0        0
+105637 (484 tris)                              random in and around the bbox                                     3000    2551     449       0        0      0      0        0
+105637 (484 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     323      25    1152        0      0      0        0
+105637 (484 tris)                              on the surface (rounded barycentric points)                       1500     548     515     437        0      6      0        0
+105637 (484 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1219    1173     608        0     11      0        0
+45409 (128 tris)                               random in and around the bbox                                     3000    2878     122       0        0      0      0        0
+45409 (128 tris)                               ray through a vertex (py,pz of a vertex, px random)               1500    1074       0     426        0    158      0        0
+45409 (128 tris)                               on the surface (rounded barycentric points)                       1500     394     390     716        0    695      0        0
+45409 (128 tris)                               within 1..3 ulp of a face point (each axis)                       3000     947    1009    1044        0   1027      0        0
+65443 (6124 tris)                              random in and around the bbox                                     3000    2722     278       0        0      0      0        0
+65443 (6124 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     349      18    1133        0    322      0        0
+65443 (6124 tris)                              on the surface (rounded barycentric points)                       1500     378     361     761        0    711      0        0
+65443 (6124 tris)                              within 1..3 ulp of a face point (each axis)                       3000     916     866    1218        0   1050      0        0
+98659 (2522 tris)                              random in and around the bbox                                     3000    2826     174       0        0      0      0        0
+98659 (2522 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     559      22     919        0    310      0        0
+98659 (2522 tris)                              on the surface (rounded barycentric points)                       1500     439     492     569        0    494      0        0
+98659 (2522 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1093    1151     756        0    675      0        0
+44382 (88 tris)                                random in and around the bbox                                     3000    2322     678       0        0      0      0        0
+44382 (88 tris)                                ray through a vertex (py,pz of a vertex, px random)               1500     269       0    1231        0    580      0        0
+44382 (88 tris)                                on the surface (rounded barycentric points)                       1500     348     368     784        0    607      0        0
+44382 (88 tris)                                within 1..3 ulp of a face point (each axis)                       3000     902     904    1194        0    894      0        0
+153100 (216 tris)                              random in and around the bbox                                     3000    2928      72       0        0      0      0        0
+153100 (216 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     673       2     825        0    257      0        0
+153100 (216 tris)                              on the surface (rounded barycentric points)                       1500     200     190    1110        0   1028      0        0
+153100 (216 tris)                              within 1..3 ulp of a face point (each axis)                       3000     688     667    1645        0   1502      0        0
+110207 (888 tris)                              random in and around the bbox                                     3000    2624     376       0        0      0      0        0
+110207 (888 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     310       0    1190        0    928      0        0
+110207 (888 tris)                              on the surface (rounded barycentric points)                       1500     397     413     690        0    665      0        0
+110207 (888 tris)                              within 1..3 ulp of a face point (each axis)                       3000     865     870    1265        0   1021      0        0
+75113 (1134 tris)                              random in and around the bbox                                     3000    2789     211       0        0      0      0        0
+75113 (1134 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     295      13    1192        0    495      0        0
+75113 (1134 tris)                              on the surface (rounded barycentric points)                       1500     411     348     741        0    642      0        0
+75113 (1134 tris)                              within 1..3 ulp of a face point (each axis)                       3000     976     894    1130        0    932      0        0
+347932 (1196 tris)                             random in and around the bbox                                     3000    2434     566       0        0      0      0        0
+347932 (1196 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     375      70    1055        0    162      0        0
+347932 (1196 tris)                             on the surface (rounded barycentric points)                       1500     611     657     232        0    177      0        0
+347932 (1196 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1364    1316     320        0    250      0        0
+71722 (2292 tris)                              random in and around the bbox                                     3000    2888     112       0        0      0      0        0
+71722 (2292 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     412       3    1085        0    414      0        0
+71722 (2292 tris)                              on the surface (rounded barycentric points)                       1500     433     414     653        0    628      0        0
+71722 (2292 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1037     957    1006        0    918      0        0
+762600 (17336 tris)                            random in and around the bbox                                     3000    2574     426       0        0      0      0        0
+762600 (17336 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     550     174     776        0      0      0        0
+762600 (17336 tris)                            on the surface (rounded barycentric points)                       1500     689     745      66        0      0      0        0
+762600 (17336 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1445    1464      91        0      0      0        0
+697206 (3710 tris)                             random in and around the bbox                                     3000    2459     541       0        0      0      0        0
+697206 (3710 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     351     325     824        0      0      0        0
+697206 (3710 tris)                             on the surface (rounded barycentric points)                       1500     656     676     168        0      0      0        0
+697206 (3710 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1362    1435     203        0      1      0        0
+54468 (3264 tris)                              random in and around the bbox                                     3000    2862     138       0        0      0      0        0
+54468 (3264 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     322       6    1172        0    341      0        0
+54468 (3264 tris)                              on the surface (rounded barycentric points)                       1500     463     471     566        0    445      0        0
+54468 (3264 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1140    1050     810        0    674      0        0
+574283 (3222 tris)                             random in and around the bbox                                     3000    2492     508       0        0      0      0        0
+574283 (3222 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     364     161     975        0    191      0        0
+574283 (3222 tris)                             on the surface (rounded barycentric points)                       1500     604     605     291        0    239      0        0
+574283 (3222 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1280    1259     461        0    394      0        0
+41154 (5710 tris)                              random in and around the bbox                                     3000    2749     251       0        0      0      0        0
+41154 (5710 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     337      88    1075        0     79      0        0
+41154 (5710 tris)                              on the surface (rounded barycentric points)                       1500     583     601     316        0    231      0        0
+41154 (5710 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1275    1264     461        0    359      0        0
+44951 (2344 tris)                              random in and around the bbox                                     3000    2780     220       0        0      0      0        0
+44951 (2344 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     529     163     808        0    185      0        0
+44951 (2344 tris)                              on the surface (rounded barycentric points)                       1500     487     463     550        0    422      0        0
+44951 (2344 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1162    1088     750        0    583      0        0
+1129079 (5278 tris)                            random in and around the bbox                                     3000    2744     256       0        0      0      0        0
+1129079 (5278 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     545     131     824        0     77      0        0
+1129079 (5278 tris)                            on the surface (rounded barycentric points)                       1500     605     613     282        0    148      0        0
+1129079 (5278 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1296    1268     436        0    249      0        0
+360072 (732 tris)                              random in and around the bbox                                     3000    2902      98       0        0      0      0        0
+360072 (732 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     354      22    1124        0     38      0        0
+360072 (732 tris)                              on the surface (rounded barycentric points)                       1500     698     722      80        0     29      0        0
+360072 (732 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1472    1452      76        0     34      0        0
+789086 (45080 tris)                            random in and around the bbox                                     3000    2720     280       0        0      0      0        0
+789086 (45080 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     518     166     816        0     49      0        0
+789086 (45080 tris)                            on the surface (rounded barycentric points)                       1500     643     702     155        0    114      0        0
+789086 (45080 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1383    1444     173        0    137      0        0
+40660 (448 tris)                               random in and around the bbox                                     3000    2869     131       0        0      0      0        0
+40660 (448 tris)                               ray through a vertex (py,pz of a vertex, px random)               1500     402       0    1098        0    407      0        0
+40660 (448 tris)                               on the surface (rounded barycentric points)                       1500     193     181    1126        0   1008      0        0
+40660 (448 tris)                               within 1..3 ulp of a face point (each axis)                       3000     710     585    1705        0   1409      0        0
+343552 (724 tris)                              random in and around the bbox                                     3000    2598     402       0        0      0      0        0
+343552 (724 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     349      98    1053        0    486      0        0
+343552 (724 tris)                              on the surface (rounded barycentric points)                       1500     380     434     686        0    630      0        0
+343552 (724 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1002     946    1052        0    934      0        0
+1146168 (10090 tris)                           random in and around the bbox                                     3000    2781     219       0        0      0      0        0
+1146168 (10090 tris)                           ray through a vertex (py,pz of a vertex, px random)               1500     499       9     992        0    137      0        0
+1146168 (10090 tris)                           on the surface (rounded barycentric points)                       1500     590     591     319        0    242      0        0
+1146168 (10090 tris)                           within 1..3 ulp of a face point (each axis)                       3000    1320    1224     456        0    351      0        0
+91607 (416 tris)                               random in and around the bbox                                     3000    2548     452       0        0      0      0        0
+91607 (416 tris)                               ray through a vertex (py,pz of a vertex, px random)               1500     371      32    1097        0    335      0        0
+91607 (416 tris)                               on the surface (rounded barycentric points)                       1500     387     367     746        0    535      0        0
+91607 (416 tris)                               within 1..3 ulp of a face point (each axis)                       3000     983     933    1084        0    760      0        0
+635746 (2008 tris)                             random in and around the bbox                                     3000    2759     241       0        0      0      0        0
+635746 (2008 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     310       0    1190        0    205      0        0
+635746 (2008 tris)                             on the surface (rounded barycentric points)                       1500     438     443     619        0    605      0        0
+635746 (2008 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1038    1005     957        0    942      0        0
+137976 (3188 tris)                             random in and around the bbox                                     3000    2607     393       0        0      0      0        0
+137976 (3188 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     375      15    1110        0     97      0        0
+137976 (3188 tris)                             on the surface (rounded barycentric points)                       1500     362     368     770        0    353      0        0
+137976 (3188 tris)                             within 1..3 ulp of a face point (each axis)                       3000     909     963    1128        0    496      0        0
+167108 (70068 tris)                            random in and around the bbox                                     3000    2737     263       0        0      0      0        0
+167108 (70068 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     598     149     753        0     15      0        0
+167108 (70068 tris)                            on the surface (rounded barycentric points)                       1500     617     559     324        0    258      0        0
+167108 (70068 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1273    1267     460        0    384      0        0
+50739 (1344 tris)                              random in and around the bbox                                     3000    2612     388       0        0      0      0        0
+50739 (1344 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     353       2    1145        0    445      0        0
+50739 (1344 tris)                              on the surface (rounded barycentric points)                       1500     403     425     672        0    610      0        0
+50739 (1344 tris)                              within 1..3 ulp of a face point (each axis)                       3000     924    1015    1061        0    986      0        0
+53882 (192 tris)                               random in and around the bbox                                     3000    2835     165       0        0      0      0        0
+53882 (192 tris)                               ray through a vertex (py,pz of a vertex, px random)               1500     443      51    1006        0    176      0        0
+53882 (192 tris)                               on the surface (rounded barycentric points)                       1500     468     492     540        0    363      0        0
+53882 (192 tris)                               within 1..3 ulp of a face point (each axis)                       3000    1116    1127     757        0    539      0        0
+842507 (6698 tris)                             random in and around the bbox                                     3000    2601     399       0        0      0      0        0
+842507 (6698 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     484     119     897        0    167      0        0
+842507 (6698 tris)                             on the surface (rounded barycentric points)                       1500     616     600     284        0    153      0        0
+842507 (6698 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1264    1291     445        0    259      0        0
+145331 (4244 tris)                             random in and around the bbox                                     3000    2581     419       0        0      0      0        0
+145331 (4244 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     494     178     828        0     20      0        0
+145331 (4244 tris)                             on the surface (rounded barycentric points)                       1500     704     723      73        0     50      0        0
+145331 (4244 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1430    1426     144        0     83      0        0
+283342 (7230 tris)                             random in and around the bbox                                     3000    2882     118       0        0      0      0        0
+283342 (7230 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     371      50    1079        0    235      0        0
+283342 (7230 tris)                             on the surface (rounded barycentric points)                       1500     368     401     731        0    646      0        0
+283342 (7230 tris)                             within 1..3 ulp of a face point (each axis)                       3000     926    1002    1072        0    928      0        0
+71709 (1276 tris)                              random in and around the bbox                                     3000    2732     268       0        0      0      0        0
+71709 (1276 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     454       0    1046        0    380      0        0
+71709 (1276 tris)                              on the surface (rounded barycentric points)                       1500     378     397     725        0    625      0        0
+71709 (1276 tris)                              within 1..3 ulp of a face point (each axis)                       3000     970     978    1052        0    894      0        0
+37886 (3366 tris)                              random in and around the bbox                                     3000    2647     353       0        0      0      0        0
+37886 (3366 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     427      89     984        0    166      0        0
+37886 (3366 tris)                              on the surface (rounded barycentric points)                       1500     191     205    1104        0    323      0        0
+37886 (3366 tris)                              within 1..3 ulp of a face point (each axis)                       3000     517     589    1894        0    483      0        0
+131605 (5098 tris)                             random in and around the bbox                                     3000    2602     398       0        0      0      0        0
+131605 (5098 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     284       0    1216        0    520      0        0
+131605 (5098 tris)                             on the surface (rounded barycentric points)                       1500     376     373     751        0    725      0        0
+131605 (5098 tris)                             within 1..3 ulp of a face point (each axis)                       3000     934     914    1152        0    996      0        0
+104442 (49690 tris)                            random in and around the bbox                                     3000    2699     301       0        0      0      0        0
+104442 (49690 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     487     204     809        0     19      0        0
+104442 (49690 tris)                            on the surface (rounded barycentric points)                       1500     669     734      97        0     27      0        0
+104442 (49690 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1434    1420     146        0     44      0        0
+78894 (1212 tris)                              random in and around the bbox                                     3000    2974      26       0        0      0      0        0
+78894 (1212 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     591       1     908        0     11      0        0
+78894 (1212 tris)                              on the surface (rounded barycentric points)                       1500     371     387     742        0    277      0        0
+78894 (1212 tris)                              within 1..3 ulp of a face point (each axis)                       3000     992     974    1034        0    375      0        0
+1120761 (892 tris)                             random in and around the bbox                                     3000    2621     379       0        0      0      0        0
+1120761 (892 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     426       0    1074        0    185      0        0
+1120761 (892 tris)                             on the surface (rounded barycentric points)                       1500     553     558     389        0    381      0        0
+1120761 (892 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1224    1226     550        0    536      0        0
+674847 (3108 tris)                             random in and around the bbox                                     3000    2826     174       0        0      0      0        0
+674847 (3108 tris)                             ray through a vertex (py,pz of a vertex, px random)               1500     386      93    1021        0    271      0        0
+674847 (3108 tris)                             on the surface (rounded barycentric points)                       1500     476     462     562        0    466      0        0
+674847 (3108 tris)                             within 1..3 ulp of a face point (each axis)                       3000    1121    1106     773        0    608      0        0
+1312957 (5230 tris)                            random in and around the bbox                                     3000    2894     106       0        0      0      0        0
+1312957 (5230 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     366      74    1060        0     33      0        0
+1312957 (5230 tris)                            on the surface (rounded barycentric points)                       1500     619     640     241        0    117      0        0
+1312957 (5230 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1334    1334     332        0    183      0        0
+153963 (14760 tris)                            random in and around the bbox                                     3000    2717     283       0        0      0      0        0
+153963 (14760 tris)                            ray through a vertex (py,pz of a vertex, px random)               1500     450     242     808        0     79      0        0
+153963 (14760 tris)                            on the surface (rounded barycentric points)                       1500     542     564     394        0    322      0        0
+153963 (14760 tris)                            within 1..3 ulp of a face point (each axis)                       3000    1244    1223     533        0    420      0        0
+1706472 (89604 tris)                           random in and around the bbox                                     3000    2368     632       0        0      0      0        0
+1706472 (89604 tris)                           ray through a vertex (py,pz of a vertex, px random)               1500     451      62     987        0     25      0        0
+1706472 (89604 tris)                           on the surface (rounded barycentric points)                       1500     661     657     182        0    174      0        0
+1706472 (89604 tris)                           within 1..3 ulp of a face point (each axis)                       3000    1342    1394     264        0    250      0        0
+97179 (1020 tris)                              random in and around the bbox                                     3000    2833     167       0        0      0      0        0
+97179 (1020 tris)                              ray through a vertex (py,pz of a vertex, px random)               1500     385       0    1115        0    466      0        0
+97179 (1020 tris)                              on the surface (rounded barycentric points)                       1500     454     431     615        0    588      0        0
+97179 (1020 tris)                              within 1..3 ulp of a face point (each axis)                       3000    1032    1020     948        0    913      0        0
+total: queries 540000, OUT 284472, IN 120549, UNCERTAIN 134979 (25.00%); false definite 0; exact-boundary 68436; device vs twin differences 0
+device verdict arrays (all classes, in order): FNV-1a hash c2800183f077073a
+fair CPU baseline (BVH ray walk + native exact predicates) versus the all-triangles exact test: 0 disagreements
+PASS
+time 727.725 s
+rc=0 (124 = killed after the 900 s limit)

@@ -1,0 +1,7 @@
+WARNING: dzn is not a conformant Vulkan implementation, testing use only.
+device=Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Ti)
+200000 pairs. device vs host f64soft: add 0, mul 0, sub 0 mismatches. host f64soft vs hardware double: add 0, mul 0, sub 0.
+device f64soft vs hardware double: add 0, mul 0, sub 0 mismatches.
+mul stage mismatches device vs host (p00 p01 p10 p11 mid lo hi rem): 0 0 0 0 0 0 0 0; sh 0; round-up flag 0
+time 0.795 s
+rc=0 (124 = killed after the 900 s limit)
