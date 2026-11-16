@@ -1,0 +1,8 @@
+FAIL octahedron + two zero-area slivers (collinear vertices): BVH path equals all-triangles path, diffs=24
+FAIL octahedron + two zero-area slivers (collinear vertices): equals the hardened oracle, diffs=59
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic permute (x,y,z)->(y,z,x), diffs=84
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic permute (x,y,z)->(z,x,y), diffs=60
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic swap x,z, diffs=60
+meshes=8 queries=24376 (OUT 20331 IN 2317 ON 1728) metamorphic comparisons=169320
+coverage: o2 filter 2169121 exact 1366691 | o3 filter 692021 exact 1424481 | tie first 169328 second 182478 none 42170 | bbox skip 23431330 | coplanar true 15661 false 38509
+FAILS 5

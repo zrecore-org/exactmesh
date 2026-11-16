@@ -1,0 +1,23 @@
+FAIL analytic octahedron |x|+|y|+|z|<6 (oblique faces, exact ON), wrong=61
+FAIL octahedron r=6: equals the hardened oracle, diffs=61
+FAIL octahedron r=6: metamorphic permute (x,y,z)->(y,z,x), diffs=100
+FAIL octahedron r=6: metamorphic permute (x,y,z)->(z,x,y), diffs=100
+FAIL octahedron r=6: metamorphic swap x,z, diffs=100
+FAIL torus 16x10: equals the hardened oracle, diffs=47
+FAIL torus 16x10: metamorphic permute (x,y,z)->(y,z,x), diffs=47
+FAIL torus 16x10: metamorphic permute (x,y,z)->(z,x,y), diffs=47
+FAIL torus 16x10: metamorphic swap x,z, diffs=47
+FAIL octahedron + two zero-area slivers (collinear vertices): equals the hardened oracle, diffs=63
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic permute (x,y,z)->(y,z,x), diffs=108
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic permute (x,y,z)->(z,x,y), diffs=108
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic swap x,z, diffs=108
+FAIL nested spheres (cavity): equals the hardened oracle, diffs=24
+FAIL nested spheres (cavity): metamorphic permute (x,y,z)->(y,z,x), diffs=24
+FAIL nested spheres (cavity): metamorphic permute (x,y,z)->(z,x,y), diffs=25
+FAIL nested spheres (cavity): metamorphic swap x,z, diffs=24
+FAIL uv sphere 10x14: metamorphic permute (x,y,z)->(z,x,y), diffs=1
+FAIL block 3: equals the hardened oracle, diffs=16
+FAIL mixed scale (x,y 2^-170, z 2^150) block 2: equals the hardened oracle, diffs=1
+meshes=8 queries=24376 (OUT 20471 IN 2236 ON 1669) metamorphic comparisons=169320
+coverage: o2 filter 2134892 exact 1368097 | o3 filter 692124 exact 1424904 | tie first 170421 second 0 none 0 | bbox skip 23431330 | coplanar true 15238 false 39355
+FAILS 20

@@ -1,0 +1,58 @@
+FAIL analytic unit cube, quarter lattice: wrong=32
+FAIL analytic octahedron |x|+|y|+|z|<6 (oblique faces, exact ON), wrong=430
+FAIL analytic tetrahedron x,y,z>=0, x+y+z<=6 (exact ON on 4 oblique/axis faces), wrong=42
+FAIL octahedron r=6: equals the hardened oracle, diffs=440
+FAIL octahedron r=6: metamorphic permute (x,y,z)->(y,z,x), diffs=700
+FAIL octahedron r=6: metamorphic permute (x,y,z)->(z,x,y), diffs=700
+FAIL octahedron r=6: metamorphic swap x,z, diffs=730
+FAIL octahedron r=6: metamorphic negate x (ray becomes -x), diffs=877
+FAIL octahedron r=6: metamorphic negate y, diffs=156
+FAIL tetrahedron 6: equals the hardened oracle, diffs=186
+FAIL tetrahedron 6: metamorphic permute (x,y,z)->(y,z,x), diffs=350
+FAIL tetrahedron 6: metamorphic permute (x,y,z)->(z,x,y), diffs=359
+FAIL tetrahedron 6: metamorphic swap x,z, diffs=359
+FAIL tetrahedron 6: metamorphic negate x (ray becomes -x), diffs=389
+FAIL tetrahedron 6: metamorphic negate y, diffs=88
+FAIL tetrahedron 6: metamorphic negate z, diffs=46
+FAIL torus 16x10: equals the hardened oracle, diffs=936
+FAIL torus 16x10: metamorphic permute (x,y,z)->(y,z,x), diffs=720
+FAIL torus 16x10: metamorphic permute (x,y,z)->(z,x,y), diffs=899
+FAIL torus 16x10: metamorphic swap x,z, diffs=899
+FAIL torus 16x10: metamorphic negate x (ray becomes -x), diffs=1274
+FAIL torus 16x10: metamorphic negate y, diffs=10
+FAIL torus 16x10: metamorphic negate z, diffs=198
+FAIL octahedron + two zero-area slivers (collinear vertices): equals the hardened oracle, diffs=440
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic permute (x,y,z)->(y,z,x), diffs=702
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic permute (x,y,z)->(z,x,y), diffs=691
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic swap x,z, diffs=721
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic negate x (ray becomes -x), diffs=876
+FAIL octahedron + two zero-area slivers (collinear vertices): metamorphic negate y, diffs=156
+FAIL nested spheres (cavity): equals the hardened oracle, diffs=924
+FAIL nested spheres (cavity): metamorphic permute (x,y,z)->(y,z,x), diffs=940
+FAIL nested spheres (cavity): metamorphic permute (x,y,z)->(z,x,y), diffs=1005
+FAIL nested spheres (cavity): metamorphic swap x,z, diffs=1005
+FAIL nested spheres (cavity): metamorphic negate x (ray becomes -x), diffs=1586
+FAIL nested spheres (cavity): metamorphic negate y, diffs=23
+FAIL uv sphere 10x14: equals the hardened oracle, diffs=627
+FAIL uv sphere 10x14: metamorphic permute (x,y,z)->(y,z,x), diffs=737
+FAIL uv sphere 10x14: metamorphic permute (x,y,z)->(z,x,y), diffs=827
+FAIL uv sphere 10x14: metamorphic swap x,z, diffs=827
+FAIL uv sphere 10x14: metamorphic negate x (ray becomes -x), diffs=1244
+FAIL uv sphere 10x14: metamorphic negate y, diffs=44
+FAIL block 3: equals the hardened oracle, diffs=164
+FAIL block 3: metamorphic permute (x,y,z)->(y,z,x), diffs=253
+FAIL block 3: metamorphic permute (x,y,z)->(z,x,y), diffs=250
+FAIL block 3: metamorphic swap x,z, diffs=250
+FAIL block 3: metamorphic negate x (ray becomes -x), diffs=285
+FAIL block 3: metamorphic negate y, diffs=81
+FAIL block 3: metamorphic negate z, diffs=84
+FAIL mixed scale (x,y 2^-170, z 2^150) block 2: equals the hardened oracle, diffs=32
+FAIL mixed scale (x,y 2^-170, z 2^150) block 2: metamorphic permute (x,y,z)->(y,z,x), diffs=44
+FAIL mixed scale (x,y 2^-170, z 2^150) block 2: metamorphic permute (x,y,z)->(z,x,y), diffs=90
+FAIL mixed scale (x,y 2^-170, z 2^150) block 2: metamorphic swap x,z, diffs=90
+FAIL mixed scale (x,y 2^-170, z 2^150) block 2: metamorphic negate x (ray becomes -x), diffs=36
+FAIL mixed scale (x,y 2^-170, z 2^150) block 2: metamorphic negate y, diffs=14
+FAIL mixed scale (x,y 2^-170, z 2^150) block 2: metamorphic negate z, diffs=32
+meshes=8 queries=24376 (OUT 16606 IN 6101 ON 1669) metamorphic comparisons=169320
+coverage: o2 filter 2169307 exact 1368118 | o3 filter 692124 exact 1424904 | tie first 170421 second 182812 none 42308 | bbox skip 23431330 | coplanar true 15238 false 39355
+FAILS 55

@@ -1,0 +1,27 @@
+sphere 12x16                     queries=2706 disagreements=0 bvh-path disagreements=0
+block 3                          queries=1192 disagreements=0 bvh-path disagreements=0
+block 4 scaled 2^-20 offset      queries=1909 disagreements=0 bvh-path disagreements=0
+sphere 8x8 scaled 2^30           queries=1146 disagreements=0 bvh-path disagreements=0
+block 3 subnormal 2^-1060        queries=1192 disagreements=0 bvh-path disagreements=0
+sphere 6x8 scaled 2^-600         queries=938 disagreements=0 bvh-path disagreements=0
+block 3 scaled 2^600             queries=1192 disagreements=0 bvh-path disagreements=0
+block 2 scaled 2^1000            queries=739 disagreements=0 bvh-path disagreements=0
+TOTAL queries=11014 (OUT 4418, IN 3356, ON 3240) disagreements=0
+== mutant MESHCONTAINS_MUT_NO_TIEBREAK (must disagree)
+TOTAL queries=11014 (OUT 4418, IN 3356, ON 3240) disagreements=2450
+== mutant MUT_BOUNDARY_IN (must disagree)
+TOTAL queries=11014 (OUT 4418, IN 3356, ON 3240) disagreements=3240
+info: NO_WINDOW mutant not caught by this corpus (guard is defensive)
+meshes=8 queries=24376 (OUT 20355 IN 2352 ON 1669) metamorphic comparisons=169320
+coverage: o2 filter 2169307 exact 1368118 | o3 filter 692124 exact 1424904 | tie first 170421 second 182812 none 42308 | bbox skip 23431330 | coplanar true 15238 false 39355
+FAILS 0
+mutant 11 caught: 9 failing checks
+mutant 12 caught: 17 failing checks
+mutant 13 caught: 17 failing checks
+mutant 14 caught: 21 failing checks
+mutant 15 caught: 38 failing checks
+mutant 16 caught: 36 failing checks
+mutant 17 caught: 6 failing checks
+mutant 19 caught: 56 failing checks
+mutant no-tiebreak caught
+ALL OK

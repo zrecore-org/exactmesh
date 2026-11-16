@@ -1,0 +1,19 @@
+FAIL torus 16x10: equals the hardened oracle, diffs=4
+FAIL torus 16x10: metamorphic permute (x,y,z)->(y,z,x), diffs=9
+FAIL torus 16x10: metamorphic permute (x,y,z)->(z,x,y), diffs=9
+FAIL torus 16x10: metamorphic swap x,z, diffs=9
+FAIL torus 16x10: metamorphic negate y, diffs=1
+FAIL nested spheres (cavity): equals the hardened oracle, diffs=8
+FAIL nested spheres (cavity): metamorphic permute (x,y,z)->(y,z,x), diffs=10
+FAIL nested spheres (cavity): metamorphic permute (x,y,z)->(z,x,y), diffs=11
+FAIL nested spheres (cavity): metamorphic swap x,z, diffs=10
+FAIL nested spheres (cavity): metamorphic negate y, diffs=4
+FAIL uv sphere 10x14: equals the hardened oracle, diffs=6
+FAIL uv sphere 10x14: metamorphic permute (x,y,z)->(y,z,x), diffs=5
+FAIL uv sphere 10x14: metamorphic permute (x,y,z)->(z,x,y), diffs=9
+FAIL uv sphere 10x14: metamorphic swap x,z, diffs=5
+FAIL uv sphere 10x14: metamorphic negate y, diffs=3
+meshes=8 queries=24376 (OUT 20356 IN 2356 ON 1664) metamorphic comparisons=169320
+FAIL predicates: orient2d wrong 0/1500000, orient3d wrong 72700/1500000
+coverage: o2 filter 2169517 exact 1368129 | o3 filter 1680767 exact 436320 | tie first 170432 second 182812 none 42308 | bbox skip 23434193 | coplanar true 15197 false 39220
+FAILS 16
