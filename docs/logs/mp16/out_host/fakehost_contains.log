@@ -1,0 +1,31 @@
+PASS both stages registered, names 
+PASS pipeline runs, 3 docs in order 
+PASS box verdicts (incl. vertices, faces, ulp neighbours) equal the core IOOBBBBBOIBB
+PASS sphere verdicts, BSON array points, equal the core 
+PASS sphere verdicts, BinData points, equal the core 
+PASS all three verdict classes occur 
+PASS input fields preserved, _id 
+PASS error pipeline runs 
+PASS per-document errors: missing points 1, not array 15, bad bin 15, no points field 1, bad point 15, open mesh 8, junk 4, good doc ok 1 15 15 1 15 8 4 0 
+PASS 200 documents, 200 results in order 
+PASS input contract: pipeline runs 
+PASS int32 coordinates accepted (vertex: B) B
+PASS int64 coordinates accepted (corner: B) B
+PASS int64 beyond 2^53 rejected (15) 
+PASS NaN as double rejected (15) 
+PASS Inf as double rejected (15) 
+PASS empty points array gives an empty verdict string 
+PASS -0.0 coordinate on the x=0 face: B B
+PASS 4 coordinates rejected (15) 
+PASS string coordinate rejected (15) 
+PASS NaN in BinData points rejected (7) 
+PASS deadline inside one document: stops with status 50 after the deadline, not after the whole batch elapsedMs=133 code=50
+PASS mesh cache: 40 documents with one 30,000-triangle mesh, identical results with and without the cache 
+PASS mesh cache: hits recorded (at least 39 for the cached run) hits=256
+INFO mesh cache timing, 40 docs x 300 points on a 30,000-triangle mesh: cache off 2175.6 ms, cache on 188.5 ms
+PASS mesh cache: two meshes interleaved give the right verdicts for each document 
+PASS custom points and output field names 
+PASS unknown field rejected at parse 
+PASS $meshVolume unaffected 
+FAILS 0
+rc=0 seconds=4.3

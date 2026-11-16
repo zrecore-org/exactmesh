@@ -1,0 +1,10 @@
+sphere 12x16                     queries=2706 disagreements=0 bvh-path disagreements=0
+block 3                          queries=1192 disagreements=0 bvh-path disagreements=0
+block 4 scaled 2^-20 offset      queries=1909 disagreements=0 bvh-path disagreements=0
+sphere 8x8 scaled 2^30           queries=1146 disagreements=0 bvh-path disagreements=0
+block 3 subnormal 2^-1060        queries=1192 disagreements=0 bvh-path disagreements=0
+sphere 6x8 scaled 2^-600         queries=938 disagreements=0 bvh-path disagreements=0
+block 3 scaled 2^600             queries=1192 disagreements=0 bvh-path disagreements=0
+block 2 scaled 2^1000            queries=739 disagreements=0 bvh-path disagreements=0
+TOTAL queries=11014 (OUT 4404, IN 3368, ON 3242) disagreements=0
+rc=0 seconds=1.9

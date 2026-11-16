@@ -1,0 +1,4 @@
+meshes=8 queries=24376 (OUT 20378 IN 2333 ON 1665) metamorphic comparisons=169320
+coverage: o2 filter 2169697 exact 1368342 | o3 filter 691989 exact 1425137 | tie first 170653 second 182701 none 42184 | bbox skip 23435668 | coplanar true 15202 false 39364
+FAILS 0
+rc=0 seconds=11.4
