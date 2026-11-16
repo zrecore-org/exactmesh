@@ -1,0 +1,47 @@
+d9c53a2c8cddf36c1ac220fd608d9991cf91b24765a3f2407abc85220df22313  crash_test
+docker engine: Docker Desktop / docker-desktop / kernel 6.18.58.1-microsoft-standard-WSL2
+container sees core_pattern: |/wsl-capture-crash %t %E %p %s
+can a container change core_pattern? (expect read-only): sh: 1: cannot create /proc/sys/kernel/core_pattern: Read-only file system
+core_pattern after that attempt: |/wsl-capture-crash %t %E %p %s
+prlimit available in the image: /usr/bin/prlimit
+
+=== E11 supervisor pattern: prctl(PR_SET_DUMPABLE,0) THEN execve the real program (default limits), segv
+supervisor: dumpable=0 before exec
+pid=7 mode=segv pre=none RLIMIT_CORE soft=0 hard=18446744073709551615 dumpable=1
+sh-status=139
+Segmentation fault (core dumped)
+NEW DUMP(S):
+   67481600 bytes wsl-crash-1794862165-7-_t_crash_test-11.dmp
+
+=== E12 in-container wrapper: prlimit --core=1:1 then exec program, default docker limits, segv
+pid=7 mode=segv pre=none RLIMIT_CORE soft=1 hard=1 dumpable=1
+Segmentation fault
+sh-status=139
+NO new dump file
+
+=== E13 in-container wrapper: prlimit --core=1:1 then abort
+pid=7 mode=abort pre=none RLIMIT_CORE soft=1 hard=1 dumpable=1
+Aborted
+sh-status=134
+NO new dump file
+
+=== E14 --ulimit core=1:1 and the program raises its own limit back to 0 (setrlimit 0 needs only to LOWER: allowed?), segv
+pid=7 mode=segv pre=rlimit0 RLIMIT_CORE soft=0 hard=0 dumpable=1
+sh-status=139
+Segmentation fault (core dumped)
+NEW DUMP(S):
+   67481600 bytes wsl-crash-1794862180-7-_t_crash_test-11.dmp
+
+=== E15 control (must dump): default limits, segv
+pid=7 mode=segv pre=none RLIMIT_CORE soft=0 hard=18446744073709551615 dumpable=1
+sh-status=139
+Segmentation fault (core dumped)
+NEW DUMP(S):
+   67481600 bytes wsl-crash-1794862185-7-_t_crash_test-11.dmp
+
+crash dir final listing:
+total 4336640
+-rwxrwxrwx 1 aalbino aalbino 2153586688 10:00:42 wsl-crash-1794852030-5007-_m_mongod-6.dmp
+-rwxrwxrwx 1 aalbino aalbino 2151489536 10:01:34 wsl-crash-1794852075-5154-_m_mongod-6.dmp
+-rwxrwxrwx 1 aalbino aalbino   67481600 12:49:42 wsl-crash-1794862180-7-_t_crash_test-11.dmp
+-rwxrwxrwx 1 aalbino aalbino   67481600 12:49:48 wsl-crash-1794862185-7-_t_crash_test-11.dmp

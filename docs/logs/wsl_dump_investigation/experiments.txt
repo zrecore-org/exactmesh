@@ -1,0 +1,101 @@
+date: Mon Nov 16 12:47:51 PM PST 2026
+WSL core_pattern: |/wsl-capture-crash %t %E %p %s   kernel: 6.18.58.1-microsoft-standard-WSL2
+crash dir before: 3 files
+
+=== E0a WSL shell, ulimit -c 0, segv
+pid=3559 mode=segv pre=none RLIMIT_CORE soft=0 hard=0 dumpable=1
+bash: line 1:  3559 Segmentation fault      (core dumped) /mnt/d/FileTransfers/mongo/wsl_dump_investigation/crash_test segv
+shell-status=139
+NEW DUMP(S) (bytes name-time):
+   67481600 bytes  wsl-crash-1794862071-3559-_mnt_d_FileTransfers_mongo_wsl_dump_investigation_crash_test-11.dmp
+crash dir now: 4 files
+
+=== E0b WSL shell, ulimit -c 1, segv
+pid=3589 mode=segv pre=none RLIMIT_CORE soft=1024 hard=1024 dumpable=1
+bash: line 1:  3589 Segmentation fault      (core dumped) /mnt/d/FileTransfers/mongo/wsl_dump_investigation/crash_test segv
+shell-status=139
+NEW DUMP(S) (bytes name-time):
+   67481600 bytes  wsl-crash-1794862075-3589-_mnt_d_FileTransfers_mongo_wsl_dump_investigation_crash_test-11.dmp
+crash dir now: 4 files
+
+=== E1 container default limits, segv
+pid=7 mode=segv pre=none RLIMIT_CORE soft=0 hard=18446744073709551615 dumpable=1
+sh-status=139
+Segmentation fault (core dumped)
+NEW DUMP(S) (bytes name-time):
+   67481600 bytes  wsl-crash-1794862081-7-_t_crash_test-11.dmp
+crash dir now: 4 files
+
+=== E2 --ulimit core=0, segv
+pid=7 mode=segv pre=none RLIMIT_CORE soft=0 hard=0 dumpable=1
+sh-status=139
+Segmentation fault (core dumped)
+NEW DUMP(S) (bytes name-time):
+   67481600 bytes  wsl-crash-1794862086-7-_t_crash_test-11.dmp
+crash dir now: 4 files
+
+=== E3 --ulimit core=0, abort
+pid=7 mode=abort pre=none RLIMIT_CORE soft=0 hard=0 dumpable=1
+sh-status=134
+Aborted (core dumped)
+NEW DUMP(S) (bytes name-time):
+   67481600 bytes  wsl-crash-1794862091-7-_t_crash_test-6.dmp
+crash dir now: 4 files
+
+=== E4 --ulimit core=0:0, segv
+pid=7 mode=segv pre=none RLIMIT_CORE soft=0 hard=0 dumpable=1
+sh-status=139
+Segmentation fault (core dumped)
+NEW DUMP(S) (bytes name-time):
+   67481600 bytes  wsl-crash-1794862097-7-_t_crash_test-11.dmp
+crash dir now: 4 files
+
+=== E5 --ulimit core=1:1, segv
+pid=7 mode=segv pre=none RLIMIT_CORE soft=1 hard=1 dumpable=1
+sh-status=139
+Segmentation fault
+NO new dump file
+crash dir now: 4 files
+
+=== E6 --ulimit core=1:1, abort
+pid=7 mode=abort pre=none RLIMIT_CORE soft=1 hard=1 dumpable=1
+Aborted
+sh-status=134
+NO new dump file
+crash dir now: 4 files
+
+=== E7 default limits, program setrlimit(0), segv
+pid=7 mode=segv pre=rlimit0 RLIMIT_CORE soft=0 hard=0 dumpable=1
+Segmentation fault (core dumped)
+sh-status=139
+NEW DUMP(S) (bytes name-time):
+   67481600 bytes  wsl-crash-1794862111-7-_t_crash_test-11.dmp
+crash dir now: 4 files
+
+=== E8 default limits, program setrlimit(1), segv
+pid=7 mode=segv pre=rlimit1 RLIMIT_CORE soft=1 hard=1 dumpable=1
+sh-status=139
+Segmentation fault
+NO new dump file
+crash dir now: 4 files
+
+=== E9 default limits, program prctl(PR_SET_DUMPABLE,0), segv
+pid=7 mode=segv pre=undumpable RLIMIT_CORE soft=0 hard=18446744073709551615 dumpable=0
+sh-status=139
+Segmentation fault
+NO new dump file
+crash dir now: 4 files
+
+=== E10 --ulimit core=0 + prctl dumpable 0, abort
+pid=7 mode=abort pre=undumpable RLIMIT_CORE soft=0 hard=0 dumpable=0
+sh-status=134
+Aborted
+NO new dump file
+crash dir now: 4 files
+
+crash dir final listing:
+total 4336640
+-rwxrwxrwx 1 aalbino aalbino 2153586688 10:00:42 wsl-crash-1794852030-5007-_m_mongod-6.dmp
+-rwxrwxrwx 1 aalbino aalbino 2151489536 10:01:34 wsl-crash-1794852075-5154-_m_mongod-6.dmp
+-rwxrwxrwx 1 aalbino aalbino   67481600 12:48:18 wsl-crash-1794862097-7-_t_crash_test-11.dmp
+-rwxrwxrwx 1 aalbino aalbino   67481600 12:48:34 wsl-crash-1794862111-7-_t_crash_test-11.dmp

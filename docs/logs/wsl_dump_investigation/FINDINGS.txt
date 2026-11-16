@@ -1,0 +1,38 @@
+WSL2 core dumps and --ulimit core=0: investigation notes (aalbino-1b, 2026-11-16)
+Machine: Windows 10 laptop, WSL 3.0.5.0, kernel 6.18.58.1-microsoft-standard-WSL2, Docker Desktop (engine runs in the docker-desktop WSL distro, same VM kernel as Ubuntu-24.04).
+Method: throwaway static program crash_test (crash_test.c, 64 MiB of touched memory, then SIGSEGV or abort()); runs in plain ubuntu:24.04 containers with varying limits; a dump of the whole image is ~67 MB (67,481,600 bytes), so a dump is easy to recognise. Raw outputs: experiments.txt, experiments2.txt.
+
+ROOT CAUSE
+/proc/sys/kernel/core_pattern = "|/wsl-capture-crash %t %E %p %s" (global to the WSL VM, read-only inside containers: "cannot create /proc/sys/kernel/core_pattern: Read-only file system").
+For a PIPE core handler the Linux kernel does not apply RLIMIT_CORE as a size limit: a limit of 0 does NOT stop the handler from running and writing a dump. The only RLIMIT_CORE value that stops a pipe handler is exactly 1 (kernel treats 1 as the "recursive crash" guard and skips the dump). (Kernel behaviour, fs/coredump.c; confirmed empirically below.)
+
+RESULTS (new dump file in D:\wsl\crashes? / shell message)
+E0a WSL shell, ulimit -c 0, segv ........................ DUMP 67,481,600 B  "Segmentation fault (core dumped)"
+E0b WSL shell, bash `ulimit -c 1` (= 1 block = 1024 bytes!) DUMP (RLIMIT_CORE shows 1024, not 1)
+E1  container default limits, segv ....................... DUMP
+E2  --ulimit core=0, segv ................................ DUMP   (this is the case that surprised us)
+E3  --ulimit core=0, abort() ............................. DUMP
+E4  --ulimit core=0:0, segv .............................. DUMP
+E5  --ulimit core=1:1, segv .............................. NO dump ("Segmentation fault", no "(core dumped)")
+E6  --ulimit core=1:1, abort() ........................... NO dump
+E7  default limits, program calls setrlimit(CORE,0) ...... DUMP
+E8  default limits, program calls setrlimit(CORE,1) ...... NO dump
+E9  program calls prctl(PR_SET_DUMPABLE,0), then crashes . NO dump
+E10 --ulimit core=0 + prctl dumpable 0, abort ............ NO dump
+E11 supervisor pattern: prctl(PR_SET_DUMPABLE,0) then execve the real program ... DUMP (dumpable is reset to 1 by execve: "dumpable=0 before exec" -> "dumpable=1" in the exec'ed program). A prctl supervisor does NOT work for an exec'ed mongod.
+E12 `prlimit --core=1:1 <program>` inside the container (default docker limits), segv ... NO dump
+E13 same, abort() ........................................ NO dump
+E14 --ulimit core=1:1 but the program then lowers its own limit with setrlimit(CORE,0) ... DUMP (lowering 1 -> 0 is allowed and RE-ENABLES the dump)
+E15 control, default limits, segv ........................ DUMP
+
+CONSEQUENCES FOR OUR JOBS
+1. `--ulimit core=0` and `ulimit -c 0` never worked on this WSL kernel (pipe handler). Use exactly 1 byte: `docker run --ulimit core=1:1 ...` (verified E5/E6) or `prlimit --core=1:1 --pid $$` / `prlimit --core=1:1 <cmd>` inside the container (verified E12/E13; prlimit is in the ubuntu:24.04 image).
+2. The run scripts I read begin with `ulimit -c 0` (mp14c_noloader_run.sh, mp14d/e/f_win_run.sh, mp14e..mp14i dzn/win scripts; I did not check every file, e.g. run_mp14d_real.sh). Under `--ulimit core=1:1` that line LOWERS the limit to 0:0 and RE-ENABLES the dump (E14). Remove it (or replace by `prlimit --core=1:1 --pid $$`). bash cannot express 1 byte (`ulimit -c 1` = 1024 bytes, E0b).
+3. Anything that sets RLIMIT_CORE to 0 inside the process re-enables dumps (E7/E14): the unit-test harness of the server does this (do not run it on WSL), mongod itself does not (per mongo-26's source grep).
+4. Verification to build into runners: after starting mongod, `grep 'core file' /proc/$MP/limits` must show "1 1 bytes"; and `ls /mnt/d/wsl/crashes` before/after.
+5. A prctl(PR_SET_DUMPABLE,0) supervisor is useless across execve (E11); setting it inside the target program works (E9) but needs source changes.
+
+WSL-LEVEL SETTINGS (not applied; user approval needed)
+.wslconfig [wsl2] crashDumpFolder (default %TEMP%\wsl-crashes) and maxCrashDumpCount (default 10) exist and are active here (D:\\wsl\\crashes, 2). `wsl --help` has no crash/dump option. Setting maxCrashDumpCount=0 is reported to be handled by newer WSL (a PR fixed a service crash at 0) but I did not test it (needs a .wslconfig edit and wsl --shutdown). A global fix would be `sysctl kernel.core_pattern=core` inside the WSL VM (needs root, lost at VM restart); not done.
+
+SIDE EFFECT TO KNOW: WSL's own maxCrashDumpCount=2 purge removed older dumps from D:\wsl\crashes while these tests ran (including the 2.68 GB mongod-11 dump of the MP14e segfault at 11:24). I deleted nothing myself. The 3 remaining/added files at the end are the two oldest 2 GB mongod dumps (10:00 and 10:01) and the last two 67 MB crash_test dumps.
