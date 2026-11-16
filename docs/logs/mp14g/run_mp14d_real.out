@@ -1,0 +1,11 @@
+== case gpu_dzn_sigterm (SIGTERM while device batches are in flight)
+counters before SIGTERM: 'gpuBatches': 27
+LOOP STARTED
+LOOP ENDED by NotPrimaryError after 1 aggregations
+progress lines: 4  last: ended NotPrimaryError 1794857956.379
+PASS gpu_dzn_sigterm: device batches ran before the signal (gpuBatches=27)
+PASS gpu_dzn_sigterm: the loop was cut by the shutdown (it was running: start 1 1794857950.930)
+PASS gpu_dzn_sigterm: an aggregation was in flight when the connection dropped
+PASS gpu_dzn_sigterm: clean exit rc 0 after SIGTERM in 1s
+PASS gpu_dzn_sigterm: no fatal signal or backtrace in the log
+FAILS 0

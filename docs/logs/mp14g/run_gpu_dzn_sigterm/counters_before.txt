@@ -1,0 +1,1 @@
+{'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'gpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 27, 'gpuFallbacks': 0, 'gpuShadowMismatch': 0, 'gpuUncertain': 62939, 'gpuPoints': 243000}
