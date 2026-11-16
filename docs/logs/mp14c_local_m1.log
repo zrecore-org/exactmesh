@@ -1,0 +1,106 @@
+== bar 1: default off (text as the real YAML::Dump gives it)
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 0
+PROBE config: gpuRequested=false gpuRequired=false gpuProbed=false gpuReady=false engine="cpu" reason="not requested" vulkanProbes=0
+PASS bar1 [|] loads, requested=false, vulkanProbes=0, no Vulkan image loaded, engine=cpu
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 0
+PROBE config: gpuRequested=false gpuRequired=false gpuProbed=false gpuReady=false engine="cpu" reason="not requested" vulkanProbes=0
+PASS bar1 [{}|] loads, requested=false, vulkanProbes=0, no Vulkan image loaded, engine=cpu
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 0
+PROBE config: gpuRequested=false gpuRequired=false gpuProbed=false gpuReady=false engine="cpu" reason="not requested" vulkanProbes=0
+PASS bar1 [~|] loads, requested=false, vulkanProbes=0, no Vulkan image loaded, engine=cpu
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 0
+PROBE config: gpuRequested=false gpuRequired=false gpuProbed=false gpuReady=false engine="cpu" reason="not requested" vulkanProbes=0
+PASS bar1 [gpu: false|] loads, requested=false, vulkanProbes=0, no Vulkan image loaded, engine=cpu
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 0
+PROBE config: gpuRequested=false gpuRequired=false gpuProbed=false gpuReady=false engine="cpu" reason="not requested" vulkanProbes=0
+PASS bar1 [gpu: false|gpuRequired: false|] loads, requested=false, vulkanProbes=0, no Vulkan image loaded, engine=cpu
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 0
+PROBE config: gpuRequested=false gpuRequired=false gpuProbed=false gpuReady=false engine="cpu" reason="not requested" vulkanProbes=0
+PASS bar1 [gpuRequired: false|] loads, requested=false, vulkanProbes=0, no Vulkan image loaded, engine=cpu
+PASS bar1 corpus exact (default off)
+== bar 2: gpu true, working Vulkan (hardware device on this host)
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 2
+PROBE config: gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1
+PASS bar2 gpuReady=true, one probe, engine=cpu, hardware reason
+PASS bar2 corpus exact, same oracle as default off (gate does not disturb results; not evidence of GPU use)
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 2
+PROBE config: gpuRequested=true gpuRequired=true gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1
+PASS bar2 gpuRequired true with a ready GPU loads
+PASS bar2 flow-style map loads, ready
+== bar 3: gpu true, no usable GPU
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 0
+PROBE config: gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=false engine="cpu" reason="built without vulkan support" vulkanProbes=1
+FAIL bar3 loads, gpuReady=false, reason reported, no path in reason
+PASS bar3 corpus exact
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: gpuRequired is true but the GPU is not ready: built without vulkan support"
+PASS bar3 gpuRequired + no GPU: initialize fails with the reason
+PASS bar3 no Vulkan image after the failed load attempt
+   (loader missing / zero devices / instance failure / software-only on real stacks are exercised in the Linux container run, see RESULTS)
+== bar 7: planted hang in the probe is bounded
+OPTIONS-LOAD ok=1 error=""
+VULKAN-IMAGES 0
+PROBE config: gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=false engine="cpu" reason="vulkan probe timed out" vulkanProbes=1
+PASS bar7 timeout: loads, gpuReady=false, reason timed out
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: gpuRequired is true but the GPU is not ready: vulkan probe timed out"
+PASS bar7 timeout with gpuRequired: initialize fails
+   (a probe that crashes in a driver is not survivable in-process; see plan)
+== bar 4: strictness (inputs as YAML::Dump prints them)
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: unknown extension option 'frobnicate' (known: gpu, gpuRequired)"
+PASS bar4 rejects [frobnicate: true|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: option 'gpu' must be true or false, got 'maybe'"
+PASS bar4 rejects [gpu: maybe|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: option 'gpu' must be true or false, got '1'"
+PASS bar4 rejects [gpu: 1|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: option 'gpu' must be true or false, got 'yes'"
+PASS bar4 rejects [gpu: yes|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: option 'gpu' must be true or false, got 'True'"
+PASS bar4 rejects [gpu: True|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: option 'gpu' must be true or false, got '~'"
+PASS bar4 rejects [gpu: ~|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: unknown extension option 'GPU' (known: gpu, gpuRequired)"
+PASS bar4 rejects [GPU: true|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: duplicate option 'gpu'"
+PASS bar4 rejects [gpu: true|gpu: false|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: nested or indented option lines are not supported: 'a: 1'"
+PASS bar4 rejects [gpu: true|nested:|  a: 1|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: option is not 'key: value': '[1, 2]'"
+PASS bar4 rejects [[1, 2]|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: option is not 'key: value': 'gpu'"
+PASS bar4 rejects [gpu|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: gpuRequired is true but gpu is not true"
+PASS bar4 rejects [gpuRequired: true|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: option 'gpu' must be true or false, got 'maybe'"
+PASS bar4 rejects [{gpu: maybe}|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: duplicate option 'gpu'"
+PASS bar4 rejects [{gpu: true, gpu: false}|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: only a flat map of options is supported: '{gpu: {a: 1}}'"
+PASS bar4 rejects [{gpu: {a: 1}}|]
+OPTIONS-LOAD ok=0 error="initialize failed: meshvolume: nested or indented option lines are not supported: 'x: 1'"
+PASS bar4 rejects [gpu: true|	x: 1|]
+PASS bar4 accepts [|]
+PASS bar4 accepts [{}|]
+PASS bar4 accepts [~|]
+PASS bar4 accepts [gpu: false|]
+PASS bar4 accepts [gpuRequired: false|]
+PASS bar4 accepts [gpu: false|gpuRequired: false|]
+PASS bar4 accepts [{gpu: false}|]
+PASS bar4 accepts [gpu: true|]
+== bar 5: mutants, one designated check each (the same check must pass on the good lib above)
+PASS mutant1 option ignored: caught (probes=1 and ready expected)
+PASS mutant2 default flipped: caught (probes=0 expected)
+PASS mutant3 gpuRequired ignored: caught (ok=0 expected)
+PASS mutant4 unknown key accepted: caught (ok=0 expected)
+PASS mutant5 duplicate accepted: caught (ok=0 expected)
+PASS mutant6 probe error swallowed: caught (ready=false expected)
+PASS mutant7 loader opened at static init: caught by the independent image check (counter stays 0)
+FAILS 1
+done
