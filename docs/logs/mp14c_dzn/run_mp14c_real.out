@@ -1,0 +1,13 @@
+== case gpu_true (expect start); conf extensionOptions: [extensionOptions:|  gpu: true|]
+vulkan-library-mappings: 10
+{"t":{"$date":"2026-11-16T17:06:36.493+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=true engine=cpu reason=hardware device present"}
+PASS gpu_true: server starts
+PASS gpu_true: logged requested=true
+   (on lavapipe the expected reason is: software device only)
+ready=true engine=cpu reason=hardware device present
+== case gpu_required (expect refuse); conf extensionOptions: [extensionOptions:|  gpu: true|  gpuRequired: true|]
+vulkan-library-mappings: 10
+{"t":{"$date":"2026-11-16T17:06:49.134+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=true engine=cpu reason=hardware device present"}
+FAIL gpu_required: server refuses to start
+FAIL gpu_required: reason in output or log
+FAILS 2

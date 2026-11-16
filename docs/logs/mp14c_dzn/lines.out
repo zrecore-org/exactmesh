@@ -1,0 +1,12 @@
+== run_gpu_required
+{"t":{"$date":"2026-11-16T17:06:49.134+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=true engine=cpu reason=hardware device present"}
+{"t":{"$date":"2026-11-16T17:06:49.134+00:00"},"s":"F",  "c":"CONTROL",  "id":6384300, "ctx":"thread12","msg":"Writing fatal message","attr":{"message":"Invalid access at address: 0x7918eeb1eb10\n"}}
+{"t":{"$date":"2026-11-16T17:06:49.135+00:00"},"s":"F",  "c":"CONTROL",  "id":6384300, "ctx":"thread12","msg":"Writing fatal message","attr":{"message":"Dumping siginfo (si_code=1): 0b 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 10 eb b1 ee 18 79 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+{"t":{"$date":"2026-11-16T17:06:49.135+00:00"},"s":"F",  "c":"CONTROL",  "id":6384300, "ctx":"thread12","msg":"Writing fatal message","attr":{"message":"Got signal: 11 (Segmentation fault).\n"}}
+== run_gpu_true
+{"t":{"$date":"2026-11-16T17:06:36.493+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=true engine=cpu reason=hardware device present"}
+{"t":{"$date":"2026-11-16T17:06:36.493+00:00"},"s":"F",  "c":"CONTROL",  "id":6384300, "ctx":"thread12","msg":"Writing fatal message","attr":{"message":"Invalid access at address: 0x73c41ff76b10\n"}}
+{"t":{"$date":"2026-11-16T17:06:36.493+00:00"},"s":"F",  "c":"CONTROL",  "id":6384300, "ctx":"thread12","msg":"Writing fatal message","attr":{"message":"Dumping siginfo (si_code=1): 0b 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 10 6b f7 1f c4 73 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+{"t":{"$date":"2026-11-16T17:06:36.493+00:00"},"s":"F",  "c":"CONTROL",  "id":6384300, "ctx":"thread12","msg":"Writing fatal message","attr":{"message":"Got signal: 11 (Segmentation fault).\n"}}
+== run_mp14c_real.out
+== run_mp14c_real.sh
