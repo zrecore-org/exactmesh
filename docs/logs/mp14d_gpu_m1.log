@@ -1,27 +1,30 @@
-CASE ok points=100040 stage ok=1 elapsedMs=53.9 verdicts equal CPU core: YES
+CASE ok points=100040 stage ok=1 elapsedMs=62.7 verdicts equal CPU core: YES
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=1 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=40 gpuPoints=100040
+SECOND RUN elapsedMs=29.5
 SECOND RUN verdicts equal CPU core: YES
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=2 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=80 gpuPoints=200080
 PASS ok: device path used (1 batch, then 2), verdicts equal the CPU core on both runs, UNCERTAIN resolved exactly
-CASE small points=1040 stage ok=1 elapsedMs=3.4 verdicts equal CPU core: YES
+CASE small points=1040 stage ok=1 elapsedMs=3.2 verdicts equal CPU core: YES
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=0 gp
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=0 gp
 PASS small (below the threshold): CPU path, 0 device batches, verdicts equal
 PASS engine knob cpu: 0 device batches, verdicts equal
-CASE fail points=100040 stage ok=1 elapsedMs=29.3 verdicts equal CPU core: YES
+CASE fail points=100040 stage ok=1 elapsedMs=28.8 verdicts equal CPU core: YES
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=0 gpuUncertain=0 gpuPoints=0
+SECOND RUN elapsedMs=27.3
 SECOND RUN verdicts equal CPU core: YES
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=0 gpuUncertain=0 gpuPoints=0
 PASS planted device failure: falls back, verdicts equal (both runs), breaker open (1 fallback, no device batch, engine cpu)
-CASE wrong points=100040 stage ok=1 elapsedMs=80.3 verdicts equal CPU core: YES
+CASE wrong points=100040 stage ok=1 elapsedMs=74.8 verdicts equal CPU core: YES
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=1 gpuUncertain=0 gpuPoints=0
+SECOND RUN elapsedMs=27.2
 SECOND RUN verdicts equal CPU core: YES
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=1 gpuUncertain=0 gpuPoints=0
 PASS planted wrong verdicts: shadow check catches, verdicts equal (both runs), device disabled
-CASE concurrent threads=6 runs=36 verdict-mismatching runs=0 rssGrowth=63684608 (maxrss units)
+CASE concurrent threads=6 runs=36 verdict-mismatching runs=0 rssGrowth=60456960 (maxrss units)
 COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=36 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=1440 gpuPoints=721440
 PASS concurrency: 6 threads x 6 aggregations on one device context, 0 mismatching runs, 36 device batches
-rss growth after 50 runs: 28229632, after 450 runs: 26886144
+rss growth after 50 runs: 20824064, after 450 runs: 21839872
 PASS no leak: RSS growth between 50 and 450 device runs under 8 MB (each run allocates tens of MB of device buffers)
 == mutants (each designated case must show the defect)
 PASS mutant1 shadow check removed: caught (wrong verdicts reach the result)
