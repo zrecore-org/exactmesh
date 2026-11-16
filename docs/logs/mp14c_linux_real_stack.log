@@ -1,0 +1,12 @@
+OPTIONS-LOAD ok=1 error=""
+PROBE config: gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=false engine="cpu" reason="vulkan loader not found" vulkanProbes=1
+PASS A no loader: loads, no crash, reason loader not found
+PASS A no loader + gpuRequired: initialize fails with the reason
+OPTIONS-LOAD ok=1 error=""
+PROBE config: gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=false engine="cpu" reason="vulkan instance creation failed" vulkanProbes=1
+PASS B loader without driver: loads, gpuReady=false, reason has no path
+OPTIONS-LOAD ok=1 error=""
+PROBE config: gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=false engine="cpu" reason="software device only" vulkanProbes=1
+PASS C lavapipe: gpuReady=false, reason software device only
+PASS C lavapipe + gpuRequired: initialize fails
+FAILS 0
