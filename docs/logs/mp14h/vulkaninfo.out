@@ -1,0 +1,4 @@
+	apiVersion         = 1.2.354
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Ti)
+	driverName         = Dozen

@@ -1,0 +1,6 @@
+PASS gpuTimeout: results equal the oracle (CPU fallback)
+COUNTERS {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'cpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 1, 'gpuFallbacks': 1, 'gpuShadowMismatch': 0, 'gpuUncertain': 895, 'gpuPoints': 9000, 'gpuLastFailure': 'vkWaitForFences(dev, 1, &fence, VK_TRUE, timeoutNs) failed: 2'}
+PASS gpuTimeout: the intended failure fired ('vkWaitForFences' in gpuLastFailure) vkWaitForFences(dev, 1, &fence, VK_TRUE, timeoutNs) failed: 2
+FAIL gpuTimeout: device disabled, engine cpu, 1 fallback, 0 device batches
+PASS gpuTimeout: later aggregations still correct (CPU)
+FAILS 1

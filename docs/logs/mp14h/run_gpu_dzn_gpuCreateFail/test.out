@@ -1,0 +1,6 @@
+PASS gpuCreateFail: results equal the oracle (CPU fallback)
+COUNTERS {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'cpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 0, 'gpuFallbacks': 1, 'gpuShadowMismatch': 0, 'gpuUncertain': 0, 'gpuPoints': 0, 'gpuLastFailure': 'planted failure of the lazy device creation'}
+PASS gpuCreateFail: the intended failure fired ('planted failure of the lazy device creation' in gpuLastFailure) planted failure of the lazy device creation
+PASS gpuCreateFail: device disabled, engine cpu, 1 fallback, 0 device batches
+PASS gpuCreateFail: later aggregations still correct (CPU)
+FAILS 0
