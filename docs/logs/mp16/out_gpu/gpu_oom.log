@@ -1,0 +1,6 @@
+CASE oom points=20040 stage ok=1 elapsedMs=156.0 verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=0 gpuUncertain=0 gpuPoints=0 gpuLastFailure="vkCreateBuffer(dev, &bi, nullptr, &b.buf) failed: -2" meshCacheHits=0 meshCacheMisses=1
+SECOND RUN elapsedMs=14.3
+SECOND RUN verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=0 gpuUncertain=0 gpuPoints=0 gpuLastFailure="vkCreateBuffer(dev, &bi, nullptr, &b.buf) failed: -2" meshCacheHits=1 meshCacheMisses=1
+rc=0 seconds=2.7

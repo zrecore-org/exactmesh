@@ -1,0 +1,2 @@
+CASE repeat threads=1 runs=150 verdict-mismatching runs=0 rssGrowth=84107264 (maxrss units)
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=150 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=6000 gpuPoints=3006000 gpuLastFailure="" meshCacheHits=149 meshCacheMisses=1

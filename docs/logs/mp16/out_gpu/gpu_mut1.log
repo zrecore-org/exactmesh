@@ -1,0 +1,6 @@
+CASE wrong points=100040 stage ok=1 elapsedMs=160.1 verdicts equal CPU core: NO
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=1 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=40 gpuPoints=100040 gpuLastFailure="" meshCacheHits=0 meshCacheMisses=1
+SECOND RUN elapsedMs=33.6
+SECOND RUN verdicts equal CPU core: NO
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=2 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=80 gpuPoints=200080 gpuLastFailure="" meshCacheHits=1 meshCacheMisses=1
+rc=1 seconds=11.8
