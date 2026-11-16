@@ -1,0 +1,6 @@
+PASS gpuOOM: results equal the oracle (CPU fallback)
+COUNTERS {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'cpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 0, 'gpuFallbacks': 1, 'gpuShadowMismatch': 0, 'gpuUncertain': 0, 'gpuPoints': 0, 'gpuLastFailure': 'vkAllocateMemory(dev, &mai, nullptr, &b.mem) failed: -2', 'meshCacheHits': 0, 'meshCacheMisses': 8}
+PASS gpuOOM: the intended failure fired ('vkAllocateMemory' in gpuLastFailure) vkAllocateMemory(dev, &mai, nullptr, &b.mem) failed: -2
+PASS gpuOOM: device disabled, engine cpu, 1 fallback, 0 device batches
+PASS gpuOOM: later aggregations still correct (CPU)
+FAILS 0
