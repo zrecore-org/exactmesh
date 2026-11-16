@@ -1,0 +1,14 @@
+== case default_absent (expect start); conf extensionOptions: [|]
+vulkan-library-mappings: 0
+{"t":{"$date":"2026-11-16T18:11:59.193+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=false ready=false engine=cpu reason=not requested"}
+PASS default_absent: server starts
+PASS default_absent: requested=false logged
+PASS default_absent: no Vulkan library mapped
+== case gpu_true_noloader (expect start); conf extensionOptions: [extensionOptions:|  gpu: true|]
+vulkan-library-mappings: 0
+{"t":{"$date":"2026-11-16T18:12:06.414+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=false engine=cpu reason=vulkan loader not found"}
+PASS gpu_true_noloader: server starts
+PASS gpu_true_noloader: reason loader not found logged
+PASS gpu_true_noloader: clean exit on SIGTERM (rc 0)
+PASS gpu_true_noloader: no abruptQuit/backtrace in log
+FAILS 0
