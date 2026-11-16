@@ -74,7 +74,7 @@ finds the output correct up to vertex rounding: the scoring rule flags a collaps
 
 ## The three Geogram defect groups found, and the patches
 
-All three are defects of Geogram v1.10.1 (commit `bbcacba146b357926b5524111f56cc70c42182a7`) found by this project's corpora; none has been reported upstream.
+All three are defects of Geogram v1.10.1 (commit `bbcacba146b357926b5524111f56cc70c42182a7`) found by this project's corpora. Reported upstream on 2026-11-14 as BrunoLevy/geogram issue #413 (vertex contact in the issue, the fixed ray length and plain-double chart volume in its follow-up comment); a pull request for groups 1 and 2 is #414 (2026-11-15). Group 3(B) was fixed upstream independently by PR #409.
 
 1. **Vertex-contact classification (patch `geogram_mp20.patch`).** Components that touch other components only at a vertex are classified by one ray from the component's start vertex; when that vertex is the shared contact vertex, the tie is broken by `orient_3d_SOS` using **pointer order**, not geometry,
    so e.g. the union of two boxes sharing one corner returns one box. The patch starts the ray from an exact facet centroid for components whose start vertex is shared. Unpatched failures: 360 of 3,150 rows on the acceptance set. Wrapping the call (vertex-order voting) was tried and failed (21 silent failures, 23.2% refusals).
