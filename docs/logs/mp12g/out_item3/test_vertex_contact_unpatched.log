@@ -1,0 +1,66 @@
+FAIL two cubes A+B: volume 1, expected 2
+FAIL two cubes A*B: volume 1, expected 0
+FAIL two cubes A-B: volume 0, expected 1
+FAIL two cubes B-A: volume 5.55112e-17, expected 1
+FAIL two cubes A+B: volume 1, expected 2
+FAIL two cubes A*B: volume 1, expected 0
+FAIL two cubes A-B: volume 1.11022e-16, expected 1
+FAIL two cubes B-A: volume 0, expected 1
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 0, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 0, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 0, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 0, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 1, expected 3
+FAIL chain B-A: volume 0, expected 2
+FAIL chain A+B: volume 1, expected 3
+FAIL chain B-A: volume 5.55112e-17, expected 2
+FAIL chain A+B: volume 1, expected 3
+FAIL chain B-A: volume 2.22045e-16, expected 2
+FAIL chain A+B: volume 1, expected 3
+FAIL chain B-A: volume 5.55112e-17, expected 2
+FAIL chain A+B: volume 1, expected 3
+FAIL chain B-A: volume 2.22045e-16, expected 2
+FAIL chain A+B: volume 1, expected 3
+FAIL chain B-A: volume 2.77556e-16, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 1.11022e-16, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 1.11022e-16, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 1.11022e-16, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 1.11022e-16, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 1.11022e-16, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 2, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 1.11022e-16, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL chain A+B: volume 4.44089e-16, expected 3
+FAIL chain A*B: volume 1, expected 0
+FAIL chain A-B: volume 1.11022e-16, expected 1
+FAIL chain B-A: volume 1, expected 2
+FAIL 448 of 512 checks
+rc=1 seconds=3

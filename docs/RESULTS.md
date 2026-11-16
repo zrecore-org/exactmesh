@@ -465,3 +465,17 @@ Run by the win session e3113b under my GPU turn (22:50 to 23:06 PST, 16 min 22 s
 5. **`real` on the 60 models: met.** 540,000 queries, OUT 284,472, IN 120,549, UNCERTAIN 134,979, exact-boundary 68,436, false definite 0, device versus twin 0, hash `c2800183f077073a` (the same as the M1, lavapipe aarch64 and lavapipe x86_64 in MP12e), PASS; 727.7 s.
 6. **Planted mutants: met, each caught.** `pip_bvh_b1` false definite 35,361 and 2,570 device-versus-twin differences; `pip_bvh_b2` 58,110; `pip_bvh_b5` 46,815; `HMUT=6` 3,617.
 So the verdicts of the point-in-solid filter, generated classes and real models, are byte-identical (same hashes) on the 4060 Ti through Dozen in Linux, the 4060 Ti Windows-native (generated classes, MP12c), the M1 GPU and two lavapipe builds. **Not claimed:** speed (Dozen is a translation layer and is not conformant; the times above are not G4 evidence), the other kernels, `mongod` with a GPU, a second run. This shows that a Linux process on that machine can run the kernels exactly through Vulkan; a GPU path in the extension inside `mongod` has not been tested.
+
+## MP12g items 3 and 2: Windows-native (CPU), 2026-11-16
+
+Run by aalbino-1b on the Windows 10 machine (PowerShell, BelowNormal, one at a time, GPU idle). All exes were cross-built
+on the M1 with mingw (static), not built on Windows. Logs: `docs/logs/mp12g/`.
+
+- **Item 3 (Geogram vertex contact):** patched exe rc=0, "PASS 512 of 512 checks" (bar met). Unpatched exe rc=1,
+  "FAIL 448 of 512 checks" (chain A+B, A*B, A-B, B-A volumes wrong). Unpatched counts: 448 Windows, 452 macOS, 504 Linux
+  aarch64, so three platform values; the patch is what makes all three agree at 512.
+- **Item 2 (unit tests and mutants):** 18 tests, 18 as expected. Non-mutant suites match counts: unit_core 370090/15,
+  unit_area 183/6, unit_rules 84/7, unit_validator 29/5, unit_validator_v1 101/4. All 13 mutants exit rc=42 with a Catch2
+  failure (bar met).
+- Copies hash-verified on both ends (SHA256SUMS are CRLF; strip `\r` before `shasum -c`).
+- **Item 1 (MP12c on the 4060 Ti, Windows-native): not run yet.**
