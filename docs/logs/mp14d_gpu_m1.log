@@ -1,0 +1,26 @@
+CASE ok points=100040 stage ok=1 elapsedMs=62.1 verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=1 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=40 gpuPoints=100040
+SECOND RUN verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=2 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=80 gpuPoints=200080
+PASS ok: device path used (1 batch, then 2), verdicts equal the CPU core on both runs, UNCERTAIN resolved exactly
+CASE small points=1040 stage ok=1 elapsedMs=3.3 verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=0 gp
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="gpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=0 gpuShadowMismatch=0 gpuUncertain=0 gp
+PASS small (below the threshold): CPU path, 0 device batches, verdicts equal
+PASS engine knob cpu: 0 device batches, verdicts equal
+CASE fail points=100040 stage ok=1 elapsedMs=31.1 verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=0 gpuUncertain=0 gpuPoints=0
+SECOND RUN verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=0 gpuUncertain=0 gpuPoints=0
+PASS planted device failure: falls back, verdicts equal (both runs), breaker open (1 fallback, no device batch, engine cpu)
+CASE wrong points=100040 stage ok=1 elapsedMs=73.8 verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=1 gpuUncertain=0 gpuPoints=0
+SECOND RUN verdicts equal CPU core: YES
+COUNTERS gpuRequested=true gpuRequired=false gpuProbed=true gpuReady=true engine="cpu" reason="hardware device present" vulkanProbes=1 gpuBatches=0 gpuFallbacks=1 gpuShadowMismatch=1 gpuUncertain=0 gpuPoints=0
+PASS planted wrong verdicts: shadow check catches, verdicts equal (both runs), device disabled
+== mutants (each designated case must show the defect)
+PASS mutant1 shadow check removed: caught (wrong verdicts reach the result)
+PASS mutant2 breaker never opens: caught (second run falls back again)
+PASS mutant3 threshold ignored: caught (device used for 1000 points)
+PASS mutant4 UNCERTAIN trusted as OUT: caught (boundary verdicts wrong)
+FAILS 0
