@@ -1,0 +1,29 @@
+db version v9.1.0
+Build Info: {
+    "version": "9.1.0",
+{"t":{"$date":"2026-11-16T06:54:18.277+00:00"},"s":"I",  "c":"CONTROL",  "id":21951,   "ctx":"initandlisten","msg":"Options set by command line","attr":{"options":{"config":"/w/g5_run/run/mongod.conf","net":{"bindIp":"127.0.0.1","port":27555},"processManagement":{"extensionsConfigPath":"/w/g5_run/run/conf","loadExtensions":["meshvol_ext"],"pidFilePath":"/w/g5_run/run/pid"},"setParameter":{"feature
+{"t":{"$date":"2026-11-16T06:54:18.313+00:00"},"s":"I",  "c":"STORAGE",  "id":22315,   "ctx":"initandlisten","msg":"Opening WiredTiger","attr":{"config":"create,cache_size=2560M,session_max=16000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,remove=true,path=journal,compressor=snappy),builtin_extension_config=(zstd=(compression_level=6)),file_manager=
+{"t":{"$date":"2026-11-16T06:54:18.474+00:00"},"s":"I",  "c":"STORAGE",  "id":10158000,"ctx":"initandlisten","msg":"Opening spill WiredTiger","attr":{"config":"create,cache_size=153M,session_max=1024,eviction=(threads_min=1,threads_max=1),eviction_dirty_target=7MB,eviction_dirty_trigger=122MB,eviction_updates_trigger=122MB,config_base=false,statistics=(fast),builtin_extension_config=(zstd=(compres
+{"t":{"$date":"2026-11-16T06:54:18.647+00:00"},"s":"I",  "c":"EXTENSION","id":11528805,"ctx":"initandlisten","msg":"Skipping signature validation"}
+{"t":{"$date":"2026-11-16T06:54:18.647+00:00"},"s":"I",  "c":"EXTENSION","id":10668501,"ctx":"initandlisten","msg":"Loading extension","attr":{"extensionName":"meshvol_ext"}}
+{"t":{"$date":"2026-11-16T06:54:18.648+00:00"},"s":"I",  "c":"EXTENSION","id":11042903,"ctx":"initandlisten","msg":"Successfully loaded config file","attr":{"extensionName":"meshvol_ext","sharedLibraryPath":"/w/g5_bundle/out/libmeshvol_ext.so"}}
+{"t":{"$date":"2026-11-16T06:54:18.648+00:00"},"s":"I",  "c":"EXTENSION","id":11528806,"ctx":"initandlisten","msg":"Skipping signature validation"}
+{"t":{"$date":"2026-11-16T06:54:20.233+00:00"},"s":"I",  "c":"EXTENSION","id":10668503,"ctx":"initandlisten","msg":"Successfully loaded extension","attr":{"extensionName":"meshvol_ext"}}
+server 9.1.0 docs 223
+PASS 220 results through $meshVolume with cursor batchSize 17 (got 220)
+PASS exact volume equals the Fraction oracle and approx is its correct rounding on every document (wrong 0)
+refusals: {1000: {'error': {'code': 7, 'reason': 'non-finite coordinate'}}, 1001: {'error': {'code': 1, 'reason': 'missing field'}}, 1002: {'error': {'code': 4, 'reason': 'bad mesh header'}}}
+PASS NaN, missing field and bad magic documents give an error object each
+PASS server healthy after the refusals
+PASS bad stage spec rejected by the extension: code 17
+PASS server healthy after the parse error
+PROBE vulkan {'loaderLoaded': True, 'loader': 'libvulkan.so.1', 'vkResult': 0, 'portabilityEnumeration': True, 'ok': True, 'elapsedMs': 76}
+PROBE counters {'computeCalls': 10, 'sourcePulls': 229, 'getNextCalls': 228, 'throwsCaught': 0, 'maxBatch': 32, 'liveBufs': 0, 'liveStatuses': 0, 'liveObjs': 4, 'docsOut': 224}
+PROBE symbol {'collideMe': 1}
+PASS server healthy after the probes
+DEADLINE plant=spinRude spinMs=600 maxTimeMS=100 -> error ExecutionTimeout 50 after 617 ms
+PASS server healthy after the deadline test
+FAILS 0
+test exit: 0
+mongod stopped
+fatal-or-invariant lines in log: 0

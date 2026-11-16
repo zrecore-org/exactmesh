@@ -1,0 +1,15 @@
+server 9.1.0 docs 223
+PASS 220 results through $meshVolume with cursor batchSize 17 (got 220)
+PASS exact volume equals the Fraction oracle and approx is its correct rounding on every document (wrong 0)
+refusals: {1000: {'error': {'code': 7, 'reason': 'non-finite coordinate'}}, 1001: {'error': {'code': 1, 'reason': 'missing field'}}, 1002: {'error': {'code': 4, 'reason': 'bad mesh header'}}}
+PASS NaN, missing field and bad magic documents give an error object each
+PASS server healthy after the refusals
+PASS bad stage spec rejected by the extension: code 17
+PASS server healthy after the parse error
+PROBE vulkan {'loaderLoaded': True, 'loader': 'libvulkan.so.1', 'vkResult': 0, 'portabilityEnumeration': True, 'ok': True, 'elapsedMs': 76}
+PROBE counters {'computeCalls': 10, 'sourcePulls': 229, 'getNextCalls': 228, 'throwsCaught': 0, 'maxBatch': 32, 'liveBufs': 0, 'liveStatuses': 0, 'liveObjs': 4, 'docsOut': 224}
+PROBE symbol {'collideMe': 1}
+PASS server healthy after the probes
+DEADLINE plant=spinRude spinMs=600 maxTimeMS=100 -> error ExecutionTimeout 50 after 617 ms
+PASS server healthy after the deadline test
+FAILS 0
