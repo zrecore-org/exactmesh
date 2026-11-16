@@ -1,0 +1,4 @@
+{"t":{"$date":"2026-11-16T19:34:21.149+00:00"},"s":"I",  "c":"-",        "id":8991200, "ctx":"main","msg":"Shuffling initializers","attr":{"seed":391559865}}
+{"t":{"$date":"2026-11-16T19:34:21.334+00:00"},"s":"I",  "c":"CONTROL",  "id":5760901, "ctx":"main","msg":"Applied --setParameter options","attr":{"serverParameters":{"featureFlagExtensionsAPI":{"default":{"value":true,"version":"9.1","fcv_gated":false},"value":{"value":true,"version":"9.1","fcv_gated":false}}}}}
+WARNING: dzn is not a conformant Vulkan implementation, testing use only.
+WARNING: dzn is not a conformant Vulkan implementation, testing use only.

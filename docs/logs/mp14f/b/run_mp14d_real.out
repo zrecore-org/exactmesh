@@ -1,0 +1,30 @@
+== case gpu_dzn_sigterm (SIGTERM while device batches are in flight)
+LOOP STARTED
+gate log lines: 1
+PASS gpu_dzn_sigterm: clean exit rc 0 after SIGTERM in 0s
+PASS gpu_dzn_sigterm: no backtrace in the log
+== case gpu_dzn; extensionOptions: [extensionOptions:|  gpu: true|]
+vulkan-library-mappings: 10
+{"t":{"$date":"2026-11-16T19:34:38.885+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=true engine=gpu reason=hardware device present"}
+PASS inserted 60 model documents
+PASS batchSize 1000: 60 documents returned
+PASS batchSize 1000: every verdict string equals the oracle mismatched models=0
+PASS batchSize 7: 60 documents returned
+PASS batchSize 7: every verdict string equals the oracle mismatched models=0
+QUERIES 540000 ON 68436 resolved-verdict hash=ae59d9976297a67b
+PASS hash equals the MP14d reference ae59d9976297a67b
+COUNTERS {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'gpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 120, 'gpuFallbacks': 0, 'gpuShadowMismatch': 0, 'gpuUncertain': 269958, 'gpuPoints': 1080000}
+PASS device path used: gpuBatches > 0, UNCERTAIN resolved exactly (gpuUncertain > 0), 0 fallbacks, 0 shadow mismatches, engine gpu {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'gpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 120, 'gpuFallbacks': 0, 'gpuShadowMismatch': 0, 'gpuUncertain': 269958, 'gpuPoints': 1080000}
+PASS planted wrong verdicts: results still equal the oracle
+COUNTERS {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'cpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 120, 'gpuFallbacks': 1, 'gpuShadowMismatch': 1, 'gpuUncertain': 269958, 'gpuPoints': 1080000}
+PASS shadow check fired once, fell back, device disabled (engine cpu) {'gpuRequested': True, 'gpuRequired': False, 'gpuProbed': True, 'gpuReady': True, 'engine': 'cpu', 'reason': 'hardware device present', 'vulkanProbes': 1, 'gpuBatches': 120, 'gpuFallbacks': 1, 'gpuShadowMismatch': 1, 'gpuUncertain': 269958, 'gpuPoints': 1080000}
+PASS after the breaker: results still equal the oracle on all 60 models
+PASS points as an array of arrays OO
+PASS $meshVolume still works {'exact': '162364492136534645275006007621/1813388729421943762059264', 'approx': 
+PASS per-document errors (missing points 1, missing mesh 1, bad header 4, bad point 15) {1: 1, 2: 1, 3: 4, 4: 15}
+PASS unknown stage field is rejected $meshVolume: unknown field 'bogus', full error: {'ok': 0.0, 'errmsg': "$meshVolume: unknown field 'b
+FAILS 0
+PASS gpu_dzn: test_mp14d FAILS 0
+ICD-library-mappings-at-end: 20
+PASS gpu_dzn: no fatal signal in the server log
+FAILS 0
