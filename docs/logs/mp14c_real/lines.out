@@ -1,0 +1,22 @@
+== run_default_absent
+{"t":{"$date":"2026-11-16T16:59:20.639+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=false ready=false engine=cpu reason=not requested"}
+{"t":{"$date":"2026-11-16T16:59:22.633+00:00"},"s":"W",  "c":"QUERY",    "id":23799,   "ctx":"conn3","msg":"Aggregate command executor error","attr":{"error":{"code":50,"codeName":"MaxTimeMSExpired","errmsg":"$meshVolume: operation exceeded the deadline reported by the host (cooperative stop)"},"stats":{},"cmd":{"aggregate":"meshes","pipeline":[{"$limit":1},{"$meshVolume":{"input":"mesh","output":"p","plant":"spinRude","spinMs":600}}],"maxTimeMS":100,"cursor":{},"lsid":{"id":{"$uuid":"9301625b-1
+{"t":{"$date":"2026-11-16T16:59:22.642+00:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn3","msg":"Slow query","attr":{"type":"command","isFromUserConnection":true,"isFromPriorityPortConnection":false,"ns":"g5.meshes","collectionType":"normal","queryShapeHash":"D55E18603A07C31D77764FE19EE871F4736F57268BF1061DDF4851E7C602ADE3","command":{"aggregate":"meshes","pipeline":[{"$limit":1},{"$meshVolume":{"input":"mesh","output":"p","plant":"spinRude","spinMs":600}}],"maxTimeMS":100,"cursor":{}
+== run_empty_map
+{"t":{"$date":"2026-11-16T16:59:30.079+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=false ready=false engine=cpu reason=not requested"}
+== run_gpu_false
+{"t":{"$date":"2026-11-16T16:59:37.295+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=false ready=false engine=cpu reason=not requested"}
+== run_gpu_required
+{"t":{"$date":"2026-11-16T16:59:52.937+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=false engine=cpu reason=software device only"}
+{"t":{"$date":"2026-11-16T16:59:52.946+00:00"},"s":"E",  "c":"EXTENSION","id":10668502,"ctx":"initandlisten","msg":"Error loading extension","attr":{"extensionName":"meshvol_ext","status":{"code":36,"codeName":"RemoteChangeDetected","errmsg":"meshvolume: gpuRequired is true but the GPU is not ready: software device only"}}}
+{"t":{"$date":"2026-11-16T16:59:52.947+00:00"},"s":"F",  "c":"ASSERT",   "id":23089,   "ctx":"initandlisten","msg":"Fatal assertion","attr":{"msgid":126502,"location":"src/mongo/db/mongod_main.cpp:748:83:ExitCode mongo::(anonymous namespace)::_initAndListen(ServiceContext *)"}}
+{"t":{"$date":"2026-11-16T16:59:52.947+00:00"},"s":"F",  "c":"ASSERT",   "id":23090,   "ctx":"initandlisten","msg":"\n\n***aborting after fassert() failure\n\n"}
+== run_gpu_true
+{"t":{"$date":"2026-11-16T16:59:44.665+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=false engine=cpu reason=software device only"}
+== run_mp14c_real.out
+== run_mp14c_real.sh
+== run_unknown_opt
+{"t":{"$date":"2026-11-16T17:00:48.936+00:00"},"s":"E",  "c":"EXTENSION","id":10668502,"ctx":"initandlisten","msg":"Error loading extension","attr":{"extensionName":"meshvol_ext","status":{"code":34,"codeName":"CannotBackfillArray","errmsg":"meshvolume: unknown extension option 'frobnicate' (known: gpu, gpuRequired)"}}}
+{"t":{"$date":"2026-11-16T17:00:48.937+00:00"},"s":"F",  "c":"ASSERT",   "id":23089,   "ctx":"initandlisten","msg":"Fatal assertion","attr":{"msgid":126502,"location":"src/mongo/db/mongod_main.cpp:748:83:ExitCode mongo::(anonymous namespace)::_initAndListen(ServiceContext *)"}}
+{"t":{"$date":"2026-11-16T17:00:48.937+00:00"},"s":"F",  "c":"ASSERT",   "id":23090,   "ctx":"initandlisten","msg":"\n\n***aborting after fassert() failure\n\n"}
+{"t":{"$date":"2026-11-16T17:00:48.937+00:00"},"s":"F",  "c":"CONTROL",  "id":6384300, "ctx":"initandlisten","msg":"Writing fatal message","attr":{"message":"Got signal: 6 (Aborted).\n"}}

@@ -1,0 +1,48 @@
+CASE 1 INPUT sharedLibraryPath: /x.so\n
+CASE 1 TYPE 4 DUMP {}
+CASE 2 INPUT sharedLibraryPath: /x.so\nextensionOptions: {}\n
+CASE 2 TYPE 4 DUMP {}
+CASE 3 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n
+CASE 3 TYPE 1 DUMP ~
+CASE 4 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: false\n
+CASE 4 TYPE 4 DUMP gpu: false
+CASE 5 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: true\n
+CASE 5 TYPE 4 DUMP gpu: true
+CASE 6 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: true\n  gpuRequired: true\n
+CASE 6 TYPE 4 DUMP gpu: true\ngpuRequired: true
+CASE 7 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: true # comment\n
+CASE 7 TYPE 4 DUMP gpu: true
+CASE 8 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: yes\n
+CASE 8 TYPE 4 DUMP gpu: yes
+CASE 9 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: True\n
+CASE 9 TYPE 4 DUMP gpu: True
+CASE 10 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: "true"\n
+CASE 10 TYPE 4 DUMP gpu: true
+CASE 11 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: 'true'\n
+CASE 11 TYPE 4 DUMP gpu: true
+CASE 12 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: 1\n
+CASE 12 TYPE 4 DUMP gpu: 1
+CASE 13 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu:\n
+CASE 13 TYPE 4 DUMP gpu: ~
+CASE 14 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: ~\n
+CASE 14 TYPE 4 DUMP gpu: ~
+CASE 15 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  GPU: true\n
+CASE 15 TYPE 4 DUMP GPU: true
+CASE 16 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: true\n  gpu: false\n
+CASE 16 TYPE 4 DUMP gpu: true\ngpu: false
+CASE 17 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n\tgpu: true\n
+CASE 17 THROW yaml-cpp: error at line 3, column 5: illegal map value
+CASE 18 INPUT sharedLibraryPath: /x.so\r\nextensionOptions:\r\n  gpu: true\r\n
+CASE 18 TYPE 4 DUMP gpu: true
+CASE 19 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: true
+CASE 19 TYPE 4 DUMP gpu: true
+CASE 20 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpu: true\n  nested:\n    a: 1\n
+CASE 20 TYPE 4 DUMP gpu: true\nnested:\n  a: 1
+CASE 21 INPUT sharedLibraryPath: /x.so\nextensionOptions: [1, 2]\n
+CASE 21 TYPE 3 DUMP [1, 2]
+CASE 22 INPUT sharedLibraryPath: /x.so\nextensionOptions: gpu\n
+CASE 22 TYPE 2 DUMP gpu
+CASE 23 INPUT sharedLibraryPath: /x.so\nextensionOptions: {gpu: true, gpuRequired: false}\n
+CASE 23 TYPE 4 DUMP {gpu: true, gpuRequired: false}
+CASE 24 INPUT sharedLibraryPath: /x.so\nextensionOptions:\n  gpuRequired: false\n
+CASE 24 TYPE 4 DUMP gpuRequired: false

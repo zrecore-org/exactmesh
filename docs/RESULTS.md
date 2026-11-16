@@ -484,3 +484,15 @@ on the M1 with mingw (static), not built on Windows. Logs: `docs/logs/mp12g/`.
   c2800183f077073a (540000 queries, 0 false definite, 0 differences, all 60 models present). Timings 17 s, 18 s, 0.5 s,
   209 s. Hashes are identical to M1, lavapipe and the earlier Dozen run. Logs: `docs/logs/mp12g/out_item1/`.
   No speed claim is made here; G4 is unchanged.
+
+## MP14c: GPU off by default, enabled through the mongod config (real fork mongod part), 2026-11-16
+
+Registered in the fork's `poc/gpu/extension/PLAN.md` (MP14c plus amendment 1, from the aalbino-1b review). The gate lives in `meshvol_ext`: `extensionOptions` of the extension's `.conf` reach it through the host portal as `YAML::Dump` text. Inputs the parser must accept were taken from the real yaml-cpp of the fork tree (`docs/logs/mp14c_yaml_dump_probe.out`, `tools/mp14c_yaml_dump_probe.cpp`): block map with no indent or trailing newline, `{}` and `~` for empty and null, flow maps kept as flow, duplicate keys kept, quotes dropped. No GPU kernel is involved: `$meshVolume` stays on the CPU and reports `engine=cpu`.
+
+**Real fork `mongod` (v9.1.0, sha 7765c832..., Ubuntu 24.04 x86_64 container on the win machine, CPU, lavapipe), run by aalbino-1b; logs `docs/logs/mp14c_real/`:**
+- `extensionOptions` absent, `{}`, and `gpu: false`: the server starts; log line `meshvolume: gpu requested=false ready=false engine=cpu reason=not requested`; 0 libvulkan mappings in the live process; for the absent case the G5 suite inside it printed `FAILS 0` (health checks after the probes and after the deadline test PASS).
+- `gpu: true` on lavapipe: starts; `requested=true ready=false engine=cpu reason=software device only` (lavapipe reports a CPU device type, so it is not counted as a GPU); 15 libvulkan mappings.
+- `gpu: true` with `gpuRequired: true`: the server refuses to start; log shows `Error loading extension ... meshvolume: gpuRequired is true but the GPU is not ready: software device only`.
+- `frobnicate: true`: refuses to start; log shows `unknown extension option 'frobnicate' (known: gpu, gpuRequired)`.
+- The script printed `FAILS 4`; all four are a bug in my runner (`chk` accepted only the string `ok` but the start cases passed `yes`), not server behaviour: every one of those servers logged "Waiting for connections". Corrected tally 0 real failures. The runner is fixed in the package; no re-run was made. The server maps the extension's status codes to unrelated code names (`RemoteChangeDetected`, `CannotBackfillArray`): cosmetic, the message text is intact.
+- Not claimed: a hardware GPU device inside `mongod` (the 4060 Ti via Dozen), release or secure builds, sharded topologies.

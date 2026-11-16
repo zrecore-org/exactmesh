@@ -1,0 +1,53 @@
+== case default_absent (expect start); conf extensionOptions: [|]
+vulkan-library-mappings: 0
+{"t":{"$date":"2026-11-16T16:59:20.639+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=false ready=false engine=cpu reason=not requested"}
+FAIL default_absent: server starts
+PASS server healthy after the probes
+DEADLINE plant=spinRude spinMs=600 maxTimeMS=100 -> error ExecutionTimeout 50 after 626 ms
+PASS server healthy after the deadline test
+FAILS 0
+PASS default_absent: g5 test suite FAILS 0
+PASS default_absent: requested=false logged
+PASS default_absent: no Vulkan library mapped
+== case empty_map (expect start); conf extensionOptions: [extensionOptions: {}|]
+vulkan-library-mappings: 0
+{"t":{"$date":"2026-11-16T16:59:30.079+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=false ready=false engine=cpu reason=not requested"}
+FAIL empty_map: server starts
+PASS empty_map: requested=false logged
+PASS empty_map: no Vulkan library mapped
+== case gpu_false (expect start); conf extensionOptions: [extensionOptions:|  gpu: false|]
+vulkan-library-mappings: 0
+{"t":{"$date":"2026-11-16T16:59:37.295+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=false ready=false engine=cpu reason=not requested"}
+FAIL gpu_false: server starts
+PASS gpu_false: requested=false logged
+PASS gpu_false: no Vulkan library mapped
+== case gpu_true (expect start); conf extensionOptions: [extensionOptions:|  gpu: true|]
+vulkan-library-mappings: 15
+{"t":{"$date":"2026-11-16T16:59:44.665+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=false engine=cpu reason=software device only"}
+FAIL gpu_true: server starts
+PASS gpu_true: logged requested=true
+   (on lavapipe the expected reason is: software device only)
+ready=false engine=cpu reason=software device only
+== case gpu_required (expect refuse); conf extensionOptions: [extensionOptions:|  gpu: true|  gpuRequired: true|]
+./run_mp14c_real.sh: line 21:  4362 Aborted                 (core dumped) nice -n 10 "$MONGOD" -f "$R/mongod.conf" > "$R/start.out" 2>&1
+{"t":{"$date":"2026-11-16T16:59:52.937+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=false engine=cpu reason=software device only"}
+{"t":{"$date":"2026-11-16T16:59:52.946+00:00"},"s":"E",  "c":"EXTENSION","id":10668502,"ctx":"initandlisten","msg":"Error loading extension","attr":{"extensionName":"meshvol_ext","status":{"code":36,"codeName":"RemoteChangeDetected","errmsg":"meshvolume: gpuRequired is true but the GPU is not ready: software device only"}}}
+{"t":{"$date":"2026-11-16T16:59:50.105+00:00"},"s":"I",  "c":"-",        "id":8991200, "ctx":"main","msg":"Shuffling initializers","attr":{"seed":2629098104}}
+{"t":{"$date":"2026-11-16T16:59:50.245+00:00"},"s":"I",  "c":"CONTROL",  "id":5760901, "ctx":"main","msg":"Applied --setParameter options","attr":{"serverParameters":{"featureFlagExtensionsAPI":{"default":{"value":true,"version":"9.1","fcv_gated":false},"value":{"value":true,"version":"9.1","fcv_gated":false}}}}}
+{"t":{"$date":"2026-11-16T16:59:52.937+00:00"},"s":"I",  "c":"EXTENSION-MONGOT","id":7001400, "ctx":"initandlisten","msg":"meshvolume: gpu requested=true ready=false engine=cpu reason=software device only"}
+{"t":{"$date":"2026-11-16T16:59:52.946+00:00"},"s":"E",  "c":"EXTENSION","id":10668502,"ctx":"initandlisten","msg":"Error loading extension","attr":{"extensionName":"meshvol_ext","status":{"code":36,"codeName":"RemoteChangeDetected","errmsg":"meshvolume: gpuRequired is true but the GPU is not ready: software device only"}}}
+{"t":{"$date":"2026-11-16T16:59:52.947+00:00"},"s":"F",  "c":"ASSERT",   "id":23089,   "ctx":"initandlisten","msg":"Fatal assertion","attr":{"msgid":126502,"location":"src/mongo/db/mongod_main.cpp:748:83:ExitCode mongo::(anonymous namespace)::_initAndListen(ServiceContext *)"}}
+{"t":{"$date":"2026-11-16T16:59:52.947+00:00"},"s":"F",  "c":"ASSERT",   "id":23090,   "ctx":"initandlisten","msg":"\n\n***aborting after fassert() failure\n\n"}
+PASS gpu_required: server refuses to start
+PASS gpu_required: reason in output or log
+== case unknown_opt (expect refuse); conf extensionOptions: [extensionOptions:|  frobnicate: true|]
+./run_mp14c_real.sh: line 21:  4541 Aborted                 (core dumped) nice -n 10 "$MONGOD" -f "$R/mongod.conf" > "$R/start.out" 2>&1
+{"t":{"$date":"2026-11-16T17:00:46.165+00:00"},"s":"I",  "c":"-",        "id":8991200, "ctx":"main","msg":"Shuffling initializers","attr":{"seed":2053563970}}
+{"t":{"$date":"2026-11-16T17:00:46.330+00:00"},"s":"I",  "c":"CONTROL",  "id":5760901, "ctx":"main","msg":"Applied --setParameter options","attr":{"serverParameters":{"featureFlagExtensionsAPI":{"default":{"value":true,"version":"9.1","fcv_gated":false},"value":{"value":true,"version":"9.1","fcv_gated":false}}}}}
+{"t":{"$date":"2026-11-16T17:00:48.936+00:00"},"s":"E",  "c":"EXTENSION","id":10668502,"ctx":"initandlisten","msg":"Error loading extension","attr":{"extensionName":"meshvol_ext","status":{"code":34,"codeName":"CannotBackfillArray","errmsg":"meshvolume: unknown extension option 'frobnicate' (known: gpu, gpuRequired)"}}}
+{"t":{"$date":"2026-11-16T17:00:48.937+00:00"},"s":"F",  "c":"ASSERT",   "id":23089,   "ctx":"initandlisten","msg":"Fatal assertion","attr":{"msgid":126502,"location":"src/mongo/db/mongod_main.cpp:748:83:ExitCode mongo::(anonymous namespace)::_initAndListen(ServiceContext *)"}}
+{"t":{"$date":"2026-11-16T17:00:48.937+00:00"},"s":"F",  "c":"ASSERT",   "id":23090,   "ctx":"initandlisten","msg":"\n\n***aborting after fassert() failure\n\n"}
+{"t":{"$date":"2026-11-16T17:00:48.937+00:00"},"s":"F",  "c":"CONTROL",  "id":6384300, "ctx":"initandlisten","msg":"Writing fatal message","attr":{"message":"Got signal: 6 (Aborted).\n"}}
+PASS unknown_opt: server refuses to start
+PASS unknown_opt: reason in output or log
+FAILS 4

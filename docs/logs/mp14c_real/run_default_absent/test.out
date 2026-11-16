@@ -1,0 +1,4 @@
+PASS server healthy after the probes
+DEADLINE plant=spinRude spinMs=600 maxTimeMS=100 -> error ExecutionTimeout 50 after 626 ms
+PASS server healthy after the deadline test
+FAILS 0
