@@ -562,3 +562,15 @@ Plan: fork `poc/gpu/extension/PLAN.md` (MP16). Cross-built with mingw-w64 on the
 
 ## The multi-thread CPU baseline (M1, 2026-11-16; `docs/logs/mp14d_speed_threads_m1.txt`)
 `$meshContains` gained `cpuThreads` (default 1; the stage splits the points of one document over N threads; only the calling thread talks to the host, workers read an atomic stop flag). Warm, one document, 9,600-triangle sphere, M1 (8 cores), ms: 50,000 points: 1 thread 12.6, 2 threads 7.3, 4 threads 4.9, 8 threads 5.4, device 13.2; 200,000 points: 58.8 / 29.4 / 18.4 / 16.6, device 49.7; 600,000 points: 154.4 / 81.3 / 44.5 / 34.2, device 139.2. **Against a multi-threaded CPU path the device is 4x slower at 600,000 points and 3x slower at 200,000 on the M1; the earlier "1.0x to 1.5x" was against one thread.** This is the fair comparison the project had called for (pg-strom's tuned-CPU point): **G4 is not met in this setting, in either direction of effort.** The 4060 Ti multi-thread comparison is not run yet (the i9-8950HK has 6 cores / 12 threads; the device path was 1.4 to 1.5x over one thread there).
+
+## MP16b: corrected GPU checks and the multi-thread CPU baseline on the Windows machine (aalbino-1b, 2026-11-16; logs `docs/logs/mp16b/`)
+NVIDIA driver 621.24 (RTX 4060 Ti, Vulkan 1.4.357; the laptop's AMD Radeon Pro 555X is listed and unused), native Windows, no crash, all programs rc 0.
+- **GPU item `FAILS 0` (20 checks):** everything of the first run, plus the out-of-memory plant now accepted (`vkCreateBuffer ... failed: -2` on NVIDIA); **leak check on CURRENT private bytes: 89,059,328 at 450 runs and 93,081,600 at 1,800 runs, +3.8 MB over 1,350 extra device runs (about 3 KB per run), limit 16 MB: no leak**; 60 real models through the NVIDIA driver: 0 false definite, 0 disagreements, hash `ae59d9976297a67b`, UNCERTAIN 134,979.
+- **Labelled bench (i9-8950HK 6 cores / 12 threads; one 9,600-triangle sphere; N random points per document; ms; warm second run; ONE run per cell, not a median):**
+```
+points | cpu 1 | cpu 2 | cpu 4 | cpu 6 | cpu 12 | device
+50000  |  29.6 |  30.9 |  31.8 |  15.6 |  30.9  |  25.3
+200000 | 112.7 |  77.6 |  62.6 |  46.4 |  62.7  |  54.3
+600000 | 332.0 | 217.4 | 157.7 | 126.3 | 109.8  | 151.9
+```
+Reading: the device beats one CPU thread (2.1x to 2.2x at 200,000 and 600,000 points) but **not** the multi-thread CPU at any size (best CPU versus device: 200,000 points 46.4 vs 54.3 ms, 600,000 points 109.8 vs 151.9 ms); on the M1 the margin against 8 threads was larger (4x). **G4 is not met on either machine in this setting.** Caveats stated: single warm runs, the 50,000-point row is noisy (about 30 ms, thread start-up and clock resolution; 6 threads shows 15.6 but 2, 4 and 12 threads are no faster than 1), thread scaling at 200,000 and 600,000 points is plausible and monotonic to 6 threads; the device row includes the host-side resolution of the 40 UNCERTAIN points out of 600,040; the CPU path inside the stage is a simple per-point loop, not hand-tuned.
