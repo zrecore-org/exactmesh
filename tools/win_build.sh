@@ -34,6 +34,9 @@ fi
 # 1. SPIR-V from the unmodified f64soft.inc (the exe targets fail their static_assert in this pass: expected)
 ninja -C build -k 0 "$@" > "$OUT/build_pass1.log" 2>&1 || true
 # 2. host copy with ull, then keep the SPIR-V that pass 1 produced
+# the tests write scratch files to EXACTMESH_TEST_TMP, a build-directory path baked in at compile time: use the current directory on Windows
+sed -i 's#EXACTMESH_TEST_TMP="${CMAKE_BINARY_DIR}/test_work/"#EXACTMESH_TEST_TMP="./"#' tests/CMakeLists.txt
+grep -q 'EXACTMESH_TEST_TMP="./"' tests/CMakeLists.txt
 # the SPIR-V rules list f64soft.inc as an input; drop that dependency in this copy so ninja does not recompile the shaders from the rewritten file
 sed -i 's# "${GPU_SRC}/shaders/f64soft.inc"##' gpu/CMakeLists.txt
 grep -q 'shaders/f64soft.inc"' gpu/CMakeLists.txt && { echo "could not drop the f64soft.inc dependency"; exit 1; }
