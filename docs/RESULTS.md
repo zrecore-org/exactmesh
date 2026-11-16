@@ -478,4 +478,9 @@ on the M1 with mingw (static), not built on Windows. Logs: `docs/logs/mp12g/`.
   unit_area 183/6, unit_rules 84/7, unit_validator 29/5, unit_validator_v1 101/4. All 13 mutants exit rc=42 with a Catch2
   failure (bar met).
 - Copies hash-verified on both ends (SHA256SUMS are CRLF; strip `\r` before `shasum -c`).
-- **Item 1 (MP12c on the 4060 Ti, Windows-native): not run yet.**
+- **Item 1 (MP12c on the 4060 Ti, Windows-native, driver 621.24): all four bars met.** device hash 2542c208f678bc75
+  (113916 queries, 0 false definite, 0 device-vs-twin differences); device_s2 hash a3480675712e3d09 (0 false definite,
+  0 differences); f64check 200000: 0 mismatches device vs host, host vs hardware, device vs hardware; real60 hash
+  c2800183f077073a (540000 queries, 0 false definite, 0 differences, all 60 models present). Timings 17 s, 18 s, 0.5 s,
+  209 s. Hashes are identical to M1, lavapipe and the earlier Dozen run. Logs: `docs/logs/mp12g/out_item1/`.
+  No speed claim is made here; G4 is unchanged.
